@@ -1,0 +1,178 @@
+﻿Private Shared Sub read_sharepoint_list()
+
+        Try
+
+            Dim ctx As sp.ClientContext = New sp.ClientContext(sharepoint_url)
+
+            login_to_sharepoint(ctx)
+
+            'get the list object
+            Dim oList As sp.List = ctx.Web.Lists.GetByTitle(sharepoint_list_nm)
+
+            'get fields
+            Dim oFields As sp.FieldCollection = oList.Fields
+
+            'load title, internal name, data type, and schema
+            ctx.Load(oFields,
+                        Function(fields) _
+                            fields.Include(Function(field__1) field__1.Title _
+                                            , Function(field__1) field__1.InternalName _
+                                            , Function(field__1) field__1.TypeAsString _
+                                            , Function(Field__2) Field__2.SchemaXml) _
+                            .Where(Function(field__1) field__1.Hidden = False)
+            )
+
+            ctx.ExecuteQuery()
+
+
+            Dim md As List(Of meta_data) = New List(Of meta_data)
+
+            Dim ord_pos As Integer = 0
+            For Each fld As sp.Field In oFields
+                Dim display_nm As String = fld.Title.ToString
+                Dim internal_nm As String = fld.InternalName.ToString
+                Dim sp_data_type As String = fld.TypeAsString.ToString()
+
+                'some of the sharepoint internal names pop up twice with the same display name
+                'user fields names don't repeat more than once
+                If Not (md.Exists(Function(item) item.display_nm = display_nm)) Then
+                    ' this filters out the ms internal sharepoint columns stuff
+                    'Include the "title" column though as a lot of ppl rename this one
+                    If (Not (fld.SchemaXml.Contains("http://schemas.microsoft.com/sharepoint/v3")) Or internal_nm.ToLower = "title") Then
+                        md.Add(New meta_data() With {.display_nm = display_nm, .internal_nm = internal_nm, .data_type = get_ss_datatype(sp_data_type), .sp_data_type = sp_data_type, .position = ord_pos})
+                        ord_pos += 1
+                    End If
+                End If
+            Next
+
+            '======================================================================================================================
+            ' Query Sharepoint List
+
+            'Build query
+            Dim qry_str As String = "<View><ViewFields>"
+
+            For Each fcol In md
+                qry_str += "<FieldRef Name = '" + fcol.internal_nm + "' />"
+            Next
+            qry_str += "</ViewFields></View>"
+
+            Dim cQuery As CamlQuery = New CamlQuery
+            cQuery.ViewXml = qry_str
+
+            Dim rows As ListItemCollection = oList.GetItems(cQuery)
+            ctx.Load(rows)
+            ctx.ExecuteQuery()
+
+            'Assemble the alter table statement for the sql global temp
+            Dim alter_tbl_sql As String = "ALTER TABLE " + output_tbl_nm + " ADD "
+            Dim insert_cols As String = "("
+            Dim param_val_cols As String = "("
+
+            Dim comma As String = ""
+            For Each col In md
+                alter_tbl_sql += (comma & Convert.ToString(" [")) + col.display_nm + "] " + col.data_type
+                insert_cols += (comma & Convert.ToString("[")) + col.display_nm + "] "
+                Dim param_val_col As String = "@p" + col.position.ToString
+                'Dim param_val_col As String = "@" + col.display_nm.Replace(" ", "_")
+                ''replace colons with double underscores
+                'param_val_col = Replace(param_val_col, ":", "__")
+                param_val_cols += comma & param_val_col
+                comma = ","
+            Next
+
+            ' add bookend parenthesis
+            insert_cols += ")"
+            param_val_cols += ")"
+
+            'grab the first column for the drop, update the alter statement and run it
+            Using cn As New SqlConnection("server = " + mssql_inst + "; integrated security = true")
+                cn.Open()
+                Dim first_col_sql As String = "select COLUMN_NAME from tempdb.INFORMATION_SCHEMA.columns where TABLE_NAME = '" + output_tbl_nm + "'"
+
+                Dim first_col As String = ""
+
+                Using cmd As New SqlCommand(first_col_sql, cn)
+                    first_col = cmd.ExecuteScalar().ToString()
+                End Using
+
+                alter_tbl_sql += (Convert.ToString("; alter table " + output_tbl_nm + " drop column [") & first_col) + "];"
+
+                Using cmd As New SqlCommand(alter_tbl_sql, cn)
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                cn.Close()
+
+            End Using
+
+            Dim insert_statement As String = "INSERT INTO " + output_tbl_nm + " " + insert_cols + " VALUES " + param_val_cols
+
+            'Load the data
+            Using cn As New SqlConnection("server = " + mssql_inst + "; integrated security = true")
+                cn.Open()
+
+                'load the data
+                For Each row As ListItem In rows
+                    Using cmd As New SqlCommand(insert_statement, cn)
+                        For Each col In md
+                            'the rows coming out store the data as the internal column name, so we need to translate back
+                            If row.FieldValues.ContainsKey(col.internal_nm) Then
+                                Dim param_nm As String = "@p" + col.position.ToString
+                                'Dim param_nm As String = "@" + col.display_nm.Replace(" ", "_")
+
+                                'replace colons with double underscores
+                                'param_nm = Replace(param_nm, ":", "__")
+
+                                If row(col.internal_nm) Is Nothing Then
+                                    cmd.Parameters.AddWithValue(param_nm, DBNull.Value)
+                                Else
+                                    Dim param_val As String = row(col.internal_nm).ToString()
+
+                                    'grab lookup columns
+                                    If col.sp_data_type.ToLower = "lookup" Then
+                                        param_val = "" 'clear the ms lookup param stuff
+                                        Dim lk = DirectCast(row(col.internal_nm), FieldLookupValue)
+                                        If lk.LookupValue IsNot Nothing Then
+                                            param_val = lk.LookupValue.ToString
+                                        Else
+                                            param_val = ""
+                                        End If
+
+                                    ElseIf col.sp_data_type.ToLower = "lookupmulti" Then
+                                        param_val = "" 'clear the ms lookup param stuff
+                                        Dim lk = DirectCast(row(col.internal_nm), FieldLookupValue())
+                                        For Each itm In lk
+                                            If itm.LookupValue IsNot Nothing Then
+                                                param_val += itm.LookupValue.ToString() + vbCrLf
+                                            End If
+                                        Next
+                                    End If
+
+
+                                    'strip out html for note columns
+                                    If param_val.Contains("<p>") Or param_val.Contains("</font>") Then
+                                        param_val = Replace(param_val, "<br>", Environment.NewLine())
+                                        param_val = Regex.Replace(param_val, "<style>(.|" & vbLf & ")*?</style>", String.Empty)
+                                        param_val = Regex.Replace(param_val, "<xml>(.|\n)*?</xml>", String.Empty)
+                                        param_val = Regex.Replace(param_val, "<(.|\n)*?>", String.Empty)
+                                    End If
+
+                                    'after the lookup tranformations and other stuff, if we are left with an empty string set to null
+                                    If param_val.ToString = "" Then
+                                        cmd.Parameters.AddWithValue(param_nm, DBNull.Value)
+                                    Else
+                                        cmd.Parameters.AddWithValue(param_nm, param_val)
+                                    End If
+
+
+                                End If
+                            End If
+                        Next
+                        cmd.ExecuteNonQuery()
+                    End Using
+                Next
+            End Using
+
+        Catch ex As Exception
+            sharepoint_err_msg = ex.Message.ToString()
+        End Try

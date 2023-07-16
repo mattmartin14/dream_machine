@@ -1,0 +1,64 @@
+
+2016-12-28: New EDIS SSIS shell setup
+
+-------------------------------------
+<< Parameters >>
+[1] edis_exec_path
+[2] edis_logging_level
+[3] exec_id
+[4] mssql_inst
+
+-- ------------------------------------------------------------------------------------------------------------
+-- Create a script task with the script below
+
+
+
+Try
+            Dim edis_exec_path As String = Dts.Variables("$Package::edis_exec_path").Value.ToString
+            Dim mssql_inst As String = Dts.Variables("$Package::mssql_inst").Value.ToString
+            Dim exec_id As String = Dts.Variables("$Package::exec_id").Value.ToString
+            Dim edis_logging_level As String = Dts.Variables("$Package::edis_logging_level").Value.ToString
+
+            Dim args As New StringBuilder
+            args.AppendFormat("""{0}"" ""{1}"" ""{2}""", mssql_inst, exec_id, edis_logging_level)
+
+            Dim p As New Process
+
+            Dim pi As New ProcessStartInfo
+
+            pi.FileName = edis_exec_path
+            pi.Arguments = args.ToString
+            pi.CreateNoWindow = True
+            pi.RedirectStandardError = True
+            pi.RedirectStandardOutput = True
+            pi.WindowStyle = ProcessWindowStyle.Hidden
+            pi.UseShellExecute = False
+
+            p.StartInfo = pi
+            p.Start()
+
+            Dim output As String = p.StandardOutput.ReadToEnd()
+            Dim err_msg As String = p.StandardError.ReadToEnd()
+            p.WaitForExit()
+
+            Dim res = p.ExitCode
+
+            If res = 0 Then
+                Dts.TaskResult = ScriptResults.Success
+            Else
+
+                Dim final_msg As String = output
+                If final_msg = "" Then
+                    final_msg = err_msg
+                End If
+
+                Dts.Events.FireError(-1, "EDIS", final_msg, "", 0)
+
+                'Console.WriteLine(output)
+                'Console.WriteLine(err_msg)
+
+                Dts.TaskResult = ScriptResults.Failure
+            End If
+        Catch ex As Exception
+            Throw New Exception(ex.Message)
+        End Try

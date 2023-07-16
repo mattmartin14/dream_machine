@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lbl_confirmation_setup.Text" xml:space="preserve">
+    <value>Confirmation:
+
+You are about to install EDIS with the following setup:
+-&gt; Instance: W1ASPRD\P5252
+-&gt; Instance Version: MSSQL 2014
+-&gt; License Type: Trial
+-&gt; License Number: ABCE-1344q4-sdsfsdf-r2424-24222
+
+
+
+Please click install if you wish to continue.</value>
+  </data>
+  <data name="txt_eula_info.Text" xml:space="preserve">
+    <value>**END USER LICENSE AGREEMENT (EULA) for MD Data Technologies, LLC. EDIS (THE SOFTWARE PRODUCT)**
+
+PLEASE THOROUGHLY READ THIS EULA BEFORE DETERMINING WHETHER OR NOT YOU WANT TO INSTALL THIS SOFTWARE.
+
+This End User License Agreement is a legal agreement between you (THE END-USER) (either an individual or a single entity) and MD Data Technologies, LLC (THE COMPANY).
+
+By installing, copying, or otherwise using THE SOFTWARE PRODUCT, you agree to be bounded by the terms of this EULA. If you do not agree to the terms of this EULA, do not install or use THE SOFTWARE PRODUCT.
+
+1. SOFTWARE PRODUCT LICENSE AND TRANSFERRABILITY
+
+The License Number you are about to activate is non-transferrable and is valid for 1 Microsoft SQL Server Instance, and upon activation, will be locked with the hardware ID associated with the SQL Server Instance. This activation DOES NOT inherit perpetual upgrades. THE END-USER must purchase a new license when they upgrade the SQL Server Instance to a new version if they want to continue using THE SOFTWARE PRODUCT.
+
+2. TERMINATION
+
+Without prejudice to any other rights, THE COMPANY may terminate this EULA if you fail to comply with the terms and conditions of this EULA. In such event, you (THE END-USER) must destroy all copies of THE SOFTWARE PRODUCT and all of its component parts.
+
+3. USE OF WORK
+
+THE END-USER will not attempt to decompile, reverse-engineer, or use the code within THE SOFTWARE PRODUCT as your own work or attempt to sell, distribute, or otherwise disclose the contents within THE SOFTWARE PRODUCT without prior written consent of THE COMPANY.
+
+LIMITED WARRANTY
+
+4. NO WARRANTIES.
+
+THE COMPANY expressly disclaims any warranty for THE SOFTWARE PRODUCT. THE SOFTWARE PRODUCT and any related documentation is provided "as is" without warranty of any kind, either express or implied, including, without limitation, the implied warranties or merchantability, fitness for a particular purpose, or noninfringement. The entire risk arising out of use or performance of THE SOFTWARE PRODUCT remains with THE END-USER.
+
+5. NO LIABILITY FOR DAMAGES.
+
+In no event shall THE COMPANY be liable for any special, consequential, incidental or indirect damages whatsoever (including, without limitation, damages for loss of business profits, business interruption, loss of business information, or any other pecuniary loss) arising out of the use of or inability to use THE SOFTWARE PRODUCT.
+
+OTHER
+
+6. THIRD PARTY SOFTWARE NOTICE
+
+THE SOFTWARE PRODUCT uses portions of NPOI for Excel 2003 (xls) tasks. NPOI is covered under the APACHE LICENSE and a copy of the license is obtainable HERE: http://www.apache.org/licenses/.
+</value>
+  </data>
+  <data name="Label4.Text" xml:space="preserve">
+    <value>**PLEASE READ CAREFULLY BEFORE CONTINUING**
+
+By clicking the 'Remove EDIS' button, you will remove EDIS
+from the SQL Server instance entered above. When this happens,
+ALL objects under schema EDIS in the SSISDB
+(including tables) will be removed.
+
+Click 'Remove EDIS' if you wish to continue</value>
+  </data>
+</root>

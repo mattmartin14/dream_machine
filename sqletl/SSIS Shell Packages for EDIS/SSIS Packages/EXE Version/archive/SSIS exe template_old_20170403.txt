@@ -1,0 +1,144 @@
+New Template for SSIS EXE
+
+Step 1: Create new IS project titled EDIS
+
+Step 2:
+- Rename the package to "Launcher.dtsx"
+
+Step 3:
+- add these 4 variables (non-sensitive)
+[1] exec_id : String
+[2] edis_exec_path : string
+[3] mssql_inst : string
+[4] edis_logging_level : string
+[5] ssisdb_execution_id: string
+
+Step 4: Create a script task in C# and add this code to main:
+
+// add to namespaces
+using System.Diagnostics;
+using System.Text;
+
+ private static StringBuilder outData = new StringBuilder();
+        private static StringBuilder errData = new StringBuilder();
+
+        public void Main()
+		{
+
+            Process p = new Process();
+            ProcessStartInfo psi = new ProcessStartInfo();
+            StringBuilder args = new StringBuilder();
+            try
+            {
+                string exec_id = Dts.Variables["$Package::exec_id"].Value.ToString();
+                string edis_exec_path = Dts.Variables["$Package::edis_exec_path"].Value.ToString();
+                string edis_logging_level = Dts.Variables["$Package::edis_logging_level"].Value.ToString();
+                string mssql_inst = Dts.Variables["$Package::mssql_inst"].Value.ToString();
+                string ssisdb_execution_id = Dts.Variables["$Package::ssisdb_execution_id"].Value.ToString();
+
+                args.AppendFormat(@"""{0}"" ""{1}"" ""{2}""", mssql_inst, exec_id, edis_logging_level);
+
+                psi.FileName = edis_exec_path;
+                psi.Arguments = args.ToString();
+                psi.CreateNoWindow = true;
+                psi.RedirectStandardInput = true;
+                psi.RedirectStandardError = true;
+                psi.RedirectStandardOutput = true;
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+                psi.UseShellExecute = false;
+
+                p.EnableRaisingEvents = true;
+
+                p.OutputDataReceived += process_output_statements;
+                p.ErrorDataReceived += process_error_statements;
+
+                p.StartInfo = psi;
+
+                
+
+                p.Start();
+
+                launch_crash_handler(mssql_inst, ssisdb_execution_id, p.Id.ToString(), exec_id, edis_exec_path);
+
+                p.BeginOutputReadLine();
+                p.BeginErrorReadLine();
+
+                p.WaitForExit();
+
+                int res = p.ExitCode;
+
+                if (res == 0)
+                {
+                    Dts.TaskResult = (int)ScriptResults.Success;
+                }
+                else
+                {
+
+                    string ret_msg;
+                    if (res == 1)
+                    {
+                        ret_msg = "Task Error (Return Code 1)";
+                    }
+                    else
+                    {
+                        ret_msg = "Startup Error (Return Code 2)";
+                    }
+
+                    ret_msg = ret_msg + "\r\n " + errData.ToString();
+
+                    Dts.Events.FireError(-1, "EDIS", ret_msg, "", 0);
+
+                    Dts.TaskResult = (int)ScriptResults.Failure;
+                }
+            }
+            catch (Exception ex)
+            {
+                Dts.Events.FireError(-1, "EDIS", ex.Message.ToString(), "", 0);
+                Dts.TaskResult = (int)ScriptResults.Failure;
+                throw new Exception(ex.Message.ToString());
+            }
+            finally
+            {
+                p.Close();
+                p.Dispose();
+            }
+         
+		}
+
+        private void launch_crash_handler(string mssql_inst, string ssis_exec_id, string edis_process_id, string exec_id, string fpath)
+        {
+            Process pr1 = new Process();
+            ProcessStartInfo ps1 = new ProcessStartInfo();
+            string crashpath = fpath.Replace("MDDataTechEDIS.exe", "MDDataTechEDISCrashHandler.exe");
+
+            StringBuilder args = new StringBuilder();
+            args.AppendFormat(@"""{0}"" ""{1}"" ""{2}"" ""{3}""", mssql_inst, ssis_exec_id, edis_process_id, exec_id);
+
+            //MessageBox.Show("here");
+
+            ps1.FileName = crashpath;
+            ps1.Arguments = args.ToString();
+            ps1.UseShellExecute = false;
+            ps1.CreateNoWindow = false;
+            pr1.StartInfo = ps1;
+            pr1.Start();
+            //MessageBox.Show("crash handler started");
+        }
+        private static void process_output_statements(object sender, DataReceivedEventArgs out_line)
+        {
+            if (!string.IsNullOrEmpty(out_line.Data))
+            {
+                outData.AppendLine(out_line.Data.ToString());
+            }
+
+        }
+
+
+        private static void process_error_statements(object sender, DataReceivedEventArgs out_line)
+        {
+            if (!string.IsNullOrEmpty(out_line.Data))
+            {
+                errData.AppendLine(out_line.Data.ToString());
+            }
+
+        }

@@ -1,0 +1,11 @@
+﻿
+
+-- MSSQL
+Dim fferr_msg As String
+            Dim file_path As String = "C:\temp\testffMSSQL.txt"
+            Dim src_qry As String = "SELECT * From bigData.dbo.large_table"
+            Dim cn_str As String = "Server = MDDT\DEV16; Integrated Security = True"
+            Dim col_delim As String = "|"
+            Dim row_term As String = "{CRLF}"
+
+            cFlatFile_tsfr.export_data_mssql(file_path, src_qry, cn_str, col_delim, row_term, """", 1, 0, "ascii", fferr_msg)

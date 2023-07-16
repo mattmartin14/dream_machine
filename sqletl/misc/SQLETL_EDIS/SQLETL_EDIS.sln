@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SQLETL_EDIS", "SQLETL_EDIS\SQLETL_EDIS.vbproj", "{1EC9AEE8-55D0-498C-B8B4-6620D09E765B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1EC9AEE8-55D0-498C-B8B4-6620D09E765B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC9AEE8-55D0-498C-B8B4-6620D09E765B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC9AEE8-55D0-498C-B8B4-6620D09E765B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC9AEE8-55D0-498C-B8B4-6620D09E765B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://mattmartin14.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SQLETL_EDIS\\SQLETL_EDIS.vbproj
+		SccProjectName1 = SQLETL_EDIS
+		SccLocalPath1 = SQLETL_EDIS
+	EndGlobalSection
+EndGlobal
