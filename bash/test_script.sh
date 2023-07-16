@@ -1,6 +1,6 @@
 #!/bin/bash
 
-name="Matt Martin"
+name="Matt"
 echo "Hello $name"
 
 ## creating a file with data
@@ -9,7 +9,7 @@ echo "FIRST_NAME,LAST_NAME,AGE" > people.txt
 ## >> arrows append
 echo "John,Doe,22" >> people.txt
 echo "Jane,Doe,21" >> people.txt
-echo "Matt,Martin,37" >> people.txt
+echo "Matt,Doe,30" >> people.txt
 
 cat people.txt
 
