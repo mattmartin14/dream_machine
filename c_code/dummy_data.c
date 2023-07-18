@@ -12,7 +12,7 @@ int main() {
 
     start_ts = clock();
 
-    char buffer[] = "dummy_header1,dummy_header2,dummy_header3";
+    char headers[] = "dummy_header1,dummy_header2,dummy_header3";
 
     FILE *file = fopen("dummy_data_in_c.csv","w");
     if (file == NULL) {
@@ -21,7 +21,7 @@ int main() {
     }
 
     //add headers
-    fprintf(file, "%s\n", buffer);
+    fprintf(file, "%s\n", headers);
 
     int max_iterations = 1000000;
     for (int i=1; i<=max_iterations; i++){
