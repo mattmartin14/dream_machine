@@ -23,7 +23,7 @@ int main() {
     //add headers
     fprintf(file, "%s\n", headers);
 
-    int max_iterations = 1000000;
+    int max_iterations = 100000;
     for (int i=1; i<=max_iterations; i++){
         int random_value = rand();
         fprintf(file, "%s,%d,%d\n", "test", random_value, i);
