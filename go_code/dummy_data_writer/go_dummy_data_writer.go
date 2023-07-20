@@ -41,20 +41,8 @@ func get_random_date() string {
 
 	rand_dt := lower_bound.Add(rand_span)
 
+	//note: the 2006-01-02 thing is significant for go lang; its when the time package was written....
 	return rand_dt.Format("2006-01-02")
-	//return rand_dt.String()
-
-	// lower_bound.Format("YYYY-MM-DD")
-
-	// return string(lower_bound.Add(rand_span))
-	//return strconv.(lower_bound.Add(rand_span))
-
-	// randomDuration := time.Duration(rand.Int63n(int64(duration)))
-
-	// // Add the random duration to the start date to get the random date
-	// randomDate := startDate.Add(randomDuration)
-
-	// return randomDate
 }
 
 func main() {
