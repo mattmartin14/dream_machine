@@ -5,12 +5,6 @@ package main
 	Date: 2023-07-20
 	Desc: Writes a bunch of dummy data to a CSV File
 
-	TO DO:
-		1) Redirect the output to a non-git folder
-		2) create a random value generator as a column
-		3) have it pick from random date range
-		4) have it pick from random list of strings (from slice)
-
 */
 
 import (
