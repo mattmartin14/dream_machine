@@ -4,7 +4,6 @@ package main
 	Author: Matt Martin
 	Date: 2023-07-20
 	Desc: Writes a bunch of dummy data to a CSV File
-
 */
 
 import (
@@ -44,7 +43,7 @@ func main() {
 	start_ts := time.Now()
 
 	work_dir, _ := os.UserHomeDir()
-	f_path := work_dir + "/test_dummy_data/dummy_data.csv"
+	f_path := work_dir + "/test_dummy_data/dummy_data2.csv"
 
 	file, err := os.Create(f_path)
 	if err != nil {
@@ -73,7 +72,7 @@ func main() {
 	headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
 	writer.Write(headers)
 
-	max_iterations := 1000000000
+	max_iterations := 100000000
 
 	for i := 1; i <= max_iterations; i++ {
 		rec := []string{
