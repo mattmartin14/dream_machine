@@ -9,4 +9,5 @@ sql="SELECT COUNT(*) AS ROW_CNT FROM read_parquet('$output_path');"
 duckdb -c "$sql"
 sql="SELECT * FROM read_parquet('$output_path') limit 5;"
 duckdb -c "$sql"
-
+sql="SELECT COUNT(*) AS ROW_CNT FROM read_parquet('$output_path');"
+duckdb -c "$sql"
