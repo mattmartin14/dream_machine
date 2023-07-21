@@ -1,18 +1,10 @@
 package main
 
-/*
-	Author: Matt Martin
-	Date: 2023-07-20
-	Desc: Writes a bunch of dummy data to a CSV File
-*/
-
 import (
 	"bufio"
-	"encoding/csv"
 	"fmt"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -44,13 +36,7 @@ func main() {
 	start_ts := time.Now()
 
 	work_dir, _ := os.UserHomeDir()
-	f_path := work_dir + "/test_dummy_data/dummy_data2.csv"
-
-	file, err := os.Create(f_path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
+	f_path := work_dir + "/test_dummy_data/dummy_tab_data.txt"
 
 	first_names_list := []string{
 		"Bob", "Bill", "William", "Matt", "Matthew", "Jake", "Betsy", "George", "Phil", "Alex", "Lindsey", "Erin",
@@ -64,55 +50,47 @@ func main() {
 		"Johnson", "Greene", "Durant", "Wilson",
 	}
 
+	file, err := os.Create(f_path)
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
 	defer file.Close()
 
 	one_mb := 1048576
-	buffer_multiplier := 1
+	buffer_multiplier := 100
 	buffer_size := buffer_multiplier * one_mb // default is 4096
 	buffer_size = 4096
-	fmt.Printf("Running on buffer size: %d\n", buffer_size)
-	bufWriter := bufio.NewWriterSize(file, buffer_size)
-	defer bufWriter.Flush()
-
-	//writer := csv.NewWriter(file)
-
-	writer := csv.NewWriter(bufWriter)
-	// takes 26.439320 seconds to write a 100M row file with buf io
-	// takes same amount of time to write 100M rows without the bufio writer
-	/*
-		need to maybe update the bufio writer to have a larger buffer than 4k
-		-- currently at 100M rows and file size of 3.3GB
-			its roughly 35 bytes per row
-			so one buffer is roughly 115 rows
-			and that equates to a total of 865k write calls
-	*/
+	fmt.Printf("Running on buffer size: %d bytes\n", buffer_size)
+	writer := bufio.NewWriterSize(file, buffer_size)
 	defer writer.Flush()
 
 	//append headers
-	headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
-	writer.Write(headers)
+	//headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
+	fmt.Fprintf(writer, "index\tfirst_name\tlast_name\tlast_mod_dt\n")
+	//writer.Write(headers)
 
 	size_choices := make(map[string]int)
 	size_choices["1 billion"] = 1000000000
 	size_choices["1 million"] = 1000000
 	size_choices["10 million"] = 10000000
+	size_choices["100 million"] = 100000000
 	size_choices["10k"] = 1000
 
-	max_iterations := size_choices["10 million"]
+	size_choice := "1 billion"
+
+	max_iterations := size_choices[size_choice]
 
 	for i := 1; i <= max_iterations; i++ {
-		rec := []string{
-			strconv.Itoa(i),
+		fmt.Fprintf(writer, "%d\t%s\t%s\t%s\n", i,
 			get_random_string(first_names_list),
 			get_random_string(last_names_list),
 			get_random_date(),
-		}
-		writer.Write(rec)
+		)
 	}
 
 	end_ts := time.Now()
 
 	elapsed_time := end_ts.Sub(start_ts).Seconds()
-	fmt.Printf("Total time to process %d rows: %2f", max_iterations, elapsed_time)
-
+	fmt.Printf("Total time to process %s rows: %2f", size_choice, elapsed_time)
 }
