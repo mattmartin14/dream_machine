@@ -1,5 +1,13 @@
 package main
 
+/*
+	Notes:
+		Explore using a goroutine here to write in chunks in parallel to see if it goes any faster
+			try with 4 workers first
+
+		Also, since testing with CSV as well, might want to move the random strings picker and date picker to seperate module
+*/
+
 import (
 	"bufio"
 	"fmt"
@@ -62,7 +70,8 @@ func main() {
 	buffer_size := buffer_multiplier * one_mb // default is 4096
 	buffer_size = 4096
 	fmt.Printf("Running on buffer size: %d bytes\n", buffer_size)
-	writer := bufio.NewWriterSize(file, buffer_size)
+	//writer := bufio.NewWriterSize(file, buffer_size)
+	writer := bufio.NewWriter(file)
 	defer writer.Flush()
 
 	//append headers
@@ -77,7 +86,7 @@ func main() {
 	size_choices["100 million"] = 100000000
 	size_choices["10k"] = 1000
 
-	size_choice := "1 billion"
+	size_choice := "1 million"
 
 	max_iterations := size_choices[size_choice]
 
