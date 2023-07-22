@@ -18,10 +18,8 @@ const char* rand_name() {
     };
 
     int total_elements = sizeof(first_names)/sizeof(first_names[0]);
-
-    const char* rand_name = randomString(first_names,total_elements);
-
-    return rand_name;
+    int rand_index = rand() % total_elements;
+    return first_names[rand_index];
 
 }
 
@@ -56,7 +54,7 @@ int main() {
     char headers[] = "index,first_name,rand_val";
     fprintf(file, "%s\n", headers);
 
-    int max_iterations = 1000;
+    int max_iterations = 1000000000;
     for (int i=1; i<=max_iterations; i++){
         int random_value = rand();
         fprintf(file, "%d,%s,%d\n", i, rand_name(), random_value);
