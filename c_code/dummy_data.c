@@ -41,7 +41,6 @@ int main() {
     char f_path[len];
     snprintf(f_path,len,"%s%s",home_dir,file_sub_path);
 
-	//const char* f_path = strcat(home_dir, "/test_dummy_data/dummy_data3.csv");
     printf("File target: %s\n",f_path);
 
     FILE *file = fopen(f_path,"w");
@@ -54,10 +53,20 @@ int main() {
     char headers[] = "index,first_name,rand_val";
     fprintf(file, "%s\n", headers);
 
-    int max_iterations = 1000000000;
+    //size_t buffer_size = 100;
+    //char buffer[buffer_size];
+
+    int max_iterations = 10000000;
     for (int i=1; i<=max_iterations; i++){
-        int random_value = rand();
-        fprintf(file, "%d,%s,%d\n", i, rand_name(), random_value);
+        //int random_value = rand();
+
+        //10M rows on fwrite with buffer is 1.82 seconds
+        //10M rows on fprintf is 1.34 seconds
+
+        //snprintf(buffer, buffer_size, "%d,%s,%d\n", i, rand_name(), random_value);
+        //fwrite(buffer, 1, strlen(buffer),file);
+
+        fprintf(file, "%d,%s,%d\n", i, rand_name(), rand());
     }
 
     fclose(file);
@@ -65,8 +74,6 @@ int main() {
     end_ts = clock();
 
     elapsed = (double)(end_ts - start_ts)/ CLOCKS_PER_SEC;
-
-    //free(f_path);
 
     printf("process complete. Total Run time to generate %d: %.2f seconds\n", max_iterations, elapsed);
 
