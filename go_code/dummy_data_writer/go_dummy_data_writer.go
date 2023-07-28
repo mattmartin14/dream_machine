@@ -40,11 +40,6 @@ func get_random_name(list []Person, nm_type string) string {
 
 }
 
-func get_random_string(arr []string) string {
-	rand_index := rand.Intn(len(arr))
-	return arr[rand_index]
-}
-
 func get_random_date() string {
 	lower_bound := time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
 	upper_bound := time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local)
@@ -102,7 +97,7 @@ func main() {
 	size_choices["10 million"] = 10000000
 	size_choices["10k"] = 1000
 
-	max_iterations := size_choices["1 billion"]
+	max_iterations := size_choices["10 million"]
 
 	for i := 1; i <= max_iterations; i++ {
 		rec := []string{
