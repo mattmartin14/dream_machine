@@ -15,7 +15,7 @@ FROM (
     concat(first_name, ' ',last_name) as full_nm, count(*) as rec_cnt
     FROM data_raw
     GROUP BY 1
-    ORDER BY 2 DESC
+    --ORDER BY 2 DESC
 ) AS SUB
 QUALIFY ranked_cnt BETWEEN 1 AND 5
 ;
