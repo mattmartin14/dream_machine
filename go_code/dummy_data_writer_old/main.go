@@ -4,11 +4,15 @@ package main
 	Author: Matt Martin
 	Date: 2023-07-20
 	Desc: Writes a bunch of dummy data to a CSV File
+
+	-- next steps:
+		move the data fetch functions into separate package and reorg the code
 */
 
 import (
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -56,6 +60,10 @@ func get_random_date() string {
 
 func main() {
 
+	max_rows := flag.Int("rows", 0, "How many rows you want to generate")
+
+	flag.Parse()
+
 	start_ts := time.Now()
 
 	work_dir, _ := os.UserHomeDir()
@@ -91,15 +99,15 @@ func main() {
 	headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
 	writer.Write(headers)
 
-	size_choices := make(map[string]int)
-	size_choices["1 billion"] = 1000000000
-	size_choices["1 million"] = 1000000
-	size_choices["10 million"] = 10000000
-	size_choices["10k"] = 1000
+	// size_choices := make(map[string]int)
+	// size_choices["1 billion"] = 1000000000
+	// size_choices["1 million"] = 1000000
+	// size_choices["10 million"] = 10000000
+	// size_choices["10k"] = 1000
 
-	max_iterations := size_choices["10 million"]
+	//max_iterations := size_choices["10 million"]
 
-	for i := 1; i <= max_iterations; i++ {
+	for i := 1; i <= *max_rows; i++ {
 		rec := []string{
 			strconv.Itoa(i),
 			get_random_name(People, "first_name"),
@@ -111,7 +119,46 @@ func main() {
 
 	end_ts := time.Now()
 
+	fileInfo, err := os.Stat(f_path)
+	if err != nil {
+		fmt.Println("Error getting stats on file: ", err)
+	}
+
+	fsize := fileInfo.Size()
+
+	// inline function to format the file size
+	fSizeFriendly := func(fsize int64) string {
+		const (
+			//shortcut to 2 raised to power of ###; e.g. first one KB is 2^10 which is 1024
+			// could have also written as KB = 1024, MB = (1024 * 1024) etc.
+			KB = 1 << 10
+			MB = 1 << 20
+			GB = 1 << 30
+		)
+
+		switch {
+		case fsize >= GB:
+			return fmt.Sprintf("%.2f GB", float64(fsize)/GB)
+		case fsize >= MB:
+			return fmt.Sprintf("%.2f MB", float64(fsize)/MB)
+		case fsize >= KB:
+			return fmt.Sprintf("%.2f KB", float64(fsize)/KB)
+		default:
+			return fmt.Sprintf("%d bytes", fsize)
+		}
+	}
+
+	//inline function to convert the int to a comma separated string for readability := Syntax Sugar :-)
+	commaSepNbr := func(rows int) string {
+		rows_str := strconv.Itoa(rows)
+
+		for i := len(rows_str) - 3; i > 0; i -= 3 {
+			rows_str = rows_str[:i] + "," + rows_str[i:]
+		}
+		return rows_str
+	}
+
 	elapsed_time := end_ts.Sub(start_ts).Seconds()
-	fmt.Printf("Total time to process %d rows: %2f", max_iterations, elapsed_time)
+	fmt.Printf("File '%s' written with %s rows. File size is %s. Total time to process: %.2f", f_path, commaSepNbr(*max_rows), fSizeFriendly(fsize), elapsed_time)
 
 }

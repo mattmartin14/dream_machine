@@ -30,5 +30,8 @@
     ,{"first_name":"Angelina","last_name":"Jolie"}
     ,{"first_name":"Emma","last_name":"Watson"}
     ,{"first_name":"Scarlett","last_name":"Johansson"}
+    ,{"first_name":"George","last_name":"Clooney"}
+    ,{"first_name":"Brad","last_name":"Pitt"}
+    ,{"first_name":"Matt","last_name":"Damon"}
 
 ]
