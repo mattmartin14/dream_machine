@@ -17,6 +17,10 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 type Person struct {
 	First_name string `json:"first_name"`
 	Last_name  string `json:"last_name"`

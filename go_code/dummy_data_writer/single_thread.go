@@ -11,15 +11,10 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
 	"strconv"
 	"time"
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 func main() {
 
