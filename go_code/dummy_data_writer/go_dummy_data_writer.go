@@ -7,17 +7,37 @@ package main
 */
 
 import (
-	"bufio"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 )
 
+const people_data string = "./data/people.json"
+
+var people_data_size int
+
+type Person struct {
+	First_name string `json:"first_name"`
+	Last_name  string `json:"last_name"`
+}
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
+}
+
+func get_random_name(list []Person, nm_type string) string {
+	rand_index := rand.Intn(people_data_size)
+	if nm_type == "first_name" {
+		return list[rand_index].First_name
+	} else {
+		return list[rand_index].Last_name
+	}
+
 }
 
 func get_random_string(arr []string) string {
@@ -51,42 +71,26 @@ func main() {
 		fmt.Println("Error creating file:", err)
 		return
 	}
-
-	first_names_list := []string{
-		"Bob", "Bill", "William", "Matt", "Matthew", "Jake", "Betsy", "George", "Phil", "Alex", "Lindsey", "Erin",
-		"Robert", "Mackensy", "Blake", "Elvis", "Leon", "Randy", "Amy", "Courtney", "Lisa", "Debbie", "Daniel",
-		"Ian", "Brad", "Bart", "Mariano", "Tom", "Greg", "John", "Manny", "Steph", "Clay", "Draymond", "Kevin", "Russell",
-	}
-
-	last_names_list := []string{
-		"Jones", "Clinton", "Smith", "Martin", "James", "Stein", "Carter", "Pitt", "Jolie", "Clooney", "Roberts", "Damon",
-		"Hanks", "Decaprio", "Parsons", "Ramirez", "Smoltz", "Glavine", "Maddux", "Ramiro", "Rivera", "Curry", "Thompson",
-		"Johnson", "Greene", "Durant", "Wilson",
-	}
-
 	defer file.Close()
-
-	one_mb := 1048576
-	buffer_multiplier := 1
-	buffer_size := buffer_multiplier * one_mb // default is 4096
-	buffer_size = 4096
-	fmt.Printf("Running on buffer size: %d\n", buffer_size)
-	bufWriter := bufio.NewWriterSize(file, buffer_size)
-	defer bufWriter.Flush()
-
-	//writer := csv.NewWriter(file)
-
-	writer := csv.NewWriter(bufWriter)
-	// takes 26.439320 seconds to write a 100M row file with buf io
-	// takes same amount of time to write 100M rows without the bufio writer
-	/*
-		need to maybe update the bufio writer to have a larger buffer than 4k
-		-- currently at 100M rows and file size of 3.3GB
-			its roughly 35 bytes per row
-			so one buffer is roughly 115 rows
-			and that equates to a total of 865k write calls
-	*/
+	writer := csv.NewWriter(file)
 	defer writer.Flush()
+
+	js_file, err := os.Open(people_data)
+	if err != nil {
+		fmt.Println("Error open json data file:", err)
+		return
+	}
+
+	byteData, err := ioutil.ReadAll(js_file)
+
+	var People []Person
+	err = json.Unmarshal(byteData, &People)
+	if err != nil {
+		fmt.Println("Error mapping json data to struct:", err)
+		return
+	}
+
+	people_data_size = len(People)
 
 	//append headers
 	headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
@@ -98,13 +102,13 @@ func main() {
 	size_choices["10 million"] = 10000000
 	size_choices["10k"] = 1000
 
-	max_iterations := size_choices["10 million"]
+	max_iterations := size_choices["1 billion"]
 
 	for i := 1; i <= max_iterations; i++ {
 		rec := []string{
 			strconv.Itoa(i),
-			get_random_string(first_names_list),
-			get_random_string(last_names_list),
+			get_random_name(People, "first_name"),
+			get_random_name(People, "last_name"),
 			get_random_date(),
 		}
 		writer.Write(rec)
