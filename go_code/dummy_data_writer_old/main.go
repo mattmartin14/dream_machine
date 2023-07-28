@@ -151,6 +151,6 @@ func main() {
 	}
 
 	elapsed_time := end_ts.Sub(start_ts).Seconds()
-	fmt.Printf("File '%s' written with %s rows. File size is %s. Total time to process: %.2f", f_path, commaSepNbr(*max_rows), fSizeFriendly(fsize), elapsed_time)
+	fmt.Printf("File '%s' written with %s rows. File size is %s. Total time to process: %.2f seconds\n", f_path, commaSepNbr(*max_rows), fSizeFriendly(fsize), elapsed_time)
 
 }
