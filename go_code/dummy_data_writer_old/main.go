@@ -99,14 +99,6 @@ func main() {
 	headers := []string{"index", "first_name", "last_name", "last_mod_dt"}
 	writer.Write(headers)
 
-	// size_choices := make(map[string]int)
-	// size_choices["1 billion"] = 1000000000
-	// size_choices["1 million"] = 1000000
-	// size_choices["10 million"] = 10000000
-	// size_choices["10k"] = 1000
-
-	//max_iterations := size_choices["10 million"]
-
 	for i := 1; i <= *max_rows; i++ {
 		rec := []string{
 			strconv.Itoa(i),
