@@ -47,6 +47,10 @@ func main() {
 	writer.Write(headers)
 
 	// apply data
+
+	var buffer [][]string
+	var max_buffer_size int64 = 100000
+
 	for i := 1; i <= *max_rows; i++ {
 		rec := []string{
 			strconv.Itoa(i),
@@ -54,7 +58,15 @@ func main() {
 			helpers.Get_random_name(*r, People, "last_name"),
 			helpers.Get_random_date(*r),
 		}
-		writer.Write(rec)
+
+		buffer = append(buffer, rec)
+
+		if len(buffer) >= int(max_buffer_size) || i == *max_rows {
+			writer.WriteAll(buffer)
+			buffer = nil
+		}
+
+		//writer.Write(rec)
 	}
 
 	end_ts := time.Now()
