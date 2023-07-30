@@ -23,6 +23,10 @@ import (
 	"time"
 )
 
+// keeps memory pressure low; i'm sure there is a way to optimize this calc and look at the load on the machine
+// 100k seems reasonable when going 15 files wide for 1B rows
+var max_rows_per_buffer int = 100000
+
 type written_file struct {
 	file_name string
 	batch_nbr int
@@ -68,9 +72,6 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 	writer.Write(headers)
 
 	var buffer [][]string = nil
-
-	//keeps memory pressure low; i'm sure there is a way to optimize this calc and look at the load on the machine
-	var max_rows_per_buffer int = 50000
 
 	for i := start_row; i <= end_row; i++ {
 
