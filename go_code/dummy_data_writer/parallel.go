@@ -19,6 +19,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"sync"
@@ -60,6 +61,9 @@ func main() {
 
 	flag.Parse()
 
+	rand_src := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(rand_src)
+
 	work_dir, _ := os.UserHomeDir()
 	f_path := work_dir + "/test_dummy_data/dummy_data_parallel.csv"
 
@@ -83,9 +87,9 @@ func main() {
 
 		rec := []string{
 			strconv.Itoa(i),
-			helpers.Get_random_name(People, "first_name"),
-			helpers.Get_random_name(People, "last_name"),
-			helpers.Get_random_date(),
+			helpers.Get_random_name(*r, People, "first_name"),
+			helpers.Get_random_name(*r, People, "last_name"),
+			helpers.Get_random_date(*r),
 		}
 
 		batch_recs = append(batch_recs, rec)

@@ -11,6 +11,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -24,6 +25,9 @@ func main() {
 
 	work_dir, _ := os.UserHomeDir()
 	f_path := work_dir + "/test_dummy_data/dummy_data_single_thread.csv"
+
+	rand_src := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(rand_src)
 
 	file, err := os.Create(f_path)
 	if err != nil {
@@ -46,9 +50,9 @@ func main() {
 	for i := 1; i <= *max_rows; i++ {
 		rec := []string{
 			strconv.Itoa(i),
-			helpers.Get_random_name(People, "first_name"),
-			helpers.Get_random_name(People, "last_name"),
-			helpers.Get_random_date(),
+			helpers.Get_random_name(*r, People, "first_name"),
+			helpers.Get_random_name(*r, People, "last_name"),
+			helpers.Get_random_date(*r),
 		}
 		writer.Write(rec)
 	}

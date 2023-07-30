@@ -23,7 +23,8 @@ var time_span time.Duration
 var people_list_len int
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+
+	//rand.Seed(time.Now().UnixNano())
 	lower_bound = time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
 	upper_bound = time.Date(2023, 1, 1, 0, 0, 0, 0, time.Local)
 	time_span = upper_bound.Sub(lower_bound)
@@ -34,18 +35,20 @@ type Person struct {
 	Last_name  string `json:"last_name"`
 }
 
-func Get_random_date() string {
+func Get_random_date(r rand.Rand) string {
 
-	rand_span := time.Duration(rand.Int63n(int64(time_span)))
+	//rand_span := time.Duration(rand.Int63n(int64(time_span)))
+	rand_span := time.Duration(r.Int63n(int64(time_span)))
 	rand_dt := lower_bound.Add(rand_span)
 
 	//note: the 2006-01-02 thing is significant for go lang; its when the time package was written....
 	return rand_dt.Format("2006-01-02")
 }
 
-func Get_random_name(list []Person, nm_type string) string {
+func Get_random_name(r rand.Rand, list []Person, nm_type string) string {
 	//rand_index := rand.Intn(len(list))
-	rand_index := rand.Intn(people_list_len)
+	//rand_index := rand.Intn(people_list_len)
+	rand_index := r.Intn(people_list_len)
 	//people_list_len
 	if nm_type == "first_name" {
 		return list[rand_index].First_name

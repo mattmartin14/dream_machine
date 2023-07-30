@@ -4,18 +4,14 @@ package main
 	Author: Matt Martin
 	Date: 2023-07-20
 	Desc: does parallel writing to multiple files via go routines and channels
-		-- seems crazy slow vs the other parallel writer that pre-processes the data before going into a go routine thread
-		-- to write 100M rows in this version to 100 files took 80 seconds
-		-- when i lowered it to 6 files, it ran in 60 seconds
-		-- 5 files, it runs in 45 seconds; still double the other
-		-- not sure if there is some magic file number/batch size i need to be targeting
-		--- checked chat gpt and it appears you can control the number of concurrent go routines via a channel/semiphone
-		-- might want to look into that
+		current benchmark is 100M rows in 8 seconds using 10 files for parallel writing
+		-- this version runs faster than single thread now
+		-- however, if i try to do 1B rows, i get an out of mem exception
+		-- need to look into regulating how many go routines can run at once with a semaphore and control that
+		-- so i dont get memory pressure
 
-		-- i think there is memory pressure because as they are all building their arrays up
+		-- check this url on bounded parallelism: https://go.dev/blog/pipelines
 
-		-- with the reg parallel version, it takes 23 seconds
-			-- now it runs in 18 seconds...i optimized the helper date function to initialize some stuff at the beginning
 */
 
 import (
@@ -23,6 +19,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"sync"
@@ -44,6 +41,9 @@ func init() {
 func write_recs_v2(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, results chan<- written_file) {
 
 	defer wg.Done()
+
+	rand_src := rand.NewSource(time.Now().UnixNano() + int64(batch_nbr))
+	r := rand.New(rand_src)
 
 	var headers []string = []string{"index", "first_name", "last_name", "last_mod_dt"}
 
@@ -78,9 +78,9 @@ func write_recs_v2(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int
 
 		rec := []string{
 			strconv.Itoa(i),
-			helpers.Get_random_name(People, "first_name"),
-			helpers.Get_random_name(People, "last_name"),
-			helpers.Get_random_date(),
+			helpers.Get_random_name(*r, People, "first_name"),
+			helpers.Get_random_name(*r, People, "last_name"),
+			helpers.Get_random_date(*r),
 		}
 
 		batch_recs = append(batch_recs, rec)
