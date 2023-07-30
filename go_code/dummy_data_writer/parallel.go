@@ -2,16 +2,13 @@ package main
 
 /*
 	Author: Matt Martin
-	Date: 2023-07-20
-	Desc: writes dummy data to csv using batches and go routines
-
-	next steps: make another version of this parallel processing that moves the row building process inside the go routine
-	-- we got a 18% improvement using go routines, but curious when we move the compute of data to a go routine to see how much of a lift we can get
-		-- it will need to track the row index start/end
-			-- loop will be for i = start, i <= end, i ++
-		-- need a single rec writer
-		-- need a multi rec writer for last batch?
-
+	Create Date: 2023-07-20
+	Last Mod: 2023-07-30
+	Desc: Creates dummy data csv files in parallel using go routines and channels
+		current benchmark is 100M rows in 5 seconds using 10 files for parallel writing and a buffer
+		-- 1B rows in 52 seconds
+		-- single thread takes 209 seconds
+		-- this version runs faster than single thread now
 */
 
 import (
@@ -26,64 +23,56 @@ import (
 	"time"
 )
 
-// roughly 500 mb for 1m rows
-/*
-	batch size of 2000000:  229 seconds
-	batch size of 1000:     234 seconds
-	batch size of 10000000: 238 seconds
+type written_file struct {
+	file_name string
+	batch_nbr int
+	err       error
+}
 
+var People []helpers.Person
 
-*/
-const batch_size int = 2000000
+func init() {
+	People = helpers.Get_people()
+}
 
-func write_recs(wg *sync.WaitGroup, f_path string, recs [][]string) {
+func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, results chan<- written_file) {
+
 	defer wg.Done()
 
-	file, err := os.OpenFile(f_path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	rand_src := rand.NewSource(time.Now().UnixNano() + int64(batch_nbr))
+	r := rand.New(rand_src)
+
+	var headers []string = []string{"index", "first_name", "last_name", "last_mod_dt"}
+
+	work_dir, _ := os.UserHomeDir()
+	f_path := work_dir + "/test_dummy_data/multi_files/dummy_data_parallel_batch_" + strconv.Itoa(batch_nbr) + ".csv"
+
+	item := written_file{
+		file_name: f_path,
+		batch_nbr: batch_nbr,
+		err:       nil,
+	}
+
+	file, err := os.Create(f_path)
 	if err != nil {
-		fmt.Println("Error opening file for write: ", err)
+		item.err = err
+		fmt.Println("Error creating file: ", err)
+		return
 	}
 
 	defer file.Close()
-
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	writer.WriteAll(recs)
-	if err := writer.Error(); err != nil {
-		fmt.Println("Error writing row to csv: ", err)
-	}
-
-}
-
-func main() {
-
-	max_rows := flag.Int("rows", 0, "How many rows you want to generate")
-
-	flag.Parse()
-
-	rand_src := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(rand_src)
-
-	work_dir, _ := os.UserHomeDir()
-	f_path := work_dir + "/test_dummy_data/dummy_data_parallel.csv"
-
-	// kill file if exists
-	err := os.Remove(f_path)
-
-	var wg sync.WaitGroup
-
-	People := helpers.Get_people()
-
-	start_ts := time.Now()
 
 	// apply headers
-	var headers [][]string
-	headers = append(headers, []string{"index", "first_name", "last_name", "last_mod_dt"})
-	wg.Add(1)
-	write_recs(&wg, f_path, headers)
+	writer.Write(headers)
 
-	var batch_recs [][]string
-	for i := 1; i <= *max_rows; i++ {
+	var buffer [][]string = nil
+
+	//keeps memory pressure low; i'm sure there is a way to optimize this calc and look at the load on the machine
+	var max_rows_per_buffer int = 50000
+
+	for i := start_row; i <= end_row; i++ {
 
 		rec := []string{
 			strconv.Itoa(i),
@@ -92,38 +81,83 @@ func main() {
 			helpers.Get_random_date(*r),
 		}
 
-		batch_recs = append(batch_recs, rec)
+		buffer = append(buffer, rec)
 
-		if len(batch_recs) > batch_size {
-			wg.Add(1)
-			go write_recs(&wg, f_path, batch_recs)
-			batch_recs = nil
+		if len(buffer) >= max_rows_per_buffer || i == end_row {
+			writer.WriteAll(buffer)
+			buffer = nil
+		}
+		if err := writer.Error(); err != nil {
+			item.err = err
+			fmt.Println("Error writing row to csv: ", err)
+		}
+
+	}
+
+	//load the item to the channel
+	results <- item
+
+}
+
+func main() {
+
+	row_cnt := flag.Int("rows", 0, "How many rows you want to generate")
+	total_files := flag.Int("files", 0, "How many rows you want to generate")
+
+	flag.Parse()
+
+	var wg sync.WaitGroup
+
+	results := make(chan written_file)
+
+	start_ts := time.Now()
+
+	// calculate total batches
+	rows_per_batch := *row_cnt / *total_files
+
+	fmt.Printf("Total batches to process: %d\n", *total_files)
+
+	wg.Add(*total_files)
+
+	var start_row int = 1
+	var end_row int
+
+	for i := 1; i <= *total_files; i++ {
+		//fmt.Println("Entered loop for batch loading")
+		// calc the start and end row
+		if i > 1 {
+			start_row = (i * rows_per_batch) - (rows_per_batch - 1)
+		}
+
+		//if we are on the last batch, add the tail (if any)
+		if i == *total_files {
+			end_row = *row_cnt
+		} else {
+			end_row = i * rows_per_batch
+		}
+
+		go write_recs(&wg, start_row, end_row, i, results)
+	}
+	// by not buffering the channel and wrapping the wait/close here, as the routines complete, they will read out
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// process channel results
+	for item := range results {
+		if item.err != nil {
+			fmt.Printf("Error processing batch %d: %v\n", item.batch_nbr, item.err)
+		} else {
+			fmt.Printf("Successfully processed batch %d\n", item.batch_nbr)
 		}
 	}
-
-	// last batch
-	if len(batch_recs) > 0 {
-		//fmt.Printf("writing last batch with size %d\n", len(batch_recs))
-		wg.Add(1)
-		go write_recs(&wg, f_path, batch_recs)
-		batch_recs = nil
-	}
-
-	wg.Wait()
 
 	end_ts := time.Now()
 	elapsed_time := end_ts.Sub(start_ts).Seconds()
 
-	fileInfo, err := os.Stat(f_path)
-	if err != nil {
-		fmt.Println("Error getting stats on file: ", err)
-	}
+	rows_friendly := helpers.Format_nbr_with_commas(*row_cnt)
 
-	fsize := fileInfo.Size()
-	fSizeFriendly := helpers.Format_file_size(fsize)
-
-	rows_friendly := helpers.Format_nbr_with_commas(*max_rows)
-
-	fmt.Printf("File '%s' written with %s rows. File size is %s. Total time to process: %.2f seconds\n", f_path, rows_friendly, fSizeFriendly, elapsed_time)
+	fmt.Printf("Total files writen: %d. Total rows: %s. Total time to process: %.2f seconds\n", *total_files, rows_friendly, elapsed_time)
 
 }
