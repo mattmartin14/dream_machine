@@ -6,6 +6,7 @@ package main
 	Desc: writes dummy data to csv using batches and go routines
 
 	next steps: make another version of this parallel processing that moves the row building process inside the go routine
+	-- we got a 18% improvement using go routines, but curious when we move the compute of data to a go routine to see how much of a lift we can get
 		-- it will need to track the row index start/end
 			-- loop will be for i = start, i <= end, i ++
 		-- need a single rec writer
@@ -26,12 +27,13 @@ import (
 
 // roughly 500 mb for 1m rows
 /*
-	batch size 2000000: 229 seconds
-	batch size of 1000: 234 seconds
+	batch size of 2000000:  229 seconds
+	batch size of 1000:     234 seconds
+	batch size of 10000000: 238 seconds
 
 
 */
-const batch_size int = 1000 //250000
+const batch_size int = 2000000
 
 func write_recs(wg *sync.WaitGroup, f_path string, recs [][]string) {
 	defer wg.Done()
