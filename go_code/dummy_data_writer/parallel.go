@@ -102,7 +102,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 func main() {
 
 	row_cnt := flag.Int("rows", 0, "How many rows you want to generate")
-	total_files := flag.Int("files", 0, "How many rows you want to generate")
+	total_files := flag.Int("files", 0, "How many files you want to generate")
 
 	flag.Parse()
 
