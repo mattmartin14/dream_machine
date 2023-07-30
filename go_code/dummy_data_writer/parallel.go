@@ -28,9 +28,13 @@ import (
 var max_rows_per_buffer int = 100000
 
 type written_file struct {
-	file_name string
-	batch_nbr int
-	err       error
+	file_name    string
+	batch_nbr    int
+	total_rows   int
+	start_time   time.Time
+	end_time     time.Time
+	elapsed_time float64
+	err          error
 }
 
 var People []helpers.Person
@@ -52,9 +56,11 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 	f_path := work_dir + "/test_dummy_data/multi_files/dummy_data_parallel_batch_" + strconv.Itoa(batch_nbr) + ".csv"
 
 	item := written_file{
-		file_name: f_path,
-		batch_nbr: batch_nbr,
-		err:       nil,
+		file_name:  f_path,
+		batch_nbr:  batch_nbr,
+		total_rows: (end_row - start_row),
+		start_time: time.Now(),
+		err:        nil,
 	}
 
 	file, err := os.Create(f_path)
@@ -65,6 +71,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 	}
 
 	defer file.Close()
+
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
@@ -94,6 +101,9 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 		}
 
 	}
+
+	item.end_time = time.Now()
+	item.elapsed_time = item.end_time.Sub(item.start_time).Seconds()
 
 	//load the item to the channel
 	results <- item
@@ -150,7 +160,7 @@ func main() {
 		if item.err != nil {
 			fmt.Printf("Error processing batch %d: %v\n", item.batch_nbr, item.err)
 		} else {
-			fmt.Printf("Successfully processed batch %d\n", item.batch_nbr)
+			fmt.Printf("Successfully processed batch %d with %d rows. Batch Processing Time: %.2f seconds\n", item.batch_nbr, item.total_rows, item.elapsed_time)
 		}
 	}
 
