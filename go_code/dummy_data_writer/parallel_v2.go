@@ -7,11 +7,15 @@ package main
 		-- seems crazy slow vs the other parallel writer that pre-processes the data before going into a go routine thread
 		-- to write 100M rows in this version to 100 files took 80 seconds
 		-- when i lowered it to 6 files, it ran in 60 seconds
+		-- 5 files, it runs in 45 seconds; still double the other
 		-- not sure if there is some magic file number/batch size i need to be targeting
 		--- checked chat gpt and it appears you can control the number of concurrent go routines via a channel/semiphone
 		-- might want to look into that
 
+		-- i think there is memory pressure because as they are all building their arrays up
+
 		-- with the reg parallel version, it takes 23 seconds
+			-- now it runs in 18 seconds...i optimized the helper date function to initialize some stuff at the beginning
 */
 
 import (
@@ -68,6 +72,8 @@ func write_recs_v2(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int
 
 	var batch_recs [][]string = nil
 
+	// need to clock this build time for the rand stuff
+
 	for i := start_row; i <= end_row; i++ {
 
 		rec := []string{
@@ -79,12 +85,19 @@ func write_recs_v2(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int
 
 		batch_recs = append(batch_recs, rec)
 	}
-
+	start_ts := time.Now()
+	fmt.Printf("Starting to write batch %d to file, rows %d to %d\n", batch_nbr, start_row, end_row)
 	writer.WriteAll(batch_recs)
 	if err := writer.Error(); err != nil {
 		item.err = err
 		fmt.Println("Error writing row to csv: ", err)
 	}
+	end_ts := time.Now()
+	elapsed_time := end_ts.Sub(start_ts).Seconds()
+
+	// based on these outputs, time to write a huge chunk of data to csv is very fast
+	// so its really just memory pressure we are dealing with here
+	fmt.Printf("Batch %d written. Time to write to file: %.2f seconds\n", batch_nbr, elapsed_time)
 
 	//load the item to the channel
 	results <- item
