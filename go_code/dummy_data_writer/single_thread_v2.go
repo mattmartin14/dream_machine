@@ -55,7 +55,7 @@ func main() {
 	for i := 1; i <= *max_rows; i++ {
 
 		rec := strconv.Itoa(i) + "," + helpers.Get_random_name(*r, People, "first_name") + "," +
-			helpers.Get_random_name(*r, People, "first_name") + "," +
+			helpers.Get_random_name(*r, People, "last_name") + "," +
 			helpers.Get_random_date(*r) + "\n"
 
 		buffer.WriteString(rec)
