@@ -89,7 +89,9 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 
 		//flush the buffer to disk if we hit the max size
 		if row_cnt >= max_rows_per_buffer || i == end_row {
-			if _, err := io.Copy(file, &buffer); err != nil {
+			_, err := io.Copy(file, &buffer)
+			if err != nil {
+				fmt.Println("Error writing data buffer to file: ", err)
 				return
 			}
 			buffer.Reset()
