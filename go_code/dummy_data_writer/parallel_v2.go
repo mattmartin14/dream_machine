@@ -7,7 +7,7 @@ package main
 	Desc: Creates dummy data csv files in parallel using go routines and channels
 		current benchmark is 100M rows in 5 seconds using 10 files for parallel writing and a buffer
 		-- version 1 with csv encoder does 1B rows in 52 seconds
-		-- version 2 with a byte buffer does 1b rows 15 files wide in 26 seconds
+		-- version 2 with a byte buffer does 1b rows 15 files wide in 25 seconds
 
 */
 
