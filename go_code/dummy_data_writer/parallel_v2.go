@@ -87,16 +87,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 		buffer.WriteString(rec)
 		row_cnt += 1
 
-		// rec := []string{
-		// 	strconv.Itoa(i),
-		// 	helpers.Get_random_name(*r, People, "first_name"),
-		// 	helpers.Get_random_name(*r, People, "last_name"),
-		// 	helpers.Get_random_date(*r),
-		// }
-
-		// buffer = append(buffer, rec)
-
-		//flusht the buffer to disk if we hit the max size
+		//flush the buffer to disk if we hit the max size
 		if row_cnt >= max_rows_per_buffer || i == end_row {
 			if _, err := io.Copy(file, &buffer); err != nil {
 				return
@@ -104,15 +95,6 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 			buffer.Reset()
 			row_cnt = 0
 		}
-
-		// if len(buffer) >= max_rows_per_buffer || i == end_row {
-		// 	writer.WriteAll(buffer)
-		// 	buffer = nil
-		// }
-		// if err := writer.Error(); err != nil {
-		// 	item.err = err
-		// 	fmt.Println("Error writing row to csv: ", err)
-		// }
 
 	}
 
