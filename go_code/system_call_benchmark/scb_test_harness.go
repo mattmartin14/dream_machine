@@ -56,8 +56,6 @@ func main() {
 
 	start_ts = time.Now()
 
-	var max_rows_per_buffer int = 1000000
-
 	f_path2 := work_dir + "/test_dummy_data/scb_batch_iter.txt"
 
 	file2, err := os.Create(f_path2)
@@ -69,8 +67,9 @@ func main() {
 	defer file2.Close()
 
 	var buffer2 bytes.Buffer
-
 	var accumulator int = 0
+	var max_rows_per_buffer int = 1000000
+
 	flush_cnt := 0
 	for i := 1; i <= *row_cnt; i++ {
 		buffer2.WriteString(strconv.Itoa(i) + "\n")
