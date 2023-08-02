@@ -38,13 +38,13 @@ func main() {
 
 	for i := 1; i <= *row_cnt; i++ {
 		buffer.WriteString(strconv.Itoa(i) + "\n")
-	}
-
-	//flush to file
-	_, err2 := io.Copy(file, &buffer)
-	if err2 != nil {
-		fmt.Println("Error writing data buffer to file: ", err)
-		return
+		//flush to file
+		_, err2 := io.Copy(file, &buffer)
+		buffer.Reset()
+		if err2 != nil {
+			fmt.Println("Error writing data buffer to file: ", err)
+			return
+		}
 	}
 
 	end_ts := time.Now()
