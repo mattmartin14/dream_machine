@@ -50,7 +50,9 @@ func main() {
 	end_ts := time.Now()
 	elapsed_time := end_ts.Sub(start_ts).Seconds()
 
-	fmt.Printf("Total processing with %d system calls: %.2f seconds\n", *row_cnt, elapsed_time)
+	var msg string
+	msg = fmt.Sprintf("Total rows to process: %d\n----------------\n", *row_cnt)
+	msg += fmt.Sprintf("Total processing with system calls for every row: %.2f seconds\n", elapsed_time)
 
 	//accumulate and flush the buffer test
 
@@ -65,6 +67,12 @@ func main() {
 	}
 
 	defer file2.Close()
+
+	/*
+		In this scenario, we are accumulating rows in the buffer, and once it hits the max
+			rows per buffer threshold, or we are at the end of the loop, we will flush the buffer to disk
+				with an io.Copy command
+	*/
 
 	var buffer2 bytes.Buffer
 	var accumulator int = 0
@@ -91,6 +99,8 @@ func main() {
 	end_ts = time.Now()
 	elapsed_time = end_ts.Sub(start_ts).Seconds()
 
-	fmt.Printf("Total processing with %d system calls: %.2f seconds\n", flush_cnt, elapsed_time)
+	msg += fmt.Sprintf("Total processing with %d system calls: %.2f seconds\n", flush_cnt, elapsed_time)
+
+	fmt.Println(msg)
 
 }
