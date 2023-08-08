@@ -21,4 +21,13 @@ And this is really slow:
 buffer.WriteString(fmt.Sprintf("%d\n", i)
 ```
 
-4. Pre-Memory allocated byte buffer - this doesn't appear to be any faster or slower than a non-pre allocated buffer
+4. Pre-Memory allocated byte buffer - this doesn't appear to be any faster or slower than a non-pre allocated buffer; i experimented with buffers as small as 1MB and as high as 100MB. No substantial speed improvement
+
+#### Benchmark Results for 1B row integer CSV file and 100MB Buffer
+
+| Method | Time (Seconds) |
+| ------ | -------------- |
+| CSV Encorder | 93.6 |
+| Byte Buffer | 29.15 |
+| Byte Buffer Pre-Allocated Memory | 29.25 |
+| BufIO | 29 |
