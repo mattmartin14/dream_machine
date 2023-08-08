@@ -5,8 +5,8 @@ This project is looking at several methods in Go Lang to write 1B rows of intege
 1. Encoding/csv - this one is by far the slowest
 2. bufio - Using a BufIO writer is very performant
 3. Byte Buffer - This one appears to be the most performant
-    - Side note: Discovered that concatenating a string for the Buffer.WriteString method is slower vs. doing 2 Buffer.WriteString calls (1 for the integer value and another for the new line)
-e.g.
+    - Side note: Discovered that concatenating a string for the Buffer.WriteString method is slower vs. doing 2 Buffer.WriteString calls (1 for the integer value and another for the new line)</br>
+e.g.</br>
 This is faster:
 ```go
 buffer.WriteString(strconv.Itoa(i))
