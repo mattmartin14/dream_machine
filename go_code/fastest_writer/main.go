@@ -45,9 +45,6 @@ func main() {
 	end_ts = time.Now()
 	fmt.Print(elapsed_time_msg("Byte Buffer with BufIO", start_ts, end_ts))
 
-	// Need to test Fwrite and bufio without a byte buffer
-	// Also test buffer loop multiple rows written per loop?
-
 	fmt.Println("Done")
 
 }
