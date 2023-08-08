@@ -1,7 +1,7 @@
 ### Test Harness to Determine Fastest Way in Go Lang to write 1B integers to a CSV
 
-Author: Matt Martin
-Date: 2023-08-08
+Author: Matt Martin<br>
+Date: 2023-08-08<br>
 
 This project is looking at several methods in Go Lang to write 1B rows of integers to a CSV file to see which one is the most performant. This repo tests teh following methods:
 
