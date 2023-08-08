@@ -29,6 +29,9 @@ func Byte_buffer(tot_rows int, buffer_size_mb int) {
 		buffer.WriteString(strconv.Itoa(i))
 		buffer.WriteString("\n")
 
+		///very slow to do this
+		//buffer.WriteString(fmt.Sprintf("%d\n", i))
+
 		row_cnt += 1
 
 		//flush the buffer to disk if we hit the max size
