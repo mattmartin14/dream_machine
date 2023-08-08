@@ -18,7 +18,7 @@ func elapsed_time_msg(harness_type string, start_ts time.Time, end_ts time.Time)
 func main() {
 
 	tot_rows := flag.Int("rows", 0, "How many rows you want to generate")
-	buffer_size := flag.Int("buffer_size", 0, "How many rows to accumulate in the buffer")
+	buffer_size := flag.Int("buffer_size_mb", 0, "How many megabytes to allocate to the buffer")
 
 	flag.Parse()
 
@@ -40,13 +40,13 @@ func main() {
 	end_ts = time.Now()
 	fmt.Print(elapsed_time_msg("Pre-Allocated Byte Buffer", start_ts, end_ts))
 
-	//Bufio_test
 	start_ts = time.Now()
 	testers.Bufio_test(*tot_rows, *buffer_size)
 	end_ts = time.Now()
-	fmt.Print(elapsed_time_msg("Buffer with BufIO", start_ts, end_ts))
+	fmt.Print(elapsed_time_msg("Byte Buffer with BufIO", start_ts, end_ts))
 
-	// Need to test Fwrite and buffer.WriteTo and combo of bufio + buffer
+	// Need to test Fwrite and bufio without a byte buffer
+	// Also test buffer loop multiple rows written per loop?
 
 	fmt.Println("Done")
 
