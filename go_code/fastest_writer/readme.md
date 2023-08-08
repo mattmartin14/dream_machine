@@ -1,9 +1,9 @@
-### Test Harness to Determine Fastest Way in Go Lang to write 1B integers to a CSV
-
 Author: Matt Martin<br>
 Date: 2023-08-08<br>
 
-This project is looking at several methods in Go Lang to write 1B rows of integers to a CSV file to see which one is the most performant. This repo tests teh following methods:
+#### Overview
+
+This project is looking at several methods in Go Lang to write 1B rows (single column) of integers to a CSV file to see which one is the most performant. This repo tests teh following methods:
 
 1. Encoding/csv; go package that makes writing CSV files easy due to it auto-encoding stuff properly
 2. bufio - a more low level pacakge that manages the buffer stream
@@ -26,6 +26,7 @@ And this is really slow:
 ```go
 buffer.WriteString(fmt.Sprintf("%d\n", i)
 ```
+2. The Encoding/CSV package is significantly slower vs. the byte buffer, which makes sense. According to the Go Lang authors from some Googling, The Encoding/CSV package was designed to be more user friendly to ensure written rows via a 2D string matrix were properly formatted for CSV's. They did not focus on performance for this package.
 
 #### Benchmark Results for 1B row integer CSV file and 100MB Buffer
 
