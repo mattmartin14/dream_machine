@@ -83,7 +83,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, r
 		rec := strconv.Itoa(i) + "," + helpers.Get_random_name(*r, People, "first_name") + "," +
 			helpers.Get_random_name(*r, People, "last_name") + "," +
 			helpers.Get_random_date(*r) + "\n"
-
+		
 		buffer.WriteString(rec)
 		row_cnt += 1
 
