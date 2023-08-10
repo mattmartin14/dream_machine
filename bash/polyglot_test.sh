@@ -12,7 +12,7 @@ echo "Running Python Code"
 py_path="$DREAM_MACHINE/python/single_thread_writer.py $num_rows $batch_size"
 python3 $py_path
 
-echo "Running Go Code"
+echo "Running Go Code >>>"
 #run go version
 go_path="$DREAM_MACHINE/go_code/dummy_data_writer"
 echo $go_path
