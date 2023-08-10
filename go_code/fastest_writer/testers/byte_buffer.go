@@ -23,14 +23,12 @@ func Byte_buffer(tot_rows int, buffer_size_mb int) {
 	//ints are 4 bytes
 	buffer_rows := (buffer_size_mb * 1024 * 1024) / 4
 
+	newline := "\n"
 	for i := 1; i <= tot_rows; i++ {
 
 		// more efficient to run to write string operations vs. a + concatenation
 		buffer.WriteString(strconv.Itoa(i))
-		buffer.WriteString("\n")
-
-		///very slow to do this
-		//buffer.WriteString(fmt.Sprintf("%d\n", i))
+		buffer.WriteString(newline)
 
 		row_cnt += 1
 

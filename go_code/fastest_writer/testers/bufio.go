@@ -25,11 +25,12 @@ func Bufio_test(tot_rows int, buffer_size_mb int) {
 	buffer_rows := (buffer_size_mb * 1024 * 1024) / 4
 
 	row_cnt := 0
+	newline := "\n"
 	for i := 1; i <= tot_rows; i++ {
 
 		// more efficient to run to write string operations vs. a + concatenation
 		buffer.WriteString(strconv.Itoa(i))
-		buffer.WriteString("\n")
+		buffer.WriteString(newline)
 
 		row_cnt += 1
 
