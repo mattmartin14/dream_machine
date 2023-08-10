@@ -9,12 +9,12 @@ batch_size=$2
 
 echo "Running Python Code"
 # run python version
-py_path="$HOME/dream_machine/python/single_thread_writer.py $num_rows $batch_size"
+py_path="$DREAM_MACHINE/python/single_thread_writer.py $num_rows $batch_size"
 python3 $py_path
 
 echo "Running Go Code"
 #run go version
-go_path="$HOME/dream_machine/go_code/dummy_data_writer"
+go_path="$DREAM_MACHINE/go_code/dummy_data_writer"
 cd $go_path
 go_arg="parallel_v2.go -rows $num_rows -files 10"
 go run $go_arg
