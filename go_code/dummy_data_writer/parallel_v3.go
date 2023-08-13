@@ -50,7 +50,10 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int,
 
 	defer wg.Done()
 
+	//this part handles bounded parallelism
 	worker_pool <- struct{}{}
+
+	//fire the defer function at the end to release a worker
 	defer func() { <-worker_pool }()
 
 	rand_src := rand.NewSource(time.Now().UnixNano() + int64(batch_nbr))
@@ -120,6 +123,7 @@ func main() {
 
 	flag.Parse()
 
+	//set how many processes we want max in parallel
 	max_workers := 5
 	worker_pool := make(chan struct{}, max_workers)
 
