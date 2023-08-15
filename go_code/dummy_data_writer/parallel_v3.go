@@ -124,7 +124,7 @@ func main() {
 	flag.Parse()
 
 	//set how many processes we want max in parallel
-	max_workers := 5
+	max_workers := 8
 	worker_pool := make(chan struct{}, max_workers)
 
 	var wg sync.WaitGroup
