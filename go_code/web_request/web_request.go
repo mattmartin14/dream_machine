@@ -30,8 +30,6 @@ func main() {
 		return
 	}
 
-	//var data map[string]interface{}
-
 	joke := chuck_joke{}
 	err = json.Unmarshal(body, &joke)
 	if err != nil {
@@ -39,14 +37,7 @@ func main() {
 		return
 	}
 
-	// grab json elements
-
-	// joke := data["value"]
-	// crt_dt := data["created_at"]
-
 	fmt.Println(joke.Joke)
 	fmt.Println(joke.Created_at)
-
-	//fmt.Println(string(body))
 
 }
