@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+type chuck_joke struct {
+	Joke       string `json:"value"`
+	Created_at string `json:"created_at"`
+}
+
 func main() {
 
 	url := "https://api.chucknorris.io/jokes/random"
@@ -25,21 +30,23 @@ func main() {
 		return
 	}
 
-	var data map[string]interface{}
+	//var data map[string]interface{}
 
-	err = json.Unmarshal(body, &data)
+	joke := chuck_joke{}
+	err = json.Unmarshal(body, &joke)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return
 	}
 
 	// grab json elements
-	joke := data["value"]
-	crt_dt := data["created_at"]
 
-	fmt.Println(joke)
-	fmt.Println(crt_dt)
+	// joke := data["value"]
+	// crt_dt := data["created_at"]
 
-	fmt.Println(string(body))
+	fmt.Println(joke.Joke)
+	fmt.Println(joke.Created_at)
+
+	//fmt.Println(string(body))
 
 }
