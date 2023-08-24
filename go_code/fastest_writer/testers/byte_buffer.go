@@ -6,9 +6,12 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"time"
 )
 
 func Byte_buffer(tot_rows int, buffer_size_mb int) {
+
+	start_ts := time.Now()
 
 	work_dir, _ := os.UserHomeDir()
 	f_path := work_dir + "/test_dummy_data/perf_testing/byte_buffer_test.csv"
@@ -44,5 +47,7 @@ func Byte_buffer(tot_rows int, buffer_size_mb int) {
 		}
 
 	}
+
+	Elapsed_time(start_ts, tot_rows, "Byte Buffer")
 
 }

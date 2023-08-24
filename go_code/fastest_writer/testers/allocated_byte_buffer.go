@@ -6,9 +6,12 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"time"
 )
 
 func Alloc_byte_buffer(tot_rows int, buffer_size_mb int) {
+
+	start_ts := time.Now()
 
 	work_dir, _ := os.UserHomeDir()
 	f_path := work_dir + "/test_dummy_data/perf_testing/pre_alloc_byte_buffer_test.csv"
@@ -45,5 +48,7 @@ func Alloc_byte_buffer(tot_rows int, buffer_size_mb int) {
 		}
 
 	}
+
+	Elapsed_time(start_ts, tot_rows, "Pre-Allocted Byte Buffer")
 
 }
