@@ -17,13 +17,17 @@ extern crate csv;
 
 use std::error::Error;
 use std::fs::File;
+//use std::io::{self, Write};
 use std::path::Path;
 use std::env;
 use std::time::Instant;
+//use csv::WriterBuilder;
 use num_format::{Locale, ToFormattedString};
+use std::io::{BufWriter, Write};
 
 fn main() -> Result<(), Box<dyn Error>> {
     
+
     let start_ts = Instant::now();
 
     //let f_path string = "~/test_dummy_data/rust/test.csv";
@@ -31,43 +35,33 @@ fn main() -> Result<(), Box<dyn Error>> {
     let folder_path = home_dir.to_string() + "/test_dummy_data/rust";
 
     println!("Home dir is: {:?}",folder_path);
-    //println!(home_dir);
 
     let file_path = Path::new(&folder_path).join("output.csv");
-    
-    //println!(file_path);
-    //let file_path = Path::new("~/test_dummy_data/rust/test.csv");
     let file = File::create(&file_path)?;
 
-    let mut csv_writer = csv::Writer::from_writer(file);
-
-    // Write headers if needed
-    csv_writer.write_record(&["Value"])?;
+    let mut writer = BufWriter::new(file);
 
     // Write 1000 integers to the CSV file
-    // slow at 100M; need to flush the writer every 10k rows i'm guessing
+    // takes 42 seconds for the csv writer to write 100M rows
+    // takes only 3 seconds for the bufio writer to write 100m rows
+    // the csv writer is slow
 
-    let row_cnt = 10000000;
+    let row_cnt = 1_000_000_000;
+    let batch_size = 10_000;
 
-    let mut curr_batch_size = 0;
-    let max_batch_size = 10000;
-
-    for i in 1..=row_cnt {
-        csv_writer.write_record(&[i.to_string()])?;
-
-        curr_batch_size +=1;
-        if curr_batch_size >= max_batch_size {
-            csv_writer.flush()?;
-            curr_batch_size = 0;
-        }
-
-    }
-
-    // Flush and finish writing
-    if curr_batch_size >= 1 {
-        csv_writer.flush()?;
-    }
     
+    for chunk_start in (1..row_cnt).step_by(batch_size) {
+
+       // println!("chunk start is {}", chunk_start);
+
+        let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
+
+        //println!("chunk end is {}", chunk_end);
+        for row_num in chunk_start..=chunk_end {
+            writeln!(writer, "{}", row_num)?;
+        }
+        writer.flush()?;
+    }
 
     let elapsed = start_ts.elapsed().as_secs();
 
@@ -78,4 +72,3 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 
 }
-
