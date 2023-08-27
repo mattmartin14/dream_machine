@@ -15,17 +15,16 @@
 
 extern crate csv;
 
-mod test2;
-
 use std::error::Error;
 use std::fs::File;
 use std::path::Path;
 use std::env;
+use std::time::Instant;
+use num_format::{Locale, ToFormattedString};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("Hello, world!");
-    test();
-    test2::test2p();
+    
+    let start_ts = Instant::now();
 
     //let f_path string = "~/test_dummy_data/rust/test.csv";
     let home_dir = env::var("HOME")?;
@@ -48,24 +47,35 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Write 1000 integers to the CSV file
     // slow at 100M; need to flush the writer every 10k rows i'm guessing
 
+    let row_cnt = 10000000;
 
+    let mut curr_batch_size = 0;
+    let max_batch_size = 10000;
 
-    for i in 1..=100000000 {
+    for i in 1..=row_cnt {
         csv_writer.write_record(&[i.to_string()])?;
 
+        curr_batch_size +=1;
+        if curr_batch_size >= max_batch_size {
+            csv_writer.flush()?;
+            curr_batch_size = 0;
+        }
 
     }
 
     // Flush and finish writing
-    csv_writer.flush()?;
+    if curr_batch_size >= 1 {
+        csv_writer.flush()?;
+    }
+    
 
-    println!("CSV file written successfully.");
-    println!("CSV file written successfully to: {:?}", file_path);
+    let elapsed = start_ts.elapsed().as_secs();
+
+    let fmt_row_cnt = row_cnt.to_formatted_string(&Locale::en);
+
+    println!("CSV file written with {} rows. Total Processing Time {} seconds", fmt_row_cnt, elapsed);
 
     Ok(())
 
 }
 
-fn test() {
-    println!("test test")
-}
