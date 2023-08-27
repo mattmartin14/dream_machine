@@ -17,11 +17,9 @@ extern crate csv;
 
 use std::error::Error;
 use std::fs::File;
-//use std::io::{self, Write};
 use std::path::Path;
 use std::env;
 use std::time::Instant;
-//use csv::WriterBuilder;
 use num_format::{Locale, ToFormattedString};
 use std::io::{BufWriter, Write};
 
@@ -30,7 +28,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let start_ts = Instant::now();
 
-    //let f_path string = "~/test_dummy_data/rust/test.csv";
     let home_dir = env::var("HOME")?;
     let folder_path = home_dir.to_string() + "/test_dummy_data/rust";
 
@@ -41,9 +38,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut writer = BufWriter::new(file);
 
-    // Write 1000 integers to the CSV file
     // takes 42 seconds for the csv writer to write 100M rows
     // takes only 3 seconds for the bufio writer to write 100m rows
+    // took 37 seconds to write 1B rows -- in debug mode
+    // took 16 seconds in release mode to write 1B rows
     // the csv writer is slow
 
     let row_cnt = 1_000_000_000;
