@@ -28,15 +28,14 @@ use std::io::{BufWriter, Write};
 
 fn main() -> Result<(), Box<dyn Error>> {
     
-
     let start_ts = Instant::now();
 
     let home_dir = env::var("HOME")?;
-    let folder_path = home_dir.to_string() + "/test_dummy_data/rust";
+    let folder_path = home_dir.to_string() + "/test_dummy_data/write_benchmark";
 
     println!("Home dir is: {:?}",folder_path);
 
-    let file_path = Path::new(&folder_path).join("output.csv");
+    let file_path = Path::new(&folder_path).join("rust_generated.csv");
     let file = File::create(&file_path)?;
 
     let mut writer = BufWriter::new(file);
@@ -49,7 +48,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let row_cnt = 1_000_000_000;
     let batch_size = 10_000;
-
     
     for chunk_start in (1..row_cnt).step_by(batch_size) {
 
