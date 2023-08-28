@@ -19,7 +19,7 @@ import (
 func main() {
 
 	tot_rows := 1000000000
-	batch_size := 1000
+	batch_size := 10000
 
 	start_ts := time.Now()
 
