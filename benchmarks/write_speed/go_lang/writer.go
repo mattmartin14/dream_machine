@@ -34,7 +34,7 @@ func main() {
 
 	var buffer bytes.Buffer
 
-	newline := "\n"
+	//newline := "\n"
 	for i := 1; i <= tot_rows; i += batch_size {
 
 		start_row := i
@@ -47,7 +47,8 @@ func main() {
 
 		for j := start_row; j <= end_row; j++ {
 			buffer.WriteString(strconv.Itoa(j))
-			buffer.WriteString(newline)
+			buffer.WriteRune('\n')
+			//buffer.WriteString(newline)
 		}
 
 		_, err := buffer.WriteTo(writer)

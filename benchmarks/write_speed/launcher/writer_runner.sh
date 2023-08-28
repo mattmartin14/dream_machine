@@ -27,11 +27,3 @@ cd $exec_path
 # run python version
 #py_path="$DREAM_MACHINE/python/single_thread_writer.py $num_rows $batch_size"
 #python3 $py_path
-
-#echo "Running Go Code >>"
-#run go version
-#go_path="$DREAM_MACHINE/go_code/dummy_data_writer"
-#echo $go_path
-#cd $go_path
-#go_arg="parallel_v2.go -rows $num_rows -files 10"
-#go run $go_arg
