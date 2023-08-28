@@ -1,19 +1,22 @@
 /*
-    steps for rust
-    go to top level folder, in terminal do "cargo new project_folder_name"
+    Author: Matt Martin
+    Date: 2023-08-28
+    Desc: Rust Write Speed Test Harness 1B rows    
+
+    steps to create/deply rust project
+    go to top level folder, in terminal do "cargo new [project_folder_name]" e.g. "cargo new my_folder"
     cd into the project_folder_name > there should be a folder called "src" with a "main.rs" file
     -- open that file, edit, save
     -- then in terminal "cargo run"
     -- to compile a binary, do "cargo build" ; this makes a binary in the target/debug folder
     -- to make a more optimized release build, do "cargo build --release"; this makes a binary in target/release folder
+        -- before doing the benchmarks, deploy the release executable...it is usually way faster than the debug version
 
     -- to link other files, the functions have to be marked "pub"
     --  Then you add in the main.rs a section up top to import the module using "mod [name of other module without rs extension]"
     -- functions in other files don't need to be uppercase to be recognized
 
 */
-
-//extern crate csv;
 
 use std::error::Error;
 use std::fs::File;
