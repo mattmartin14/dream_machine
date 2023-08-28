@@ -68,7 +68,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let fmt_row_cnt = row_cnt.to_formatted_string(&Locale::en);
 
-    println!("CSV file written with {} rows. Total Processing Time {} seconds", fmt_row_cnt, elapsed);
+    println!("Rust Benchmark: CSV file written with {} rows. Total Processing Time {} seconds", fmt_row_cnt, elapsed);
 
     Ok(())
 
