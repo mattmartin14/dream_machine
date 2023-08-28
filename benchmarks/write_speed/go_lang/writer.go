@@ -20,6 +20,8 @@ func main() {
 
 	tot_rows := 1000000000
 	batch_size := 10000
+	// 10 mb
+	init_buffer_size := 10 * 1024 * 1024
 
 	start_ts := time.Now()
 
@@ -29,10 +31,13 @@ func main() {
 	file, _ := os.Create(f_path)
 	defer file.Close()
 
-	writer := bufio.NewWriter(file)
+	writer := bufio.NewWriterSize(file, init_buffer_size)
+
+	//writer := bufio.NewWriter(file)
 	defer writer.Flush()
 
 	var buffer bytes.Buffer
+	buffer.Grow(init_buffer_size)
 
 	//newline := "\n"
 	for i := 1; i <= tot_rows; i += batch_size {
