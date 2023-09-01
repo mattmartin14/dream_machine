@@ -1,0 +1,14 @@
+[[34m2023-09-01T08:18:34.369-0400[0m] {[34mscheduler_job_runner.py:[0m800} INFO[0m - Starting the scheduler[0m
+[[34m2023-09-01T08:18:34.369-0400[0m] {[34mscheduler_job_runner.py:[0m807} INFO[0m - Processing each file at most -1 times[0m
+[[34m2023-09-01T08:18:34.371-0400[0m] {[34mmanager.py:[0m166} INFO[0m - Launched DagFileProcessorManager with pid: 14034[0m
+[[34m2023-09-01T08:18:34.372-0400[0m] {[34mscheduler_job_runner.py:[0m1588} INFO[0m - Resetting orphaned tasks for active dag runs[0m
+[[34m2023-09-01T08:18:34.766-0400[0m] {[34msettings.py:[0m60} INFO[0m - Configured default timezone Timezone('UTC')[0m
+[2023-09-01T08:18:34.771-0400] {manager.py:411} WARNING - Because we cannot use more than 1 thread (parsing_processes = 2) when using sqlite. So we set parallelism to 1.
+[[34m2023-09-01T08:19:00.548-0400[0m] {[34mscheduler_job_runner.py:[0m248} INFO[0m - Exiting gracefully upon receiving signal 15[0m
+[[34m2023-09-01T08:19:01.555-0400[0m] {[34mprocess_utils.py:[0m131} INFO[0m - Sending Signals.SIGTERM to group 14034. PIDs of all processes in the group: [14034][0m
+[[34m2023-09-01T08:19:01.556-0400[0m] {[34mprocess_utils.py:[0m86} INFO[0m - Sending the signal Signals.SIGTERM to group 14034[0m
+[[34m2023-09-01T08:19:01.693-0400[0m] {[34mprocess_utils.py:[0m79} INFO[0m - Process psutil.Process(pid=14034, status='terminated', exitcode=0, started='08:18:34') (14034) terminated with exit code 0[0m
+[[34m2023-09-01T08:19:01.700-0400[0m] {[34mprocess_utils.py:[0m131} INFO[0m - Sending Signals.SIGTERM to group 14034. PIDs of all processes in the group: [][0m
+[[34m2023-09-01T08:19:01.700-0400[0m] {[34mprocess_utils.py:[0m86} INFO[0m - Sending the signal Signals.SIGTERM to group 14034[0m
+[[34m2023-09-01T08:19:01.700-0400[0m] {[34mprocess_utils.py:[0m100} INFO[0m - Sending the signal Signals.SIGTERM to process 14034 as process group is missing.[0m
+[[34m2023-09-01T08:19:01.701-0400[0m] {[34mscheduler_job_runner.py:[0m876} INFO[0m - Exited execute loop[0m

@@ -62,4 +62,7 @@ airflow webserver -p 8080 -D;
 echo "done initializing airflow";
 
 echo "launching web console";
+
+sleep 2;
+
 open -a Safari "localhost:8080";
