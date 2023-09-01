@@ -1,0 +1,4 @@
+2023-09-01 08:10:40,146 INFO - Starting the scheduler
+2023-09-01 08:10:40,147 INFO - Processing each file at most -1 times
+2023-09-01 08:10:40,149 INFO - Launched DagFileProcessorManager with pid: 13769
+2023-09-01 08:10:40,150 INFO - Resetting orphaned tasks for active dag runs

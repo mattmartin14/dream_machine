@@ -1,0 +1,15 @@
+daemon/__init__.py,sha256=b09EwZQxpoziLo6KVjAPWgr9fElkt9twSZuoINcjaAU,1665
+daemon/__pycache__/__init__.cpython-310.pyc,,
+daemon/__pycache__/_metadata.cpython-310.pyc,,
+daemon/__pycache__/daemon.cpython-310.pyc,,
+daemon/__pycache__/pidfile.cpython-310.pyc,,
+daemon/_metadata.py,sha256=xk1FKT10ek36nb9XxwsZBim9O30SeU6slYel3hUEJZo,4336
+daemon/daemon.py,sha256=lb9tjOvYLs26vecl0SkS-lYAOstH3mvxSmLCgnrGDVs,35297
+daemon/pidfile.py,sha256=nxjR0Hb6Wayp1kNqI8ox4Pv5hwTZz7COQsvnbdwv59A,2194
+python_daemon-3.0.1.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+python_daemon-3.0.1.dist-info/LICENSE.ASF-2,sha256=z8d0m5b2O9McPEK1xHG_dWgUBT6EfBDz6wA0F7xSPTA,11358
+python_daemon-3.0.1.dist-info/LICENSE.GPL-3,sha256=jOtLnuWt7d5Hsx6XXB2QxzrSe2sWWh3NgMfFRetluQM,35147
+python_daemon-3.0.1.dist-info/METADATA,sha256=BeZzrlr08bIjZmVP3zpq7dMibX4FKXsYW7wWKeKlVpo,2210
+python_daemon-3.0.1.dist-info/RECORD,,
+python_daemon-3.0.1.dist-info/WHEEL,sha256=2wepM1nk4DS4eFpYrW1TTqPcoGNfHhhO_i5m4cOimbo,92
+python_daemon-3.0.1.dist-info/top_level.txt,sha256=7tSe9oVFyd_dCLrotHDHVIQ6OAM26I6rF6ggOsDL0uk,7

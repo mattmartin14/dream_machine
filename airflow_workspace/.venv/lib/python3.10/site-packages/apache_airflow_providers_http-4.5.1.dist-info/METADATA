@@ -1,0 +1,117 @@
+Metadata-Version: 2.1
+Name: apache-airflow-providers-http
+Version: 4.5.1
+Summary: Provider for Apache Airflow. Implements apache-airflow-providers-http package
+Home-page: https://airflow.apache.org/
+Download-URL: https://archive.apache.org/dist/airflow/providers
+Author: Apache Software Foundation
+Author-email: dev@airflow.apache.org
+License: Apache License 2.0
+Project-URL: Documentation, https://airflow.apache.org/docs/apache-airflow-providers-http/4.5.1/
+Project-URL: Changelog, https://airflow.apache.org/docs/apache-airflow-providers-http/4.5.1/changelog.html
+Project-URL: Bug Tracker, https://github.com/apache/airflow/issues
+Project-URL: Source Code, https://github.com/apache/airflow
+Project-URL: Slack Chat, https://s.apache.org/airflow-slack
+Project-URL: Twitter, https://twitter.com/ApacheAirflow
+Project-URL: YouTube, https://www.youtube.com/channel/UCSXwxpWZQ7XZ1WL3wqevChA/
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Framework :: Apache Airflow
+Classifier: Framework :: Apache Airflow :: Provider
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: System :: Monitoring
+Requires-Python: ~=3.8
+Description-Content-Type: text/x-rst
+License-File: LICENSE
+License-File: NOTICE
+Requires-Dist: aiohttp
+Requires-Dist: apache-airflow >=2.4.0
+Requires-Dist: asgiref
+Requires-Dist: requests >=2.26.0
+Requires-Dist: requests-toolbelt
+
+
+.. Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+..   http://www.apache.org/licenses/LICENSE-2.0
+
+.. Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+
+ .. Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+ ..   http://www.apache.org/licenses/LICENSE-2.0
+
+ .. Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+
+Package ``apache-airflow-providers-http``
+
+Release: ``4.5.1``
+
+
+`Hypertext Transfer Protocol (HTTP) <https://www.w3.org/Protocols/>`__
+
+
+Provider package
+----------------
+
+This is a provider package for ``http`` provider. All classes for this provider package
+are in ``airflow.providers.http`` python package.
+
+You can find package information and changelog for the provider
+in the `documentation <https://airflow.apache.org/docs/apache-airflow-providers-http/4.5.1/>`_.
+
+
+Installation
+------------
+
+You can install this package on top of an existing Airflow 2 installation (see ``Requirements`` below
+for the minimum Airflow version supported) via
+``pip install apache-airflow-providers-http``
+
+The package supports the following python versions: 3.8,3.9,3.10,3.11
+
+Requirements
+------------
+
+=====================  ==================
+PIP package            Version required
+=====================  ==================
+``apache-airflow``     ``>=2.4.0``
+``requests``           ``>=2.26.0``
+``requests_toolbelt``
+``aiohttp``
+``asgiref``
+=====================  ==================
+
+The changelog for the provider package can be found in the
+`changelog <https://airflow.apache.org/docs/apache-airflow-providers-http/4.5.1/changelog.html>`_.
