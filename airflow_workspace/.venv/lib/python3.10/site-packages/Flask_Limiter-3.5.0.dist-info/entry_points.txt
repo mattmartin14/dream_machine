@@ -1,2 +1,0 @@
-[flask.commands]
-limiter = flask_limiter.commands:cli

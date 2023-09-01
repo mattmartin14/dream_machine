@@ -1,5 +1,0 @@
-[2023-09-01 08:10:40 -0400] [13768] [INFO] Starting gunicorn 21.2.0
-[2023-09-01 08:10:40 -0400] [13768] [INFO] Listening at: http://[::]:8793 (13768)
-[2023-09-01 08:10:40 -0400] [13768] [INFO] Using worker: sync
-[2023-09-01 08:10:40 -0400] [13770] [INFO] Booting worker with pid: 13770
-[2023-09-01 08:10:40 -0400] [13771] [INFO] Booting worker with pid: 13771
