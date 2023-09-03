@@ -13,6 +13,11 @@
 
     -- tail calc working
 
+    perf notes:
+        step 20 runs in about 24 seconds
+        step 50 only shaves half a second off
+        increasing the buffer does not help on perf much at this point
+
 */
 
 // to compile run in terminal clang -o c_writer c_writer.c
@@ -38,6 +43,27 @@ int write_20(char *buffer, int buffer_index, int max_buffer_size, char* fmt_stri
     );
     return chars_written;
 }
+
+int write_30(char *buffer, int buffer_index, int max_buffer_size, char* fmt_string_30_step, int row_index){
+    int chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_30_step
+        ,row_index+1,row_index+2,row_index+3,row_index+4,row_index+5,row_index+6,row_index+7,row_index+8,row_index+9,row_index+10
+        ,row_index+11,row_index+12,row_index+13,row_index+14,row_index+15,row_index+16,row_index+17,row_index+18,row_index+19,row_index+20
+        ,row_index+21,row_index+22,row_index+23,row_index+24,row_index+25,row_index+26,row_index+27,row_index+28,row_index+29,row_index+30
+    );
+    return chars_written;
+}
+
+int write_50(char *buffer, int buffer_index, int max_buffer_size, char* fmt_string_50_step, int row_index){
+    int chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_50_step
+        ,row_index+1,row_index+2,row_index+3,row_index+4,row_index+5,row_index+6,row_index+7,row_index+8,row_index+9,row_index+10
+        ,row_index+11,row_index+12,row_index+13,row_index+14,row_index+15,row_index+16,row_index+17,row_index+18,row_index+19,row_index+20
+        ,row_index+21,row_index+22,row_index+23,row_index+24,row_index+25,row_index+26,row_index+27,row_index+28,row_index+29,row_index+30
+        ,row_index+31,row_index+32,row_index+33,row_index+34,row_index+35,row_index+36,row_index+37,row_index+38,row_index+39,row_index+40
+        ,row_index+41,row_index+42,row_index+43,row_index+44,row_index+45,row_index+46,row_index+47,row_index+48,row_index+49,row_index+50
+    );
+    return chars_written;
+}
+
 
 int main() {
 
@@ -67,7 +93,7 @@ int main() {
 
     // takes 40 seconds with this buffered approach
     
-    char buffer[4096*16];
+    char buffer[4096*16*2*2];
     int buffer_index = 0;
 
     char fmt_string_1_step[] = "%d\n";
@@ -79,13 +105,19 @@ int main() {
     char fmt_string_20_step[20*4];
     build_fmt_string(fmt_string_20_step,20);
 
+    char fmt_string_30_step[30*4];
+    build_fmt_string(fmt_string_30_step,30);
+
+    char fmt_string_50_step[50*4];
+    build_fmt_string(fmt_string_50_step,50);
+
     //printf("fmt buffer of 10 looks like %s. \n",fmt_string_10_step);
 
-    int step_by = 20;
+    int step_by = 50;
 
     int max_buffer_size = sizeof(buffer);
 
-    int buffer_padding = 300;
+    int buffer_padding = 600;
 
     int flush_cnt = 0;
 
@@ -105,7 +137,8 @@ int main() {
             step_by = 1;
             chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i+1);
         } else {
-            chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
+            chars_written = write_50(buffer, buffer_index, max_buffer_size, fmt_string_50_step, i);
+            //chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
         }
 
         if (chars_written < 0 || chars_written >= max_buffer_size - buffer_index) {
