@@ -8,9 +8,10 @@
 /*
     to do: 
     
-    compute the last tail amount of the rows to write
-    -- add a switch statement to alternate between the batch buffer write vs. a single write
-    -- test with odd row counts like 1005, 1008, 1013
+    add a step by 30, 40, 50
+    -- see if we can find an optimal amount
+
+    -- tail calc working
 
 */
 
@@ -88,14 +89,24 @@ int main() {
 
     int flush_cnt = 0;
 
-    //int chars_written = 0;
+    int chars_written = 0;
+
+    int tail = TOT_ROWS % step_by;
+
+    int has_tail = 0; 
+    if (tail > 0) {has_tail = 1;}
+
+    printf("tail value = %d. has tail = %d\n", tail, has_tail);
 
     for (int i = 0; i < TOT_ROWS; i+=step_by) {
 
-        int chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
-        //int chars_written = write_10(buffer, buffer_index, max_buffer_size, fmt_string_10_step, i);
-
-        //int chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i+1);
+        if(has_tail == 1 && (TOT_ROWS - i) <= tail) {
+            //printf("in the tail\n");
+            step_by = 1;
+            chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i+1);
+        } else {
+            chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
+        }
 
         if (chars_written < 0 || chars_written >= max_buffer_size - buffer_index) {
             printf("row was at %d\n",i);
