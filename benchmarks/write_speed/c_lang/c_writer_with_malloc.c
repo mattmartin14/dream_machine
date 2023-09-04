@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define TOT_ROWS 1000000000
-#define BUFFER_SIZE 1024 * 1024
+#define BUFFER_SIZE 1024 * 1024 * 100 // 1MB
 
 int build_fmt_string(char *fmt_string, int num_elements) {
     for (int i=1;i<=num_elements;i++) {
@@ -95,7 +95,7 @@ int main() {
 
     //printf("fmt buffer of 10 looks like %s. \n",fmt_string_10_step);
 
-    int step_by = 20;
+    int step_by = 50;
 
     //int max_buffer_size = sizeof(buffer);
     int max_buffer_size = BUFFER_SIZE;
@@ -119,7 +119,7 @@ int main() {
             step_by = 1;
             chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i + 1);
         } else {
-            chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
+            chars_written = write_50(buffer, buffer_index, max_buffer_size, fmt_string_50_step, i);
         }
 
         if (chars_written < 0 || chars_written >= max_buffer_size - buffer_index) {
