@@ -1,4 +1,4 @@
-it appears that fwrite with a large buffer is the fastest...got it to go under 23 seconds
+it appears that fwrite with a large enough buffer is the fastest...got it to go under 23 seconds
 
 also, malloc is needed for large buffers or you get a segmentation fault error.
 

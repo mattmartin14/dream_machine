@@ -7,6 +7,8 @@
 //#define TOT_ROWS 10005
 #define BUFFER_SIZE 1024 * 1024// 100MB
 
+// clang -o c_writer c_writer_v3.c     
+
 int build_fmt_string(char *fmt_string, int num_elements) {
 
     //if you don't put that initialization in, it prints some funky character first
