@@ -5,7 +5,7 @@
 
 This repo is designed to test the write speed of several programming languages. The criteria for this test harness is it has to write 1 billion integer rows to a csv file and must be single threaded (no parallel processing allowed). At the moment, I'm currently testing these languages:
 
-1. C
+1. [C](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/c_lang/c_writer_v3.c)
 2. Rust
 3. Go
 4. Python
