@@ -13,3 +13,15 @@ At the end of this project, I'm intending to score several factors:
 2. Size of the binary (or in python's case py file)
 3. Ease of use to program (subjective by user but going to include my impression)
 4. Maybe will measure power used (e.g. CPU time)
+
+<h4>/<h4>
+
+Results:
+<h4>/<h4>
+
+| Language | Write Speed (Seconds) | Binary Size | Ease of Use |
+| -------- | --------------------  | ----------- | ----------- |
+| C        | 22.5                  |  34kb       | very hard, inflexible at times |
+| Rust     | 16                    |  470kb      | hard, took a little while to get used to syntax |
+| Go       | 24.7                  |  1.5mb      | Very easy to learn and use |
+| Python   |                       |             | Easiest to use; clearly as an interpreted language, not as fast |
