@@ -7,7 +7,7 @@ This repo is designed to test the write speed of several programming languages. 
 
 1. [C](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/c_lang/c_writer_v3.c)
 2. [Rust](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/rust/rust/src/main.rs)
-3. Go
+3. [Go] (https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/go_lang/writer.go)
 4. Python
 
 At the end of this project, I'm intending to score several factors:
