@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define TOT_ROWS 1000000000
+#define BUFFER_SIZE 4096 * 16 * 16 * 100
 
 /*
     to do: 
@@ -81,19 +82,16 @@ int main() {
     char f_path[len];
     snprintf(f_path,len,"%s%s",home_dir,file_sub_path);
 
-    //printf("File target: %s\n",f_path);
 
-    FILE *file = fopen(f_path,"w");
+    FILE *file = fopen(f_path,"wb");
     if (file == NULL) {
         printf("Error creating file\n");
         return 1;
     }
 
    
-
-    // takes 40 seconds with this buffered approach
     
-    char buffer[4096*16*2*2];
+    char buffer[BUFFER_SIZE];
     int buffer_index = 0;
 
     char fmt_string_1_step[] = "%d\n";
@@ -125,8 +123,7 @@ int main() {
 
     int tail = TOT_ROWS % step_by;
 
-    int has_tail = 0; 
-    if (tail > 0) {has_tail = 1;}
+    int has_tail = (tail > 0) ? 1 : 0;
 
     printf("tail value = %d. has tail = %d\n", tail, has_tail);
 
@@ -153,7 +150,9 @@ int main() {
 
         //write out if we are close to the buffer padding so we dont hit overflow errors
         if (buffer_index >= max_buffer_size - buffer_padding) {
-            fputs(buffer, file);
+            fwrite(buffer, 1, buffer_index, file);
+            
+            //fputs(buffer, file);
             buffer_index = 0;
             flush_cnt++;
         }
@@ -161,7 +160,8 @@ int main() {
     }
 
     if (buffer_index > 0) {
-            fputs(buffer, file);
+            fwrite(buffer, 1, buffer_index, file);
+            //fputs(buffer, file);
             buffer_index = 0;
             flush_cnt++;
     }

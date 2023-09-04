@@ -4,23 +4,7 @@
 #include <string.h>
 
 #define TOT_ROWS 1000000000
-
-/*
-    to do: 
-    
-    add a step by 30, 40, 50
-    -- see if we can find an optimal amount
-
-    -- tail calc working
-
-    perf notes:
-        step 20 runs in about 24 seconds
-        step 50 only shaves half a second off
-        increasing the buffer does not help on perf much at this point
-
-*/
-
-// to compile run in terminal clang -o c_writer c_writer.c
+#define BUFFER_SIZE 4096 * 16 * 16
 
 int build_fmt_string(char *fmt_string, int num_elements) {
     for (int i=1;i<=num_elements;i++) {
@@ -64,16 +48,13 @@ int write_50(char *buffer, int buffer_index, int max_buffer_size, char* fmt_stri
     return chars_written;
 }
 
-
 int main() {
-
     clock_t start_ts, end_ts;
     double elapsed;
 
     start_ts = clock();
 
-
-    const char* home_dir = getenv("HOME");
+     const char* home_dir = getenv("HOME");
     const char* file_sub_path = "/test_dummy_data/write_benchmark/c_generated.csv";
 
     //concaneates the home directory and file sub path
@@ -83,19 +64,20 @@ int main() {
 
     //printf("File target: %s\n",f_path);
 
-    FILE *file = fopen(f_path,"w");
+    FILE *file = fopen(f_path,"wb");
     if (file == NULL) {
         printf("Error creating file\n");
         return 1;
     }
 
-   
 
-    // takes 40 seconds with this buffered approach
-    
-    char buffer[4096*16*2*2];
+    char *buffer = (char *)malloc(BUFFER_SIZE);
+    if (buffer == NULL) {
+        printf("Error allocating memory for the buffer\n");
+        return 1;
+    }
+
     int buffer_index = 0;
-
     char fmt_string_1_step[] = "%d\n";
     
     
@@ -113,9 +95,10 @@ int main() {
 
     //printf("fmt buffer of 10 looks like %s. \n",fmt_string_10_step);
 
-    int step_by = 50;
+    int step_by = 20;
 
-    int max_buffer_size = sizeof(buffer);
+    //int max_buffer_size = sizeof(buffer);
+    int max_buffer_size = BUFFER_SIZE;
 
     int buffer_padding = 600;
 
@@ -130,17 +113,13 @@ int main() {
 
     printf("tail value = %d. has tail = %d\n", tail, has_tail);
 
-    for (int i = 0; i < TOT_ROWS; i+=step_by) {
-
-        if(step_by == 1){
-            chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i+1);
-        }else if(has_tail == 1 && (TOT_ROWS - i) <= tail) {
-            //printf("in the tail\n");
+    for (int i = 0; i < TOT_ROWS; i += step_by) {
+        
+        if (has_tail == 1 && (TOT_ROWS - i) <= tail) {
             step_by = 1;
-            chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i+1);
+            chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_1_step, i + 1);
         } else {
-            chars_written = write_50(buffer, buffer_index, max_buffer_size, fmt_string_50_step, i);
-            //chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
+            chars_written = write_20(buffer, buffer_index, max_buffer_size, fmt_string_20_step, i);
         }
 
         if (chars_written < 0 || chars_written >= max_buffer_size - buffer_index) {
@@ -153,25 +132,28 @@ int main() {
 
         //write out if we are close to the buffer padding so we dont hit overflow errors
         if (buffer_index >= max_buffer_size - buffer_padding) {
-            fputs(buffer, file);
+            fwrite(buffer, 1, buffer_index, file);
+            //fputs(buffer, file);
             buffer_index = 0;
             flush_cnt++;
         }
 
+
     }
 
     if (buffer_index > 0) {
-            fputs(buffer, file);
+            fwrite(buffer, 1, buffer_index, file);
+            //fputs(buffer, file);
             buffer_index = 0;
             flush_cnt++;
     }
 
-    fclose(file);
+    free(buffer);
 
     end_ts = clock();
 
-    elapsed = (double)(end_ts - start_ts)/ CLOCKS_PER_SEC;
+    elapsed = (double)(end_ts - start_ts) / CLOCKS_PER_SEC;
 
-    printf("C Lang process complete. Total buffer flushes: %d. Total Run time to generate %d: %.2f seconds\n"
-    , flush_cnt, TOT_ROWS, elapsed);
+    printf("C Lang process complete. Total buffer flushes: %d. Buffer Size: %d. Total Run time to generate %d: %.2f seconds\n", flush_cnt, BUFFER_SIZE, TOT_ROWS, elapsed);
+    return 0;
 }
