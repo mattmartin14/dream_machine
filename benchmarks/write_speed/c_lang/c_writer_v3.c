@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define TOT_ROWS 1000000000 // 1B
-//#define TOT_ROWS 10005
+//#define TOT_ROWS 10013
 #define BUFFER_SIZE 1024 * 1024// 100MB
 
 // clang -o c_writer c_writer_v3.c     
@@ -21,7 +21,8 @@ int build_fmt_string(char *fmt_string, int num_elements) {
 }
 
 int write_100(char *buffer, int buffer_index, int max_buffer_size, char* fmt_string_100_step, int row_index){
-    int chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_100_step
+    //int chars_written = snprintf(buffer + buffer_index, max_buffer_size - buffer_index, fmt_string_100_step
+    int chars_written = sprintf(buffer + buffer_index, fmt_string_100_step
         ,row_index+1,row_index+2,row_index+3,row_index+4,row_index+5,row_index+6,row_index+7,row_index+8,row_index+9,row_index+10
         ,row_index+11,row_index+12,row_index+13,row_index+14,row_index+15,row_index+16,row_index+17,row_index+18,row_index+19,row_index+20
         ,row_index+21,row_index+22,row_index+23,row_index+24,row_index+25,row_index+26,row_index+27,row_index+28,row_index+29,row_index+30
@@ -34,6 +35,7 @@ int write_100(char *buffer, int buffer_index, int max_buffer_size, char* fmt_str
         ,row_index+91,row_index+92,row_index+93,row_index+94,row_index+95,row_index+96,row_index+97,row_index+98,row_index+99,row_index+100
     );
     return chars_written;
+
 }
 
 int main() {
@@ -76,25 +78,53 @@ int main() {
 
     int chars_written = 0;
 
+    int bulk_operations = TOT_ROWS/step_by;
+
+    int tail_operations = TOT_ROWS % step_by;
+
+    int tail_start = 0;
+    int tail_end = 0;
+
+    if (tail_operations > 0) {
+        tail_start = bulk_operations * step_by+1;
+        tail_end = TOT_ROWS;
+    }
+
+    printf("total bulk operations: %d\nTotal tail operations: %d\ntail start = %d; tail end = %d\n", bulk_operations, tail_operations, tail_start, tail_end);
+
+
     int tail = TOT_ROWS % step_by;
 
     int has_tail = 0; 
     if (tail > 0) {has_tail = 1;}
 
-    printf("tail value = %d. has tail = %d\n", tail, has_tail);
-
-    for (int i = 0; i < TOT_ROWS; i += step_by) {
+    // you are here; need to figure out the bulk operations loop
+    int row_index = 0;
+    for (int i = 0; i < bulk_operations; i ++) {
         
-        if (step_by == 1) {
-            chars_written = snprintf(buffer + buffer_index, BUFFER_SIZE - buffer_index, fmt_string_1_step, i + 1);
-        }
-        else if (has_tail == 1 && (TOT_ROWS - i) <= tail) {
-            step_by = 1;
-            chars_written = snprintf(buffer + buffer_index, BUFFER_SIZE - buffer_index, fmt_string_1_step, i + 1);
-        } else {
-            chars_written = write_100(buffer, buffer_index, BUFFER_SIZE, fmt_string_100_step, i);
+        chars_written = write_100(buffer, buffer_index, BUFFER_SIZE, fmt_string_100_step, i+row_index);
+
+        row_index += step_by;
+
+        if (chars_written < 0 || chars_written >= BUFFER_SIZE - buffer_index) {
+            printf("row was at %d\n",i);
+            fprintf(stderr, "Error adding number to the buffer\n");
+            return 1;
         }
 
+        buffer_index += chars_written;
+
+        //write out if we are close to the buffer padding so we dont hit overflow errors
+        if (buffer_index >= BUFFER_SIZE - buffer_padding) {
+            fwrite(buffer, 1, buffer_index, file);
+            buffer_index = 0;
+            flush_cnt++;
+        }
+
+    }
+
+    for (int i = tail_start; i<=tail_end; i++){
+        chars_written = snprintf(buffer + buffer_index, BUFFER_SIZE - buffer_index, "%d\n", i);
         if (chars_written < 0 || chars_written >= BUFFER_SIZE - buffer_index) {
             printf("row was at %d\n",i);
             fprintf(stderr, "Error adding number to the buffer\n");
@@ -109,10 +139,9 @@ int main() {
             //fputs(buffer, file);
             buffer_index = 0;
             flush_cnt++;
-            //printf("batched at row %d\n", i+1);
         }
-
     }
+
 
     if (buffer_index > 0) {
             fwrite(buffer, 1, buffer_index, file);
