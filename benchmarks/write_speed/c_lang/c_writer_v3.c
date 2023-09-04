@@ -151,6 +151,8 @@ int main() {
 
     free(buffer);
 
+    fclose(file);
+
     end_ts = clock();
 
     elapsed = (double)(end_ts - start_ts) / CLOCKS_PER_SEC;
