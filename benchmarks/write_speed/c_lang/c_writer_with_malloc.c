@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define TOT_ROWS 1000000000
-#define BUFFER_SIZE 4096 * 16 * 16
+#define BUFFER_SIZE 1024 * 1024
 
 int build_fmt_string(char *fmt_string, int num_elements) {
     for (int i=1;i<=num_elements;i++) {
