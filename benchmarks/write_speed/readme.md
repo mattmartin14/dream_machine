@@ -24,7 +24,7 @@ At the end of this project, I'm going to score these factors:
 | Language | Write Speed (Seconds) | Binary Size | Ease of Use |
 | -------- | --------------------  | ----------- | ----------- |
 | C        | 22.5                  |  34kb       | very hard, inflexible at times e.g. snprintf not allowing dynamic arguments as an array pased in|
-| Rust     | 16                    |  470kb      | hard, took a little while to get used to syntax |
+| Rust     | 13                    |  470kb      | hard, took a little while to get used to syntax |
 | Go       | 24.7                  |  1.5mb      | Very easy to learn and use |
 | Python   | 179                   |  732b       | Easiest to use; clearly as an interpreted language, not as fast |
 | C++      | 29                    |  48kb       | Easier than C; still hard at points to work with |
