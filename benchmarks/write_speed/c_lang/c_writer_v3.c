@@ -90,7 +90,7 @@ int main() {
         tail_end = TOT_ROWS;
     }
 
-    printf("total bulk operations: %d\nTotal tail operations: %d\ntail start = %d; tail end = %d\n", bulk_operations, tail_operations, tail_start, tail_end);
+    //printf("total bulk operations: %d\nTotal tail operations: %d\ntail start = %d; tail end = %d\n", bulk_operations, tail_operations, tail_start, tail_end);
 
 
     int tail = TOT_ROWS % step_by;
@@ -102,7 +102,20 @@ int main() {
     int row_index = 0;
     for (int i = 0; i < bulk_operations; i ++) {
         
-        chars_written = write_100(buffer, buffer_index, BUFFER_SIZE, fmt_string_100_step, i+row_index);
+        chars_written = sprintf(buffer + buffer_index, fmt_string_100_step
+            ,row_index+1,row_index+2,row_index+3,row_index+4,row_index+5,row_index+6,row_index+7,row_index+8,row_index+9,row_index+10
+            ,row_index+11,row_index+12,row_index+13,row_index+14,row_index+15,row_index+16,row_index+17,row_index+18,row_index+19,row_index+20
+            ,row_index+21,row_index+22,row_index+23,row_index+24,row_index+25,row_index+26,row_index+27,row_index+28,row_index+29,row_index+30
+            ,row_index+31,row_index+32,row_index+33,row_index+34,row_index+35,row_index+36,row_index+37,row_index+38,row_index+39,row_index+40
+            ,row_index+41,row_index+42,row_index+43,row_index+44,row_index+45,row_index+46,row_index+47,row_index+48,row_index+49,row_index+50
+            ,row_index+51,row_index+52,row_index+53,row_index+54,row_index+55,row_index+56,row_index+57,row_index+58,row_index+59,row_index+60
+            ,row_index+61,row_index+62,row_index+63,row_index+64,row_index+65,row_index+66,row_index+67,row_index+68,row_index+69,row_index+70
+            ,row_index+71,row_index+72,row_index+73,row_index+74,row_index+75,row_index+76,row_index+77,row_index+78,row_index+79,row_index+80
+            ,row_index+81,row_index+82,row_index+83,row_index+84,row_index+85,row_index+86,row_index+87,row_index+88,row_index+89,row_index+90
+            ,row_index+91,row_index+92,row_index+93,row_index+94,row_index+95,row_index+96,row_index+97,row_index+98,row_index+99,row_index+100
+        );
+
+        //chars_written = write_100(buffer, buffer_index, BUFFER_SIZE, fmt_string_100_step, i+row_index);
 
         row_index += step_by;
 

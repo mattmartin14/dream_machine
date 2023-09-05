@@ -66,9 +66,9 @@ int main() {
 
     auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end_ts - start_ts);
 
-    std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl;
+    //std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl;
 
-    std::cout << "Wrote " << num_rows << " integer rows to " << file_name << std::endl;
+    std::cout << "C++ benchmark complete. Wrote " << num_rows << " rows in " << elapsed.count() << " seconds" << std::endl;
 
     return 0;
 }
