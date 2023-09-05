@@ -1,8 +1,5 @@
 #!/bin/bash
 
-### script launches the different 1B lang writers
-# to run this as an example, do ./polyglot_test.sh 100000000 4096
-
 #assign input params
 #num_rows=$1
 #batch_size=$2
