@@ -36,6 +36,7 @@ use std::io::{BufWriter, Write};
 fn main() -> Result<(), Box<dyn Error>> {
     
     let start_ts = Instant::now();
+    let buffer_size = 1024 * 1024 * 10; //10 mb
 
     let home_dir = env::var("HOME")?;
     let folder_path = home_dir.to_string() + "/test_dummy_data/write_benchmark";
@@ -45,7 +46,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let file_path = Path::new(&folder_path).join("rust_generated.csv");
     let file = File::create(&file_path)?;
 
-    let mut writer = BufWriter::with_capacity(1024 * 1024 * 10, file);
+    let mut writer = BufWriter::with_capacity(buffer_size, file);
     //let mut writer = BufWriter::new(file);
 
     let row_cnt = 1_000_000_000;
@@ -55,18 +56,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
 
-
-        //slow using this batch.push_str thing
-        // let mut batch = String::new();
-
-        // for row_num in chunk_start..=chunk_end {
-        //     batch.push_str(&format!("{}\n", row_num));
-        // }
-
-        // writer.write_all(batch.as_bytes())?;
-        // writer.flush()?;
-
-        // //println!("chunk end is {}", chunk_end);
         for row_num in chunk_start..=chunk_end {
             writeln!(writer, "{}", row_num)?;
         }
