@@ -20,6 +20,7 @@ At the end of this project, I'm going to score these factors:
 <h4></h4>
 
 <h4>Results</h4>
+Note: The hardware I ran my tests on is a base Apple Mackbook M2 pro with 16GB of ram. I ran each test 5 times and took the average for the speed.
 
 | Language | Write Speed (Seconds) | Binary Size | Ease of Use |
 | -------- | --------------------  | ----------- | ----------- |
