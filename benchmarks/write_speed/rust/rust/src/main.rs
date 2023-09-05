@@ -16,6 +16,13 @@
     --  Then you add in the main.rs a section up top to import the module using "mod [name of other module without rs extension]"
     -- functions in other files don't need to be uppercase to be recognized
 
+    some perf notes:
+        // takes 42 seconds for the csv writer to write 100M rows
+        // takes only 3 seconds for the bufio writer to write 100m rows
+        // took 37 seconds to write 1B rows -- in debug mode
+        // took 16 seconds in release mode to write 1B rows
+        // the csv writer is slow - dont use it
+
 */
 
 use std::error::Error;
@@ -33,29 +40,33 @@ fn main() -> Result<(), Box<dyn Error>> {
     let home_dir = env::var("HOME")?;
     let folder_path = home_dir.to_string() + "/test_dummy_data/write_benchmark";
 
-    println!("Home dir is: {:?}",folder_path);
+    //println!("Home dir is: {:?}",folder_path);
 
     let file_path = Path::new(&folder_path).join("rust_generated.csv");
     let file = File::create(&file_path)?;
 
-    let mut writer = BufWriter::new(file);
-
-    // takes 42 seconds for the csv writer to write 100M rows
-    // takes only 3 seconds for the bufio writer to write 100m rows
-    // took 37 seconds to write 1B rows -- in debug mode
-    // took 16 seconds in release mode to write 1B rows
-    // the csv writer is slow
+    let mut writer = BufWriter::with_capacity(1024 * 1024 * 10, file);
+    //let mut writer = BufWriter::new(file);
 
     let row_cnt = 1_000_000_000;
     let batch_size = 10_000;
     
     for chunk_start in (1..row_cnt).step_by(batch_size) {
 
-       // println!("chunk start is {}", chunk_start);
-
         let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
 
-        //println!("chunk end is {}", chunk_end);
+
+        //slow using this batch.push_str thing
+        // let mut batch = String::new();
+
+        // for row_num in chunk_start..=chunk_end {
+        //     batch.push_str(&format!("{}\n", row_num));
+        // }
+
+        // writer.write_all(batch.as_bytes())?;
+        // writer.flush()?;
+
+        // //println!("chunk end is {}", chunk_end);
         for row_num in chunk_start..=chunk_end {
             writeln!(writer, "{}", row_num)?;
         }
