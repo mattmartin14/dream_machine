@@ -10,6 +10,7 @@ This repo is designed to test the write speed of several programming languages. 
 3. [Go](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/go_lang/writer.go)
 4. [Python](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/python_lang/py_writer.py)
 5. [C++](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/cpp/main_v2.cpp)
+6. Java
 
 At the end of this project, I'm going to score these factors:
 
@@ -30,6 +31,7 @@ Note: The hardware I ran my tests on is a base Apple Mackbook M2 pro with 16GB o
 | Go       | 24.7                  |  1.5mb      | Very easy to learn and use |
 | Python   | 179                   |  732b       | Easiest to use; clearly as an interpreted language, not as fast |
 | C++      | 29                    |  48kb       | Easier than C; still hard at points to work with |
+| Java     | 21.6                  |  2kb        | Easy; Java has a vast ecosystem of packages |
 
 <hr></hr>
 
