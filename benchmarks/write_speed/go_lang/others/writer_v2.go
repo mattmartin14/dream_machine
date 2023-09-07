@@ -1,4 +1,4 @@
-package main
+package others
 
 import (
 	"bufio"
@@ -8,19 +8,9 @@ import (
 	"time"
 )
 
-/*
-	Author: Matt Martin
-	Date: 2023-08-28
-	Last Mod: 2023-09-06
-		-- updated to write byte slices and time was cut in half. now runs under 13 seconds
-
-*/
-
-func main() {
-
+func Harness_v2() {
 	tot_rows := 1000000000
-	//tot_rows := 10005
-	batch_size := 10000
+	batch_size := 100000
 	init_buffer_size := 10 * 1024 * 1024
 
 	start_ts := time.Now()
