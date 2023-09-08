@@ -1,0 +1,14 @@
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/bin/Debug/net7.0/HelloWorld
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/bin/Debug/net7.0/HelloWorld.deps.json
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/bin/Debug/net7.0/HelloWorld.runtimeconfig.json
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/bin/Debug/net7.0/HelloWorld.dll
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/bin/Debug/net7.0/HelloWorld.pdb
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.GeneratedMSBuildEditorConfig.editorconfig
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.AssemblyInfoInputs.cache
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.AssemblyInfo.cs
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.csproj.CoreCompileInputs.cache
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.dll
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/refint/HelloWorld.dll
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.pdb
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/HelloWorld.genruntimeconfig.cache
+/Users/matthewmartin/dream_machine/csharp/HelloWorld/obj/Debug/net7.0/ref/HelloWorld.dll
