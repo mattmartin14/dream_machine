@@ -11,7 +11,7 @@ import (
 func Test1() {
 
 	tot_rows := 1000000000
-	//tot_rows := 10005
+	//tot_rows = 10005
 	batch_size := 10000
 	init_buffer_size := 10 * 1024 * 1024
 
@@ -33,21 +33,23 @@ func Test1() {
 		end_row := min(start_row+batch_size-1, tot_rows)
 
 		for j := start_row; j <= end_row; j++ {
-			temp := strconv.AppendInt(nil, int64(i), 10)
+			temp := strconv.AppendInt(nil, int64(j), 10)
 			temp = append(temp, ',')
 			temp = append(temp, []byte("Test")...)
+			temp = append(temp, ',')
+			temp = append(temp, []byte("Test2")...)
 			temp = append(temp, '\n')
 
 			buffer = append(buffer, temp...)
-
-			_, err := writer.Write(buffer)
-			if err != nil {
-				fmt.Println("Error writing data buffer to file: ", err)
-				return
-			}
-
-			buffer = buffer[:0] // Clear the buffer
 		}
+
+		_, err := writer.Write(buffer)
+		if err != nil {
+			fmt.Println("Error writing data buffer to file: ", err)
+			return
+		}
+
+		buffer = buffer[:0] // Clear the buffer
 	}
 
 	elapsed_time := time.Since(start_ts).Seconds()
