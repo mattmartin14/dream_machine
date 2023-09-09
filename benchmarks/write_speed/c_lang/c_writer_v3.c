@@ -136,22 +136,24 @@ int main() {
 
     }
 
-    for (int i = tail_start; i<=tail_end; i++){
-        chars_written = snprintf(buffer + buffer_index, BUFFER_SIZE - buffer_index, "%d\n", i);
-        if (chars_written < 0 || chars_written >= BUFFER_SIZE - buffer_index) {
-            printf("row was at %d\n",i);
-            fprintf(stderr, "Error adding number to the buffer\n");
-            return 1;
-        }
+    if (tail_start > 0) {
+        for (int i = tail_start; i<=tail_end; i++){
+            chars_written = snprintf(buffer + buffer_index, BUFFER_SIZE - buffer_index, "%d\n", i);
+            if (chars_written < 0 || chars_written >= BUFFER_SIZE - buffer_index) {
+                printf("row was at %d\n",i);
+                fprintf(stderr, "Error adding number to the buffer\n");
+                return 1;
+            }
 
-        buffer_index += chars_written;
+            buffer_index += chars_written;
 
-        //write out if we are close to the buffer padding so we dont hit overflow errors
-        if (buffer_index >= BUFFER_SIZE - buffer_padding) {
-            fwrite(buffer, 1, buffer_index, file);
-            //fputs(buffer, file);
-            buffer_index = 0;
-            flush_cnt++;
+            //write out if we are close to the buffer padding so we dont hit overflow errors
+            if (buffer_index >= BUFFER_SIZE - buffer_padding) {
+                fwrite(buffer, 1, buffer_index, file);
+                //fputs(buffer, file);
+                buffer_index = 0;
+                flush_cnt++;
+            }
         }
     }
 
