@@ -157,7 +157,7 @@ int main() {
         }
     }
 
-
+    // clear any remaining
     if (buffer_index > 0) {
             fwrite(buffer, 1, buffer_index, file);
             buffer_index = 0;
