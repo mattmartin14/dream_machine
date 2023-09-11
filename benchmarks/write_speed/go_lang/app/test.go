@@ -9,10 +9,7 @@ import (
 )
 
 /*
-	Author: Matt Martin
-	Date: 2023-08-28
-	Last Mod: 2023-09-06
-		-- updated to write byte slices and time was cut in half. now runs under 13 seconds
+	This test is checking to see if we have performance skew when appending multiple items
 
 */
 
@@ -37,6 +34,7 @@ func Test1() {
 	defer writer.Flush()
 
 	var buffer []byte
+	//delim := []byte(",")
 
 	// the nice thing about bufio writer is we dont need to calc batch sizes and flushes. it will flush when buffer gets full
 	for i := 1; i <= tot_rows; i++ {
