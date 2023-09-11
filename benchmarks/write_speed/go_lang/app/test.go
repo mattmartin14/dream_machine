@@ -21,7 +21,7 @@ func Test1() {
 	tot_rows := 1000000000
 	//tot_rows = 10005
 
-	buffer_size := 10 * 1024 * 1024
+	buffer_size := 1 * 1024 * 1024
 
 	start_ts := time.Now()
 

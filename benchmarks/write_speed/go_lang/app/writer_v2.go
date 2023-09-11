@@ -16,14 +16,15 @@ import (
 
 */
 
-// time ./writer && tail -10 ~/test_dummy_data/write_benchmark/go_generated.csv
+// go build -o go_writer
+// time ./go_writer && tail -10 ~/test_dummy_data/write_benchmark/go_generated.csv
 
-func V2() {
+func Writer_V2() {
 
 	tot_rows := 1000000000
 	//tot_rows = 10005
 
-	buffer_size := 10 * 1024 * 1024
+	buffer_size := 1 * 1024 * 1024
 
 	start_ts := time.Now()
 
