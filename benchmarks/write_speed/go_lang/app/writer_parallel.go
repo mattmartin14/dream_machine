@@ -23,6 +23,9 @@ import (
 //var max_rows_per_buffer int = 200000
 
 var buffer_size int = 1 * 1024 * 1024
+var max_workers int = 10
+var row_cnt int = 1000000000
+var total_files int = 15
 
 type written_file struct {
 	file_name    string
@@ -81,6 +84,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int,
 		//write the buffer to the bufio stream writer
 		_, err := writer.Write(buffer)
 		if err != nil {
+			item.err = err
 			fmt.Println("Error writing data buffer to file: ", err)
 			return
 		}
@@ -97,11 +101,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int,
 
 func Parallel_Writer() {
 
-	row_cnt := 1000000000
-	total_files := 15
-
 	//set how many processes we want max in parallel
-	max_workers := 8
 	worker_pool := make(chan struct{}, max_workers)
 
 	var wg sync.WaitGroup
@@ -148,7 +148,7 @@ func Parallel_Writer() {
 		if item.err != nil {
 			fmt.Printf("Error processing batch %d: %v\n", item.batch_nbr, item.err)
 		} else {
-			fmt.Printf("Successfully processed batch %d with %d rows. Batch Processing Time: %.2f seconds\n", item.batch_nbr, item.total_rows, item.elapsed_time)
+			fmt.Printf("Successfully processed batch %d with %s rows. Batch Processing Time: %.2f seconds\n", item.batch_nbr, format_nbr_with_commas(item.total_rows), item.elapsed_time)
 		}
 	}
 
