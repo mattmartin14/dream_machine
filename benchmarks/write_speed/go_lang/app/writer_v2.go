@@ -60,6 +60,6 @@ func Writer_V2() {
 	}
 
 	elapsed_time := time.Since(start_ts).Seconds()
-	msg := fmt.Sprintf("Elapsed Time (v2) using Go Lang to process %s rows: %.2f seconds", format_nbr_with_commas(tot_rows), elapsed_time)
+	msg := fmt.Sprintf("Single Thread Benchmark: Elapsed Time (v2) using Go Lang to process %s rows: %.2f seconds", format_nbr_with_commas(tot_rows), elapsed_time)
 	fmt.Println(msg)
 }
