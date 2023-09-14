@@ -1,6 +1,6 @@
 ### Benchmark testing Write Speeds of Various Programming Languages
 #### Author: Matt Martin
-#### Last Updated: 9/6/2023
+#### Last Updated: 9/14/2023
 
 
 This repo is designed to test the write speed of several programming languages. The criteria for this test harness is it has to write 1 billion integer rows to a csv file and must be single threaded (no parallel processing allowed). Below are the following languages I tested with source code links:
@@ -35,6 +35,9 @@ Note: The hardware I ran my tests on is a base Apple Mackbook M2 pro with 16GB o
 
 <hr></hr>
 
+<h4>Go Lang Performance Increases</h4>
+After cracking Go's secret sauce for fast write speeds (combo of bufio + byte slices), I decided to go a step further and write a parallel procesing version of the benchmark, but only in Go Lang. The parallel processing method was able to crank out the process in under 4 seconds. The code for that module can be found [here](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/go_lang/app/writer_parallel.go).
+
 <h4>Conclusion</h4>
 Overall, this project had some interesting gotchas for me. I am shocked that Rust is faster than C, given Rust is written in C. Obviously, I'm not the most seasoned expert in C and I'm pretty sure sommeone could optimize the C code further. In the C project, I experimented with multiple ways to write the data via fputs, fwrite. I found that when I load up the snprintf function to do blocks of 100, it went orders of magnitude faster than doing a single row with snprintf. 
 <h5></h5>
@@ -46,4 +49,6 @@ The original test harness I had for go ran in about 24 seconds. I updated the co
 I enjoyed programming in Go the most. This language is very modern and has a well built out ecosystem of libraries and developers. Given I do a lot of data engineering work, I see Go as my daily driver for professional ETL pipelines. I like how go routines work and how easy they are to program to enable flexible parallel processing.
 <h5></h5>
 Python, which I've used for over 7 years now, was very easy to write the script in. I view python as a general "GSD" language of sorts. You can prototype things very fast in python, the ecosystem is huge and well supported. And pretty much every type of data engineering service you can think of has a python API today. If I need to get something written quick, I'll grativate to python. However, if speed is a concern, I'll then flip to go if python is just not quick enough.
+#### Update 9/14/2023
+I'm glad I took the benchmark further in Go lang to do parallel processing. Writing 1B rows in under 4 seconds I'd say is very impressive and can be considered for production capable workloads.
 
