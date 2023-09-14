@@ -22,10 +22,12 @@ import (
 // 100k seems reasonable when going 15 files wide for 1B rows
 //var max_rows_per_buffer int = 200000
 
-var buffer_size int = 1 * 1024 * 1024
-var max_workers int = 10
+var buffer_size int = 10 * 1024 * 1024
+var max_workers int = 20
 var row_cnt int = 1000000000
-var total_files int = 15
+var total_files int = 20
+
+// with 20 workers and 20 files, it did it in 2.96 seconds
 
 type written_file struct {
 	file_name    string
