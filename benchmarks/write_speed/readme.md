@@ -49,6 +49,7 @@ The original test harness I had for go ran in about 24 seconds. I updated the co
 I enjoyed programming in Go the most. This language is very modern and has a well built out ecosystem of libraries and developers. Given I do a lot of data engineering work, I see Go as my daily driver for professional ETL pipelines. I like how go routines work and how easy they are to program to enable flexible parallel processing.
 <h5></h5>
 Python, which I've used for over 7 years now, was very easy to write the script in. I view python as a general "GSD" language of sorts. You can prototype things very fast in python, the ecosystem is huge and well supported. And pretty much every type of data engineering service you can think of has a python API today. If I need to get something written quick, I'll grativate to python. However, if speed is a concern, I'll then flip to go if python is just not quick enough.
+<h5></h5>
 #### Update 9/14/2023
 I'm glad I took the benchmark further in Go lang to do parallel processing. Writing 1B rows in under 4 seconds I'd say is very impressive and can be considered for production capable workloads.
 
