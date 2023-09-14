@@ -4,5 +4,7 @@ import "go_lang/app"
 
 func main() {
 	app.Writer_V2()
-	//app.Test1()
+
+	app.Parallel_Writer()
+
 }
