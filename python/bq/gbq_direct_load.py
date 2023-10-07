@@ -2,7 +2,9 @@ import pandas as pd
 from google.cloud import bigquery
 import os
 
-client = bigquery.Client()
+project_id = os.getenv("GBQ_PROJECT_ID")
+
+client = bigquery.Client(project=project_id)
 
 # Define your BigQuery dataset and table names
 dataset_id = 'ds1_test'
@@ -29,7 +31,7 @@ job_config = bigquery.LoadJobConfig(
     
 )
 
-table_ref = client.dataset(dataset_id).table(table_name)
+table_ref = client.dataset(dataset_id=dataset_id, project=project_id).table(table_name)
 
 
 with open(os.path.expanduser(csv_file_path), 'rb') as f:
@@ -39,5 +41,5 @@ with open(os.path.expanduser(csv_file_path), 'rb') as f:
 #validate
 sql = 'SELECT * FROM `ds1_test.customers` LIMIT 10'
 
-df = pd.read_gbq(sql)
+df = pd.read_gbq(query=sql, project_id=project_id)
 print(df.head(5).to_string())
