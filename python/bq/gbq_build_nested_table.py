@@ -9,13 +9,25 @@
 import pandas as pd
 from google.cloud import bigquery
 
+def create_bq_table_from_df(df: pd.DataFrame, dataset_id: str, table_name: str) -> None:
+  
+  client = bigquery.Client()
+  table_ref = client.dataset(dataset_id).table(table_name)
 
-def create_load_po_detail():
+  ## set the config to create the table on the fly; if already exists, overwrite the data so we dont make dups
+  job_config = bigquery.LoadJobConfig()
+  job_config.create_disposition = bigquery.CreateDisposition.CREATE_IF_NEEDED
+  job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+
+  client.load_table_from_dataframe(df, table_ref, job_config=job_config).result()
+
+
+def load_po_detail() -> None:
     
   dataset_id = 'nested_example'
   table_name = 'po_detail'
 
-  #make some data
+  #make some data and push into data frame
   po_nbr = ["A1", "A1", "A1", "B1", "B1", "B1", "C2", "C2", "C2", "C2"]
   po_line_nbr = [1, 2, 3, 1, 2, 3, 1, 2, 3, 4]
   item_nbr = [1234, 3432, 3523, 25365, 63564, 23456, 48586, 32438, 975563, 34234]
@@ -27,17 +39,9 @@ def create_load_po_detail():
 
   df = pd.DataFrame(data)
 
-  client = bigquery.Client()
-  table_ref = client.dataset(dataset_id).table(table_name)
+  create_bq_table_from_df(df, "nested_example", "po_detail")
 
-  ## set the config to create the table on the fly; if already exists, overwrite the data so we dont make dups
-  job_config = bigquery.LoadJobConfig()
-  job_config.create_disposition = bigquery.CreateDisposition.CREATE_IF_NEEDED
-  job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
-
-  client.load_table_from_dataframe(df, table_ref, job_config=job_config).result()
-
-def create_load_po_header():
+def load_po_header() -> None:
     
   dataset_id = 'nested_example'
   table_name = 'po_header'
@@ -54,14 +58,7 @@ def create_load_po_header():
   #fix order date to date
   df['order_dt'] = pd.to_datetime(df['order_dt'])
   
-  client = bigquery.Client()
-  table_ref = client.dataset(dataset_id).table(table_name)
-
-  job_config = bigquery.LoadJobConfig()
-  job_config.create_disposition = bigquery.CreateDisposition.CREATE_IF_NEEDED
-  job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
-
-  client.load_table_from_dataframe(df, table_ref, job_config=job_config).result()
+  create_bq_table_from_df(df, "nested_example", "po_header")
 
 
 def build_nested_table():
@@ -81,11 +78,10 @@ def build_nested_table():
   client.query(sql).result()
   
 
-
 def run_all():
-  create_load_po_header()
+  load_po_header()
   print('po header table created')
-  create_load_po_detail()
+  load_po_detail()
   print('po detail table created')
   build_nested_table()
   print('nested table created')
