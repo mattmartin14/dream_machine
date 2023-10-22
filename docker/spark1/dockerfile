@@ -67,7 +67,6 @@ RUN if [ -z "${scala_version}" ]; then \
 
 # Configure IPython system-wide
 COPY ipython_kernel_config.py "/etc/ipython/"
-COPY template.ipynb "/work/"
 RUN fix-permissions "/etc/ipython/"
 
 USER ${NB_UID}
@@ -86,6 +85,9 @@ RUN mamba install --yes \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
+
+#add example delta python file
+COPY delta_lake_template.ipynb "/home/jovyan/"
 
 WORKDIR "${HOME}"
 EXPOSE 4040
