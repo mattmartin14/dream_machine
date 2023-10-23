@@ -15,5 +15,9 @@ The docker file pulls in the correct versions of spark and other dependencies to
 docker run --name test_dl_instance -p 10000:8888 dl1
 ```
 4. Open a web browser and goto "localhost:10000"
-5. You will be prompted for a password; when you launched the container, towards the bottom you will see a section where it tells you the token for the notebook. That is your password.
+5. You will be prompted for a password; when you launched the container, towards the bottom you will see a section where it tells you the token for the notebook. That is your password. Here's a screenshot showing it
+![token](./photos/token.jpg)
+
 6. Once you have put in the token, jupyter lab should launch and you should see a template notebook with some sample delta lake spark code pre-loaded that you can experiment with.
+
+![jup](./photos/jupyter.jpg)
