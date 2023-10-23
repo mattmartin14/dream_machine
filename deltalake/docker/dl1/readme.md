@@ -25,3 +25,8 @@ docker run --name test_dl_instance -p 10000:8888 dl1
 6. Once you have put in the token, jupyter lab should launch and you should see a template notebook with some sample delta lake spark code pre-loaded that you can experiment with.
 
 ![jup](./photos/jupyter.jpg)
+
+
+<h4>Matt's Side Notes</h4>
+1. My IDE of choice is usually VS code. So, if you don't like having to go into the web browswer and use the jupyter lab UI, you can in VS code plug directly into the container and edit there. To do that, in VS code, download the docker extension. Once its up and running, you will be able to navigate to your container and the sample notebook that was pre-loaded. From there, VS code will ask you for the host URL and you simply put in "https://localhost:10000/lab". It will then prompt you for the password, which again is the token that was called out in step 5 above. Once you have put in that info, you will then be hooked directly into the containers spark runtime.
+2. Friendly reminder that once you destroy a container, all the work you did is gone. To mitigate this, you might want to look into Docker shared volumes, which allows the container to share files outside its walls and onto your local system.
