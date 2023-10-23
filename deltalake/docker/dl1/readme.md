@@ -4,8 +4,9 @@
 <h5>Date: 2023-10-20</h5>
 
 <h4>Overview</h4>
-Delta Lake is a great platform for running ANSI SQL statements against open source files. Instead of having to load your data into a database, you can just store the files in an object store. This makes portability easy between cloud platforms. To get Delta Lake to work though, you have to be very specific on the versions of spark/hadoop/java/scala that you have installed on your machine. The easiest way to make this process repeatable is by leveraging a docker file, like the one [here](./dockerfile).
-<h5></h5>
+Delta Lake is a great platform for running ANSI SQL statements against open source files. Instead of having to load your data into a database, you can just store the files in an object store. This makes portability easy between cloud platforms. To get Delta Lake to work though, you have to be very specific on the versions of spark/hadoop/java/scala that you have installed on your machine; otherwise, you will get very obscure and bizarre runtime errors. The easiest way to make this process repeatable is by leveraging a docker file, like the one [here](./dockerfile).
+<hr></hr>
+<h5>Install Steps</h5>
 The docker file pulls in the correct versions of spark and other dependencies to where we can in one container launch a python notebook that has all the requirements we need. To do this, follow these steps:
 <h5><h5>
 1. Fork this repo to your local workstation (you will need more than just the docker file as the docker file copies and uses a few other files in this repo to finalize)
