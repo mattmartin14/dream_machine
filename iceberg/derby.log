@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Wed Nov 01 06:04:31 EDT 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-018b-8a57-7e05-000001d88498 
+on database directory /Users/matthewmartin/dream_machine/iceberg/metastore_db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@42110406 
+Loaded from file:/Users/matthewmartin/dream_machine/iceberg/.venv/lib/python3.11/site-packages/pyspark/jars/derby-10.14.2.0.jar
+java.vendor=Eclipse Adoptium
+java.runtime.version=17.0.8.1+1
+user.dir=/Users/matthewmartin/dream_machine/iceberg
+os.name=Mac OS X
+os.arch=aarch64
+os.version=14.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

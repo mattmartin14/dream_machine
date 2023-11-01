@@ -1,0 +1,81 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "4aa0eca0-5745-4acb-bfa4-f735d9c4cf22",
+  "location" : "./warehouse/persons2",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1698833149527,
+  "last-column-id" : 3,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "first_name",
+      "required" : false,
+      "type" : "string"
+    }, {
+      "id" : 2,
+      "name" : "last_name",
+      "required" : false,
+      "type" : "string"
+    }, {
+      "id" : 3,
+      "name" : "age",
+      "required" : false,
+      "type" : "int"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "matthewmartin",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 9127378651136821677,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 9127378651136821677,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 9127378651136821677,
+    "timestamp-ms" : 1698833149527,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1698833063127",
+      "added-data-files" : "1",
+      "added-records" : "1",
+      "added-files-size" : "841",
+      "changed-partition-count" : "1",
+      "total-records" : "1",
+      "total-files-size" : "841",
+      "total-data-files" : "1",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0"
+    },
+    "manifest-list" : "warehouse/persons2/metadata/snap-9127378651136821677-1-218be716-55b8-4c29-9ce1-a5462c479c42.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1698833149527,
+    "snapshot-id" : 9127378651136821677
+  } ],
+  "metadata-log" : [ {
+    "timestamp-ms" : 1698833109267,
+    "metadata-file" : "warehouse/persons2/metadata/v1.metadata.json"
+  } ]
+}
