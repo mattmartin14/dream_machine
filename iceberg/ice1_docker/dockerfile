@@ -1,8 +1,8 @@
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
+# # TO DO
 
-
-## Modified by Matt Martin on 10/22/2023 to add in iceberg
+## got command working > spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.13:1.4.1
+## now the juypter notebook is still erroring; need to figure out what is missing;
+## says a scala class is missing so need to research that one
 
 ARG REGISTRY=quay.io
 ARG OWNER=jupyter
@@ -20,12 +20,17 @@ USER root
 # Spark dependencies
 # Default values can be overridden at build time
 # (ARGS are in lower case to distinguish them from ENV)
-ARG spark_version="3.4.1"
+#ARG spark_version="3.4.1"
+ARG spark_version="3.5.0"
 ARG hadoop_version="3"
 ARG scala_version
 
 #no scala specified
+#3.4.1
 ARG spark_checksum="5a21295b4c3d1d3f8fc85375c711c7c23e3eeb3ec9ea91778f149d8d321e3905e2f44cf19c69a28df693cffd536f7316706c78932e7e148d224424150f18b2c5"
+
+#3.5.0
+ARG spark_checksum="8883c67e0a138069e597f3e7d4edbbd5c3a565d50b28644aad02856a1ec1da7cb92b8f80454ca427118f69459ea326eaa073cf7b1a860c3b796f4b07c2101319"
 
 ARG openjdk_version="17"
 
@@ -41,31 +46,36 @@ RUN apt-get update --yes && \
 # Spark installation
 WORKDIR /tmp
 
-# You need to use https://archive.apache.org/dist/ website if you want to download old Spark versions
-# But it seems to be slower, that's why we use recommended site for download
-RUN if [ -z "${scala_version}" ]; then \
-    curl --progress-bar --location --output "spark.tgz" \
-        "https://dlcdn.apache.org/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"; \
-  else \
-    curl --progress-bar --location --output "spark.tgz" \
-        "https://dlcdn.apache.org/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala${scala_version}.tgz"; \
-  fi && \
-  echo "${spark_checksum} *spark.tgz" | sha512sum -c - && \
-  tar xzf "spark.tgz" -C /usr/local --owner root --group root --no-same-owner && \
-  rm "spark.tgz"
+RUN curl --progress-bar --location --output "spark.tgz" \
+        "https://dlcdn.apache.org/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" \
+    && echo "${spark_checksum} *spark.tgz" | sha512sum -c - \
+    && tar xzf "spark.tgz" -C /usr/local --owner root --group root --no-same-owner \
+    && rm "spark.tgz"
 
 # Configure Spark
 ENV SPARK_HOME=/usr/local/spark
+
+
+
+
 ENV SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
     PATH="${PATH}:${SPARK_HOME}/bin"
 
-RUN if [ -z "${scala_version}" ]; then \
-    ln -s "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}" "${SPARK_HOME}"; \
-  else \
-    ln -s "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala${scala_version}" "${SPARK_HOME}"; \
-  fi && \
-  # Add a link in the before_notebook hook in order to source automatically PYTHONPATH && \
+RUN ln -s "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}" "${SPARK_HOME}"; \
   ln -s "${SPARK_HOME}/sbin/spark-config.sh" /usr/local/bin/before-notebook.d/spark-config.sh
+
+## add iceberg jar
+# SPARK_HOME=/usr/local/spark
+ARG ICE_JAR=iceberg-spark-runtime-3.5_2.13-1.4.1.jar
+
+## getting an error when trying to run spark shell saying access denied on the file in terminal
+# it says: error accessing /usr/local/spark/jars/iceberg-spark-runtime-3.5_2.13-1.4.1.jar
+#spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.13:1.4.1
+## 11/2/23 - this error is now resolved by doing the chmod u+x on the iceberg jar
+### Use curl to download the JAR file and move it to the subfolder
+RUN curl -Lo ${SPARK_HOME}/jars/${ICE_JAR} "https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.5_2.13/1.4.1/${ICE_JAR}" \
+  && chmod u+x ${SPARK_HOME}/jars/${ICE_JAR}
+
 
 
 # Configure IPython system-wide
@@ -76,14 +86,15 @@ USER ${NB_UID}
 
 RUN mamba install --yes \
     'pandas=2.0.3' \
-    'pyiceberg' \
+    'pyspark=3.5' \
+    'pyiceberg=0.5.0' \
     'pyarrow' && \
     mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 
 #add example delta python file
-COPY delta_lake_template.ipynb "${HOME}"
+COPY iceberg_template.ipynb "${HOME}"
 
 WORKDIR "${HOME}"
 EXPOSE 4040
