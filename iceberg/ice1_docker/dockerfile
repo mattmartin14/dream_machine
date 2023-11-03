@@ -3,6 +3,7 @@
 ## got command working > spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.13:1.4.1
 ## now the juypter notebook is still erroring; need to figure out what is missing;
 ## says a scala class is missing so need to research that one
+## as of 11/2/23 - cannot figure out why i can run iceberg in the spark shell but not in the python notebook
 
 ARG REGISTRY=quay.io
 ARG OWNER=jupyter
@@ -27,12 +28,14 @@ ARG scala_version
 
 #no scala specified
 #3.4.1
-ARG spark_checksum="5a21295b4c3d1d3f8fc85375c711c7c23e3eeb3ec9ea91778f149d8d321e3905e2f44cf19c69a28df693cffd536f7316706c78932e7e148d224424150f18b2c5"
+#ARG spark_checksum="5a21295b4c3d1d3f8fc85375c711c7c23e3eeb3ec9ea91778f149d8d321e3905e2f44cf19c69a28df693cffd536f7316706c78932e7e148d224424150f18b2c5"
 
 #3.5.0
 ARG spark_checksum="8883c67e0a138069e597f3e7d4edbbd5c3a565d50b28644aad02856a1ec1da7cb92b8f80454ca427118f69459ea326eaa073cf7b1a860c3b796f4b07c2101319"
 
 ARG openjdk_version="17"
+#ARG openjdk_version="11"
+
 
 ENV APACHE_SPARK_VERSION="${spark_version}" \
     HADOOP_VERSION="${hadoop_version}"
@@ -55,9 +58,6 @@ RUN curl --progress-bar --location --output "spark.tgz" \
 # Configure Spark
 ENV SPARK_HOME=/usr/local/spark
 
-
-
-
 ENV SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
     PATH="${PATH}:${SPARK_HOME}/bin"
 
@@ -65,17 +65,11 @@ RUN ln -s "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}" "${SPARK_H
   ln -s "${SPARK_HOME}/sbin/spark-config.sh" /usr/local/bin/before-notebook.d/spark-config.sh
 
 ## add iceberg jar
-# SPARK_HOME=/usr/local/spark
 ARG ICE_JAR=iceberg-spark-runtime-3.5_2.13-1.4.1.jar
 
-## getting an error when trying to run spark shell saying access denied on the file in terminal
-# it says: error accessing /usr/local/spark/jars/iceberg-spark-runtime-3.5_2.13-1.4.1.jar
-#spark-shell --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.13:1.4.1
-## 11/2/23 - this error is now resolved by doing the chmod u+x on the iceberg jar
-### Use curl to download the JAR file and move it to the subfolder
-RUN curl -Lo ${SPARK_HOME}/jars/${ICE_JAR} "https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.5_2.13/1.4.1/${ICE_JAR}" \
+RUN curl -Lo ${SPARK_HOME}/jars/${ICE_JAR} \
+    "https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.5_2.13/1.4.1/${ICE_JAR}" \
   && chmod u+x ${SPARK_HOME}/jars/${ICE_JAR}
-
 
 
 # Configure IPython system-wide
@@ -84,14 +78,30 @@ RUN fix-permissions "/etc/ipython/"
 
 USER ${NB_UID}
 
-RUN mamba install --yes \
-    'pandas=2.0.3' \
-    'pyspark=3.5' \
-    'pyiceberg=0.5.0' \
-    'pyarrow' && \
-    mamba clean --all -f -y && \
+RUN pip install \
+    pyspark==3.5 \
+    pyiceberg[pyarrow,duckdb,pandas]==0.5.0
+
+RUN mamba clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
+
+
+RUN curl -Lo "/opt/conda/lib/python3.11/site-packages/pyspark/jars/${ICE_JAR}" \
+    "https://search.maven.org/remotecontent?filepath=org/apache/iceberg/iceberg-spark-runtime-3.5_2.13/1.4.1/${ICE_JAR}" \
+  && chmod u+x "/opt/conda/lib/python3.11/site-packages/pyspark/jars/${ICE_JAR}"
+
+## add pyiceberg jar to pyspark jars folder
+#COPY ${SPARK_HOME}/jars/${ICE_JAR} "/opt/conda/lib/python3.11/site-packages/pyspark/jars/"
+
+# RUN mamba install --yes \
+#     'pandas=2.0.3' \
+#     'pyspark=3.5' \
+#     'pyiceberg=0.5.0' \
+#     'pyarrow' && \
+#     mamba clean --all -f -y && \
+#     fix-permissions "${CONDA_DIR}" && \
+#     fix-permissions "/home/${NB_USER}"
 
 #add example delta python file
 COPY iceberg_template.ipynb "${HOME}"
