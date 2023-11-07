@@ -1,0 +1,4 @@
+before having the docker file pull the iceberg rt and extensions, had these in the spark session creation:
+
+    .config('spark.jars.packages', 'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2') \
+    .config('spark.jars.packages', 'org.apache.iceberg:iceberg-spark-extensions-3.5_2.12:1.4.2') \
