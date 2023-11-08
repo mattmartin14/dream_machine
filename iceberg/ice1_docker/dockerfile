@@ -33,9 +33,9 @@ RUN fix-permissions "/etc/ipython/"
 
 USER ${NB_UID}
 
-RUN pip install \
-    pyspark==3.5 \
-    pyiceberg==0.5.0
+#pyiceberg==0.5.0
+RUN pip install pyspark==3.5
+    
 
 ## get the pyspark iceberg runtime and sql extensions jars
 
