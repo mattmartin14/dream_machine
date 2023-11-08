@@ -1,4 +1,4 @@
-### Using Docker with Delta Lake
+### Using Docker with Iceberg
 
 <h5>Author: Matt Martin</h5>
 <h5>Date: 2023-11-06</h5>
