@@ -1,0 +1,17 @@
+before adding the spark config default file, had to do this to create the spark session which would call ivy to pull jars and register
+
+####
+import pyspark
+from pyspark.sql import SparkSession
+import os
+
+spark = SparkSession.builder \
+    .master("local") \
+    .config("spark.sql.extensions","org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
+    .config("spark.sql.catalog.spark_catalog","org.apache.iceberg.spark.SparkSessionCatalog") \
+    .config("spark.sql.catalog.spark_catalog.type", "hive") \
+    .config("spark.sql.catalog.local", "org.apache.iceberg.spark.SparkCatalog") \
+    .config("spark.sql.catalog.local.type", "hadoop") \
+    .config("spark.sql.catalog.local.warehouse", "./warehouse") \
+    .config("spark.sql.defaultCatalog", "local") \
+    .getOrCreate()
