@@ -21,7 +21,7 @@ docker-compose up
 
 This command will build the image and launch a docker container.
 
-3. When you start the container, you will see several outputs on the terminal screen. One is a URL to the jupyter server which is about halfway down tas seen in the screenshot below. Grab that URL and paste it into a web broswer and launch it.
+3. When you start the container, you will see several outputs on the terminal screen. One is a URL to the jupyter server which is about halfway down as seen in the screenshot below. Grab that URL and paste it into a web broswer and launch it.
 
 ![bash](./photos/bash.jpg)
 
