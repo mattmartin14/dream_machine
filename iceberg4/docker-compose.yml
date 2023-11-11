@@ -1,0 +1,8 @@
+version: '1'
+services:
+  iceberg:
+    build: .
+    container_name: iceyhotc1
+    ports:
+      - "8888:8888"
+

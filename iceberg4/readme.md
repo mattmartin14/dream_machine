@@ -10,14 +10,15 @@ Iceberg is a great platform for running ANSI SQL statements against open source 
 <h5>Install Steps</h5>
 The docker file pulls in the correct versions of spark and other dependencies to where we can in one container launch a python notebook that has all the requirements we need. To do this, follow these steps:
 <h5><h5>
-1. Fork this repo to your local workstation (you will need more than just the docker file as the docker file copies and uses a few other files in this repo to finalize)
-2. Build the image on the docker file using docker desktop or the vs code docker plugin
-3. Start the container using this bash command below that references the image:
 
-- Note: This bash command assumes your docker file is in a folder called "iceberg4". If you put it in a different folder, you will need to adjust the command below accordingly
+1. Fork this repo to your local workstation (you will need more than just the docker file as the docker file copies and uses a few other files in this repo to finalize)
+
+2. Build the image on the docker file using docker desktop or the vs code docker plugin
+
+3. Start the container using this bash command below:
 
 ```bash
-docker run -p 8888:8888 --name ice1 iceberg4
+docker-compose up
 ```
 
 4. When you start the container, you will see several outputs on the terminal screen. One is a URL to the jupyter server which is about halfway down tas seen in the screenshot below. Grab that URL and paste it into a web broswer and launch it.
