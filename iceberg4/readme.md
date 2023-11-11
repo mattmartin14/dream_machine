@@ -14,7 +14,7 @@ The docker file pulls in the correct versions of spark and other dependencies to
 2. Build the image on the docker file using docker desktop or the vs code docker plugin
 3. Start the container using this bash command below that references the image:
 
-- Note: This bash command assumes your docker file is in a folder called "ice1docker". If you put it in a different folder, you will need to adjust the command below accordingly
+- Note: This bash command assumes your docker file is in a folder called "iceberg4". If you put it in a different folder, you will need to adjust the command below accordingly
 
 ```bash
 docker run -p 8888:8888 --name ice1 iceberg4
