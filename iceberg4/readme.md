@@ -26,7 +26,7 @@ docker run -p 8888:8888 --name ice1 iceberg4
 
 6. You should now see the Juypter lab server in the web browser. There is a template notebook that contains sample Iceberg spark code to get you started called "iceberg_template.ipynb". Open that up and you should see the following:
 
-![jup](./photos/jupyter.jpg)
+![jup](./photos/jupyter2.jpg)
 
 
 <h4>Matt's Side Notes</h4>
