@@ -23,7 +23,7 @@ This command will build the image and launch a docker container.
 
 3. When you start the container, you will see several outputs on the terminal screen. One is a URL to the jupyter server which is about halfway down as seen in the screenshot below. Grab that URL and paste it into a web broswer and launch it.
 
-![bash](./photos/bash.jpg)
+![bash](./photos/url.jpg)
 
 4. You should now see the Juypter lab server in the web browser. There is a template notebook that contains sample Iceberg spark code to get you started called "iceberg_template.ipynb". Open that up and you should see the following:
 
