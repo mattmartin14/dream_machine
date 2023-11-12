@@ -15,18 +15,19 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 USER root
 
+## add install scripts to docker folder
 RUN mkdir -p /install_scripts 
+COPY ./install_scripts /install_scripts
+RUN chmod +x /install_scripts/*
 
 ## Install Open JDK 17
-COPY install_open_jdk_17.sh /install_scripts
-RUN chmod +x /install_scripts/install_open_jdk_17.sh && /install_scripts/install_open_jdk_17.sh
+RUN /install_scripts/install_open_jdk_17.sh
 
 ## install Spark
 ENV APACHE_SPARK_VERSION=3.5.0
 ENV HADOOP_VERSION=3
 
-COPY install_spark.sh /install_scripts
-RUN chmod +x /install_scripts/install_spark.sh && /install_scripts/install_spark.sh
+RUN /install_scripts/install_spark.sh
 
 # Configure Spark
 ENV SPARK_HOME=/usr/local/spark
@@ -38,8 +39,7 @@ RUN ln -s "${SPARK_HOME}/sbin/spark-config.sh" /usr/local/bin/before-notebook.d/
 # add Iceberg Runtime
 ENV ICEBERG_MAJOR_VERSION=3.5
 ENV ICEBERG_MINOR_VERSION=1.4.2
-COPY install_iceberg_rt.sh /install_scripts
-RUN chmod +x /install_scripts/install_iceberg_rt.sh && /install_scripts/install_iceberg_rt.sh
+RUN /install_scripts/install_iceberg_rt.sh
 
 #add the spark defaults config file
 COPY spark-defaults.conf /usr/local/spark/conf
