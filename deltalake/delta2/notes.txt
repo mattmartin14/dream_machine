@@ -1,0 +1,11 @@
+before adding the spark config default file, had to do this to create the spark session which would call ivy to pull jars and register
+
+####
+import pyspark
+from pyspark.sql import SparkSession
+
+builder = pyspark.sql.SparkSession.builder.appName("delta") \
+.config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension") \
+.config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+
+spark = configure_spark_with_delta_pip(builder).getOrCreate()
