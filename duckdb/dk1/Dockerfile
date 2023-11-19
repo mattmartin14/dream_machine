@@ -2,6 +2,7 @@
 #slim is 286mb, bullseye is 1GB
 #slim did not have the ability to install ipykernel
 #FROM python:3.11-slim 
+#might want to try bullsye-slim to see if it works and saves on space
 FROM python:3.11-bullseye 
 WORKDIR /usr/src/app
 RUN pip install --upgrade pip
