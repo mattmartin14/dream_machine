@@ -1,4 +1,4 @@
-steps to interact
+steps to interact with the container
 1) build the image
 2) run docker-compose up
 3) in vs code under the docker tab, click and attach to shell
