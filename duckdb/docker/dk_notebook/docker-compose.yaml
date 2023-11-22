@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  test:
+    build: .
+    #image: dk1:latest
+    volumes:
+      - ./app:/usr/src/app
+    network_mode: host
+    stdin_open: true
+    tty: true
+    container_name: duckdb_notebook

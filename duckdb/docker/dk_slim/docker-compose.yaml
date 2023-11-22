@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  slim_duck:
+    build: .
+    volumes:
+      - ./app:/usr/src/app
+    network_mode: host
+    stdin_open: true
+    tty: true
+    container_name: slim_duck
