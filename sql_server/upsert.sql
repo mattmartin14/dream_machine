@@ -129,7 +129,9 @@ BEGIN
 		end
 
 	-- -----------------------------------------------------------------------------------------------------------------------------
-	-- End Param validation     declare 
+	-- End Param validation     
+	
+	declare 
 		
 		 @join_txt nvarchar(max)
 		,@matched_txt nvarchar(max)
