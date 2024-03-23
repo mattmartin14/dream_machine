@@ -303,7 +303,7 @@ BEGIN
 				set @dups_sql = 'set nocount on; select top 1000 * from ['+@gtt+']';
 
 				set @msg = 
-					 'Note: During proc usp_run_upsert, duplicate records were detected, and the proc failed.<br>'
+					 'Note: During proc sp_upsert, duplicate records were detected, and the proc failed.<br>'
 					+'Attached is a list of duplicate records found during the upsert attempt.<br>'
 					+'Notes on usp_upsert proc:<br><br>'
 					+'<ul>'
@@ -316,7 +316,7 @@ BEGIN
 				-- SEND EMAIL
 				exec msdb.dbo.sp_send_dbmail
 					 @recipients = 'example@yourBiz.com'
-					,@subject = 'Duplicates found during sp_run_upsert'
+					,@subject = 'Duplicates found during sp_upsert'
 					,@body = @msg
 					,@query = @dups_sql
 					,@query_attachment_filename = 'dups.csv'
