@@ -1,5 +1,7 @@
 package main
 
+// docs here: https://pkg.go.dev/github.com/bxcodec/faker/v3
+
 import (
 	"fmt"
 
