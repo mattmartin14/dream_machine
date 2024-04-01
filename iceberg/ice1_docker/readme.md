@@ -3,6 +3,9 @@
 <h5>Author: Matt Martin</h5>
 <h5>Date: 2023-11-06</h5>
 
+<h4>Update 2023-12-08</h4>
+A newer version of this setup can be found here > https://github.com/mattmartin14/dream_machine/tree/main/iceberg4. This newer version abstracts out the spark config stuff and leverages docker compose to make the startup of the notebook and presentation a lot cleaner.
+
 <h4>Overview</h4>
 Iceberg is a great platform for running ANSI SQL statements against open source files. Instead of having to load your data into a database, you can just store the files in an object store. This makes portability easy between cloud platforms. To get Iceberg to work though, you have to be very specific on the versions of spark and java that you have installed on your machine; otherwise, you will get very obscure and bizarre runtime errors. The easiest way to make this process repeatable is by leveraging a docker file, like the one in this repo.
 <hr></hr>
