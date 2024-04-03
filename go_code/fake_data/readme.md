@@ -24,6 +24,9 @@ I really enjoy using the cobra CLI as it standardizes the help menus accross all
 <hr></hr>
 <h4>Other Thoughts</h4>
 
-Down the road, I could expand this handle other file formats such as parquet, but I have not gotten to that just yet.
+Down the road, I was thinking of expanding the CLI to do the following:
+
+- Add "append" as an action in addition to the "create" verb
+- Add "parquet" as an additional noun to support create parquet files
 
 Enjoy!
