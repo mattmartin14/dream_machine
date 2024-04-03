@@ -24,6 +24,7 @@ func CreateCmd() *cobra.Command {
 	}
 
 	create.AddCommand(gen_data_json)
+	create.AddCommand(gen_data_csv)
 
 	return create
 }
