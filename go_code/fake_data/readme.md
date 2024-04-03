@@ -9,11 +9,11 @@ The cobra CLI is a great interface for organizing go lang CLI's. This program le
 
 - CLI_Name > Verb > Noun > Adjective
 
-to generate a fake dataset. Currently, this program is built to handle creating fake datasets in 2 file formats (JSON and CSV). You can pass in the number of rows you want to generate and the file name. Below are 2 examples that you can run on the CLI to generate data files:
+to generate a fake dataset. Currently, this program is built to handle creating fake datasets in 2 file formats (JSON and CSV). You can pass in the number of rows you want to generate, the file name, and the output directory. The output directory can recognize a hard path e.g. /someUser/someFolder, or the ~ for the shortcut to the users home directory. Below are 2 examples that you can run on the CLI to generate data files:
 
 ```bash
-fd create json --rows 10000 --filename somedata.json
-fd create csv --rows 5000 --filename data.csv
+fd create json --rows 10000 --filename somedata.json --outputdir ~/test_data
+fd create csv --rows 5000 --filename data.csv --outputdir ~
 ```
 
 <hr></hr>

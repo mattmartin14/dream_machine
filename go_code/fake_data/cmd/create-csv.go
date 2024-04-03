@@ -1,38 +1,51 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
 var Crows int
-var CfileName string
+var CfileName, CoutPutDir string
 
-var gen_data_csv = &cobra.Command{
+func init() {
+	createCmd.AddCommand(genCsvDataCmd)
+	genCsvDataCmd.Flags().IntVarP(&Crows, "rows", "r", 0, "Number of rows to generate")
+	genCsvDataCmd.Flags().StringVarP(&CfileName, "filename", "f", "", "Name of the file")
+	genCsvDataCmd.Flags().StringVarP(&CoutPutDir, "outputdir", "o", "", "Directory to Output the file")
+}
+
+var genCsvDataCmd = &cobra.Command{
 	Use:   "csv",
 	Short: "creates a fake dataset formatted in csv",
 	Run:   GenCsvData,
 }
 
 func GenCsvData(cmd *cobra.Command, args []string) {
-	create_csv_file(Crows, CfileName)
+
+	if err := create_csv_file(Crows, CfileName, CoutPutDir); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+
 }
 
-func init() {
-	CreateCmd().AddCommand(gen_data_csv)
-	gen_data_csv.Flags().IntVarP(&Crows, "rows", "r", 0, "Number of rows to generate")
-	gen_data_csv.Flags().StringVarP(&CfileName, "filename", "f", "", "Name of the file")
-}
+func create_csv_file(rows int, fileName string, outputdir string) error {
 
-func create_csv_file(rows int, fileName string) error {
-	work_dir, _ := os.UserHomeDir()
-	f_path := work_dir + "/test_dummy_data/fake_data/" + fileName
+	outputdir, err := resolveOutputDir(outputdir)
+	if err != nil {
+		return fmt.Errorf("failed to resolve the output directory: %v", err)
+	}
+
+	f_path := outputdir + fileName
 
 	file, err := os.Create(f_path)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create file: %v", err)
 	}
+
 	defer file.Close()
 
 	// add headers
