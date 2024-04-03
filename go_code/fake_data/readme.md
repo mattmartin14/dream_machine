@@ -16,6 +16,14 @@ fd create json --rows 10000 --filename somedata.json
 fd create csv --rows 5000 --filename data.csv
 ```
 
+<hr></hr>
+<h4>Cobra CLI Remarks</h4>
+
+I really enjoy using the cobra CLI as it standardizes the help menus accross all commands. It is easy to add flags and build robust CLI applications.
+
+<hr></hr>
+<h4>Other Thoughts</h4>
+
 Down the road, I could expand this handle other file formats such as parquet, but I have not gotten to that just yet.
 
 Enjoy!
