@@ -77,6 +77,7 @@ func write_data_parallel(row_cnt int, total_files int, file_type string, output_
 	for item := range results {
 		if item.err != nil {
 			fmt.Printf("Error processing batch %d: %v\n", item.batch_nbr, item.err)
+			return item.err
 		} else {
 			fmt.Printf("Successfully processed batch %d with %s rows. Batch Processing Time: %.2f seconds\n", item.batch_nbr, format_nbr_with_commas(item.total_rows), item.elapsed_time)
 		}
