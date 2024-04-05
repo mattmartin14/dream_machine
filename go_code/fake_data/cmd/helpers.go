@@ -3,6 +3,7 @@ package cmd
 import (
 	"os/user"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -33,4 +34,16 @@ func resolveOutputDir(outputDir string) (string, error) {
 	//fmt.Printf("final output dir is %s: ", finalOutputDir)
 	return finalOutputDir, nil
 
+}
+
+func format_nbr_with_commas(rows int) string {
+	str := strconv.Itoa(rows)
+	var result string
+	for i, v := range str {
+		if i > 0 && (len(str)-i)%3 == 0 {
+			result += ","
+		}
+		result += string(v)
+	}
+	return result
 }

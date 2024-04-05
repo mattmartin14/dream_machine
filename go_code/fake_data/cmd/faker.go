@@ -39,7 +39,7 @@ func GenFakeDataJson() []byte {
 	return dsJSON
 }
 
-func GetCSVHeaders() string {
+func GetCSVHeaders() []byte {
 	var headers []string
 	headerRow := []string{
 		"Latitude",
@@ -55,9 +55,38 @@ func GetCSVHeaders() string {
 	}
 	headers = append(headers, strings.Join(headerRow, ","))
 
-	return strings.Join(headers, "\n")
+	var buf bytes.Buffer
+	csvWriter := csv.NewWriter(&buf)
+	csvWriter.Write(headers)
 
+	// if err := csvWriter.Write(headers); err != nil {
+	// 	fmt.Errorf("error generating the csv headers: %v", err)
+	// 	return nil
+	// }
+	csvWriter.Flush()
+
+	return buf.Bytes()
 }
+
+// func GetCSVHeaders() string {
+// 	var headers []string
+// 	headerRow := []string{
+// 		"Latitude",
+// 		"Longitude",
+// 		"CreditCardNumber",
+// 		"Email",
+// 		"PhoneNumber",
+// 		"FirstName",
+// 		"LastName",
+// 		"Date",
+// 		"NetWorth",
+// 		"TxnKey",
+// 	}
+// 	headers = append(headers, strings.Join(headerRow, ","))
+
+// 	return strings.Join(headers, "\n")
+
+// }
 
 func GenFakeDataCSV() []byte {
 	ds := dataset{}
