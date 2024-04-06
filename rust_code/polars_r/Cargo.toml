@@ -1,0 +1,10 @@
+[package]
+name = "polars_r"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+polars = { version = "0.38.3", features = ["parquet", "dtype-i8","lazy"] }
+polars-io = "0.38.3"
