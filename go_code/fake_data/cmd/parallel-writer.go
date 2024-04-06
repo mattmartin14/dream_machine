@@ -121,6 +121,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 	if err != nil {
 		item.err = err
 		fmt.Println("Error creating file: ", err)
+		results <- item
 		return
 	}
 
@@ -141,6 +142,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 		if err != nil {
 			item.err = err
 			fmt.Println("Error fetching CSV headers: ", err)
+			results <- item
 			return
 		}
 		buffer = append(buffer[:0], headers...)
@@ -151,6 +153,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 	if err != nil {
 		item.err = err
 		fmt.Println("Error writing data buffer to file: ", err)
+		results <- item
 		return
 	}
 
@@ -163,6 +166,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 			if err != nil {
 				item.err = err
 				fmt.Println("Error fetching JSON fake data row: ", err)
+				results <- item
 				return
 			}
 		} else if file_type == "csv" {
@@ -170,6 +174,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 			if err != nil {
 				item.err = err
 				fmt.Println("Error fetching CSV fake data row: ", err)
+				results <- item
 				return
 			}
 		}
@@ -192,6 +197,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 		if err != nil {
 			item.err = err
 			fmt.Println("Error writing data buffer to file: ", err)
+			results <- item
 			return
 		}
 

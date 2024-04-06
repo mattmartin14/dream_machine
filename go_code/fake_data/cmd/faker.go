@@ -28,13 +28,11 @@ func GenFakeDataJson() ([]byte, error) {
 	ds := dataset{}
 	err := faker.FakeData(&ds)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	dsJSON, err := json.Marshal(ds)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
