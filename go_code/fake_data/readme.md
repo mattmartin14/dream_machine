@@ -14,7 +14,7 @@ to generate a fake dataset. Currently, this program is built to support the foll
 
 | Flag Name | Default Value | Description |
 | --------- | ------------- | ----------- |
-| prefix    | data          | file name prefix e.g. "prefix[1,2,3...].csv |
+| prefix    | data          | file name prefix e.g. prefix[1,2,3...].csv |
 | filetype  | none          | can be either json or csv |
 | files     | none          | total number of files to create with the data |
 | outputdir | none          | output directory to save files to; it must exist |
