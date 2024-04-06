@@ -10,17 +10,24 @@ The cobra CLI is a great interface for organizing go lang CLI's. This program le
 
 - CLI_Name > Verb > Adjective
 
-to generate a fake dataset. Currently, this program is built to suppor the following flags:
+to generate a fake dataset. Currently, this program is built to support the following flags:
 
--- filetype (can be either csv or json)
--- files (this is the total count of files you want produced in parallel)
--- outputdir (the output directory where you want the files saved)
--- rows (total number of rows to generate)
+| Flag Name | Default Value | Description |
+| --------- | ------------- | ----------- |
+| prefix    | data          | file name prefix e.g. "prefix[1,2,3...].csv |
+| filetype  | none          | can be either json or csv |
+| files     | none          | total number of files to create with the data |
+| outputdir | none          | output directory to save files to; it must exist |
+| rows      | none          | total number of rows to create |
+| maxworkers | 5            | total number of go routines (parallel processes) in flight allowed |
+
 
 ```bash
-fd create --filetype csv --files 15 --outputdir ~/test_data --rows 1000000
-fd create --filetype json --files 15 --outputdir ~/test_data --rows 1000000
+fd create --filetype csv --maxworkers 6 --prefix fin_data_ --outputdir ~/test_dummy_data/fd --files 12 --rows 1000000
+fd create --filetype json --maxworkers 4 --prefix merch_ --outputdir ~/test_dummy_data/fd --files 15 --rows 2000000
 ```
+
+Keep in mind that if you set the number of workers too high, you could lock your machine; so be cautious not to overload it.
 
 <hr></hr>
 <h4>Cobra CLI Remarks</h4>

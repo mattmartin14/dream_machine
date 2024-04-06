@@ -14,7 +14,8 @@ import (
 //var max_rows_per_buffer int = 200000
 
 var buffer_size int = 10 * 1024 * 1024
-var max_workers int = 5
+
+//var max_workers int = 5
 
 // with 20 workers and 20 files, it did it in 2.96 seconds
 
@@ -32,7 +33,7 @@ type written_file struct {
 func write_data_parallel(row_cnt int, total_files int, file_type string, output_dir string) error {
 
 	//set how many processes we want max in parallel
-	worker_pool := make(chan struct{}, max_workers)
+	worker_pool := make(chan struct{}, maxworkers)
 
 	var wg sync.WaitGroup
 
@@ -105,7 +106,7 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 	//fire the defer function at the end to release a worker
 	defer func() { <-worker_pool }()
 
-	file_name := "data" + strconv.Itoa(batch_nbr) + "." + file_type
+	file_name := file_prefix + strconv.Itoa(batch_nbr) + "." + file_type
 
 	item := written_file{
 		file_name:  file_name,

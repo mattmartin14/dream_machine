@@ -8,14 +8,16 @@ import (
 )
 
 var (
-	rows, file_cnt        int
-	file_type, output_dir string
+	rows, file_cnt, maxworkers         int
+	file_type, output_dir, file_prefix string
 )
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 	createCmd.Flags().IntVarP(&rows, "rows", "r", 0, "Number of rows to generate")
 	createCmd.Flags().IntVarP(&file_cnt, "files", "f", 0, "Total number of files to generate")
+	createCmd.Flags().IntVarP(&maxworkers, "maxworkers", "m", 5, "Max number of workers to run in parallel; default is 5")
+	createCmd.Flags().StringVarP(&file_prefix, "prefix", "p", "data", "Prefix on file names; default is 'data'.")
 	createCmd.Flags().StringVarP(&file_type, "filetype", "t", "", "Type of file; can be either csv or json")
 	createCmd.Flags().StringVarP(&output_dir, "outputdir", "o", "", "Directory to Output the file")
 }
