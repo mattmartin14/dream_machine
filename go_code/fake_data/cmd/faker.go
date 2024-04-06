@@ -5,7 +5,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"strings"
+	"reflect"
 
 	"github.com/bxcodec/faker/v3"
 )
@@ -24,75 +24,55 @@ type dataset struct {
 	TxnKey           string  `faker:"uuid_hyphenated"`
 }
 
-func GenFakeDataJson() []byte {
+func GenFakeDataJson() ([]byte, error) {
 	ds := dataset{}
 	err := faker.FakeData(&ds)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
 
 	dsJSON, err := json.Marshal(ds)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
 
-	return dsJSON
+	return dsJSON, nil
 }
 
-func GetCSVHeaders() []byte {
-	var headers []string
-	headerRow := []string{
-		"Latitude",
-		"Longitude",
-		"CreditCardNumber",
-		"Email",
-		"PhoneNumber",
-		"FirstName",
-		"LastName",
-		"Date",
-		"NetWorth",
-		"TxnKey",
-	}
-	headers = append(headers, strings.Join(headerRow, ","))
+// grabs the headers from the struct dynamically so if we add more columns, they will get picked up
+func GetCSVHeaders() ([]byte, error) {
 
+	var ds dataset
+	dataType := reflect.TypeOf(ds)
+
+	var headerRow []string
+
+	// Iterate over the fields of the struct type and extract their names
+	for i := 0; i < dataType.NumField(); i++ {
+		field := dataType.Field(i)
+		headerRow = append(headerRow, field.Name)
+	}
+
+	// Write the header row to the buffer
 	var buf bytes.Buffer
 	csvWriter := csv.NewWriter(&buf)
-	csvWriter.Write(headers)
+	err := csvWriter.Write(headerRow)
+	if err != nil {
+		return nil, err
+	}
 
-	// if err := csvWriter.Write(headers); err != nil {
-	// 	fmt.Errorf("error generating the csv headers: %v", err)
-	// 	return nil
-	// }
 	csvWriter.Flush()
 
-	return buf.Bytes()
+	return buf.Bytes(), nil
 }
 
-// func GetCSVHeaders() string {
-// 	var headers []string
-// 	headerRow := []string{
-// 		"Latitude",
-// 		"Longitude",
-// 		"CreditCardNumber",
-// 		"Email",
-// 		"PhoneNumber",
-// 		"FirstName",
-// 		"LastName",
-// 		"Date",
-// 		"NetWorth",
-// 		"TxnKey",
-// 	}
-// 	headers = append(headers, strings.Join(headerRow, ","))
-
-// 	return strings.Join(headers, "\n")
-
-// }
-
-func GenFakeDataCSV() []byte {
+func GenFakeDataCSV() ([]byte, error) {
 	ds := dataset{}
 	err := faker.FakeData(&ds)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	// Convert struct to CSV
@@ -115,8 +95,8 @@ func GenFakeDataCSV() []byte {
 	writer := csv.NewWriter(buffer)
 	err = writer.WriteAll(csvData)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
-	return buffer.Bytes()
+	return buffer.Bytes(), nil
 }

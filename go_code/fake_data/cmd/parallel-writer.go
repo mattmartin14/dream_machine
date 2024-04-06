@@ -137,7 +137,13 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 		buffer = append(buffer, '\n')
 
 	} else if file_type == "csv" {
-		buffer = append(buffer[:0], GetCSVHeaders()...)
+		headers, err := GetCSVHeaders()
+		if err != nil {
+			item.err = err
+			fmt.Println("Error fetching CSV headers: ", err)
+			return
+		}
+		buffer = append(buffer[:0], headers...)
 	}
 
 	//write the header buffer
@@ -153,11 +159,20 @@ func write_recs(wg *sync.WaitGroup, start_row int, end_row int, batch_nbr int, o
 		var row_data []byte
 
 		if file_type == "json" {
-			row_data = GenFakeDataJson()
+			row_data, err = GenFakeDataJson()
+			if err != nil {
+				item.err = err
+				fmt.Println("Error fetching JSON fake data row: ", err)
+				return
+			}
 		} else if file_type == "csv" {
-			row_data = GenFakeDataCSV()
+			row_data, err = GenFakeDataCSV()
+			if err != nil {
+				item.err = err
+				fmt.Println("Error fetching CSV fake data row: ", err)
+				return
+			}
 		}
-		//dsJSON := GenFakeDataJson()
 
 		buffer = append(buffer[:0], row_data...)
 
