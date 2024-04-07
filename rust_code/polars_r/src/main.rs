@@ -39,8 +39,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             col("NetWorth").sum().alias("tot_net_worth")
         ])
         .collect()
-        .unwrap()
-        //.expect("Error getting dataframe created")
+        //.unwrap()
+        .expect("Error getting dataframe created")
     ;
 
     //sample top 5 rows
