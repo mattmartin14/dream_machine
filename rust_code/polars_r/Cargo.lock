@@ -1060,7 +1060,6 @@ dependencies = [
  "bytes",
  "chrono",
  "fast-float",
- "flate2",
  "futures",
  "home",
  "itoa",
@@ -1082,7 +1081,6 @@ dependencies = [
  "smartstring",
  "tokio",
  "tokio-util",
- "zstd",
 ]
 
 [[package]]
@@ -1289,7 +1287,7 @@ name = "polars_r"
 version = "0.1.0"
 dependencies = [
  "polars",
- "polars-io",
+ "polars-lazy",
 ]
 
 [[package]]
