@@ -26,4 +26,3 @@ I also wrote the data processing script in Rust to see if I could get a greater 
 
 <hr>
 <h3>Other Thoughts</h3>
-I also wrote the test harness in Rust to see if there was any performance difference and saw that the Rust version was clocking in 5 seconds faster, which is impressive.
