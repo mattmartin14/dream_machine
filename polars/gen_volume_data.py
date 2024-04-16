@@ -12,9 +12,9 @@ import io
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Set parameters
-ROW_CNT = 1_000_000
+ROW_CNT = 10_000_000
 BATCH_SIZE = 10_000
-NUM_BATCHES = 10
+NUM_BATCHES = 15
 MAX_WORKERS = 8
 
 # Define data generation function
@@ -36,6 +36,9 @@ def generate_data(batch_nbr):
             data.append([
                 peep.first_name(),
                 peep.last_name(),
+                peep.gender(),
+                peep.weight(),
+                peep.height(),
                 adrs.address(),
                 adrs.zip_code(),
                 adrs.city(),
@@ -47,7 +50,7 @@ def generate_data(batch_nbr):
         output_path = os.path.expanduser(f'~/test_dummy_data/polars2/data{batch_nbr}.csv')
         with open(output_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(['first_name', 'last_name', 'address_txt', 'zip_cd', 'city', 'state', 'net_worth'])
+            writer.writerow(['first_name', 'last_name', 'gender','weight','height','address_txt', 'zip_cd', 'city', 'state', 'net_worth'])
             writer.writerows(data)
     except Exception as e:
         raise RuntimeError(f"Error occurred in generate_data for batch {batch_nbr}: {e}")
