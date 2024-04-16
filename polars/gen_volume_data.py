@@ -1,3 +1,9 @@
+"""
+    Author: Matt Martin
+    Date: 4/15/24
+    Desc: Generates dummy data csv files in parallel using mimesis
+"""
+
 import time
 import os
 from mimesis import Person, Address, Numeric
@@ -6,9 +12,9 @@ import io
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Set parameters
-ROW_CNT = 10_000_000
+ROW_CNT = 1_000_000
 BATCH_SIZE = 10_000
-NUM_BATCHES = 50
+NUM_BATCHES = 10
 MAX_WORKERS = 8
 
 # Define data generation function
@@ -18,9 +24,15 @@ def generate_data(batch_nbr):
         adrs = Address()
         num = Numeric()
 
+        #check if on last batch
+        if batch_nbr == NUM_BATCHES - 1:  
+            num_rows = ROW_CNT - (ROW_CNT // NUM_BATCHES) * (NUM_BATCHES - 1)
+        else:
+            num_rows = ROW_CNT // NUM_BATCHES
+
         # Generate data
         data = []
-        for _ in range(ROW_CNT // NUM_BATCHES):
+        for _ in range(num_rows):
             data.append([
                 peep.first_name(),
                 peep.last_name(),
@@ -41,13 +53,8 @@ def generate_data(batch_nbr):
         raise RuntimeError(f"Error occurred in generate_data for batch {batch_nbr}: {e}")
 
 
-# Main function
 def main():
     start_time = time.time()
-
-    # Generate data in parallel
-    # with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-    #     executor.map(generate_data, range(NUM_BATCHES))
 
     with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = [executor.submit(generate_data, batch_nbr) for batch_nbr in range(NUM_BATCHES)]
