@@ -2,6 +2,8 @@
     Author: Matt Martin
     Date: 4/15/24
     Desc: Generates dummy data csv files in parallel using mimesis
+
+    Note: On an Macbook Pro M2 pro with 8 cores engaged, wrote 200M rows (16GB of csv files) in about 5 minutes
 """
 
 import time
@@ -12,9 +14,9 @@ import io
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Set parameters
-ROW_CNT = 10_000_000
+ROW_CNT = 200_000_000
 BATCH_SIZE = 10_000
-NUM_BATCHES = 15
+NUM_BATCHES = 50
 MAX_WORKERS = 8
 
 # Define data generation function
@@ -47,7 +49,7 @@ def generate_data(batch_nbr):
             ])
 
         # Write data to CSV file
-        output_path = os.path.expanduser(f'~/test_dummy_data/polars2/data{batch_nbr}.csv')
+        output_path = os.path.expanduser(f'~/test_dummy_data/polars/data{batch_nbr}.csv')
         with open(output_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['first_name', 'last_name', 'gender','weight','height','address_txt', 'zip_cd', 'city', 'state', 'net_worth'])
