@@ -21,5 +21,9 @@ The first script generates 200 million rows of test data which comes out to abou
 The results of this exercise were promising. The processing job ran on average over 5 time trials in about 40 seconds on an M2 pro, which had about 12GB of ram to give, since 4GB is tied up in system processes. So the overall data footprint exceeded the amount of RAM available, yet the pipeline was able to process at a generally decent enough pace.
 
 <hr>
+<h3>Bonus: Tried in Rust as Well</h3>
+I also wrote the data processing script in Rust [here](./volume_testing/polars_r/src/main.rs) to see if I could get a greater performance boost. When I ran the rust script in debug mode, it took about 80 seconds. But when I shipped it to release mode, it ran in about 35 seconds consistently, a 13% performance increase over the python code. 
+
+<hr>
 <h3>Other Thoughts</h3>
 I also wrote the test harness in Rust to see if there was any performance difference and saw that the Rust version was clocking in 5 seconds faster, which is impressive.
