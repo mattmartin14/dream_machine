@@ -22,4 +22,4 @@ The results of this exercise were promising. The processing job ran on average o
 
 <hr>
 <h3>Other Thoughts</h3>
-I also wrote the test harness in Rust [here](./volume_testing/polars_r/src/main.rs) to see if there was any performance difference and saw that the Rust version was clocking in 5 seconds faster, which is impressive.
+I also wrote the test harness in Rust to see if there was any performance difference and saw that the Rust version was clocking in 5 seconds faster, which is impressive.
