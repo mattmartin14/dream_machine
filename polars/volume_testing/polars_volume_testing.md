@@ -62,8 +62,8 @@ I ran both scripts 5 times each and documented the runs below. The results of th
 <hr>
 <h3>Conclusion</h3>
 This test harness demonstrated that you can process more data in polars than the available ram on your machine. The key is to use the lazy frame and the csv scanner so that Polars does not try to load everything into memory all at once. I'm glad I wrote the code in both Python and Rust. Even though I'm still on the fence of using Rust as a daily driver, I can see use-cases for it where you just want a compiled binary to ship and to where you don't have to worry about python runtime environments or dependencies, since Rust just packs it all in a single executable.
-
-*Another Pro Tip* - On Rust, make sure when you are ready to "realy" test your code, you run a build/release e.g.:
+<br></br>
+*Another Pro Tip* - On Rust, make sure when you are ready to "really" test your code, you run a build/release e.g.:
 
 ```bash
 cargo build --release
