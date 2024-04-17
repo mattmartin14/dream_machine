@@ -35,9 +35,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     ;
 
     // add current timestamp to the transformed dataframe
-    let current_time_et = Local::now();
+    let current_time_et = Local::now().with_timezone(&chrono_tz::America::New_York).naive_local();
+    //println!("{}",current_time_et);
     let _result = tsf.with_column(
-        Series::new("process_ts", vec![current_time_et.naive_utc()])
+        Series::new("process_ts", vec![current_time_et])
     );
 
     //sample top 5 rows
