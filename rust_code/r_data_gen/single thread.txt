@@ -1,0 +1,90 @@
+
+use fakeit::name;
+use fakeit::address;
+use fakeit::currency;
+use fakeit::contact;
+use std::error::Error;
+use std::time::Instant;
+use std::env;
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use rand::Rng;
+use chrono::{NaiveDate, Duration};
+
+// using this repo: https://github.com/PumpkinSeed/fakeit
+
+
+fn main() -> Result<(), Box<dyn Error>> {
+    
+    let start_ts = Instant::now();
+
+    let home_dir = env::var("HOME")?;
+    let f_path = home_dir.to_string() + "/test_dummy_data/rust/dummy_data.csv";
+    let file = File::create(&f_path)?;
+
+    let mut writer = BufWriter::new(file);
+
+    let headers = gen_headers()?;
+    writeln!(writer, "{}", headers)?;
+
+    let row_cnt = 10_000;
+    let batch_size = 10_000;
+
+    for chunk_start in (1..row_cnt).step_by(batch_size) {
+        let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
+        for _row_num in chunk_start..=chunk_end {
+            let row = gen_data_line()?;
+            writeln!(writer, "{}", row)?;
+        }
+        writer.flush()?;
+    }
+
+    let elapsed = start_ts.elapsed().as_secs();
+
+    println!("Total Processing Time {} seconds", elapsed);
+
+    Ok(())
+}
+
+fn gen_rand_dt() -> String {
+
+    let start_date = NaiveDate::from_ymd_opt(2000, 1, 1).expect("invalid_date");
+    let end_date = NaiveDate::from_ymd_opt(2024, 1, 1).expect("invalid date");
+
+    let mut rng = rand::thread_rng();
+    let days = rng.gen_range(0..(end_date - start_date).num_days() + 1);
+    let random_date = start_date + Duration::days(days);
+    random_date.format("%Y-%m-%d").to_string()
+}
+
+fn gen_headers() -> Result<String, Box<dyn Error>> {
+
+    let result = format!("{},{},{},{},{},{},{},{},{},{},{},{}", 
+        "first_name", "last_name", "street", "city", "state", "state_abr", "zip_cd",
+        "latitude", "longitude", "net_worth", "email_adrs", "ref_dt");
+
+    Ok(result)
+}
+
+fn gen_data_line() -> Result<String, Box<dyn Error>> {
+    
+    let _first_name = name::first();
+    let _last_name = name::last(); 
+    let _street = address::street(); 
+    let _city = address::city(); 
+    let _state = address::state(); 
+    let _state_abr = address::state_abr(); 
+    let _zip_cd = address::zip(); 
+    let _latitude = address::latitude(); 
+    let _longitude = address::longitude(); 
+    let _net_worth = currency::price(5000 as f64, 500000 as f64);
+    let _email_adrs = contact::email();
+    let _ref_dt = gen_rand_dt();
+
+    let result = format!("{},{},{},{},{},{},{},{},{},{},{},{}", 
+        _first_name, _last_name, _street, _city, _state, _state_abr, _zip_cd,
+        _latitude, _longitude, _net_worth, _email_adrs, _ref_dt);
+
+    Ok(result)
+
+}

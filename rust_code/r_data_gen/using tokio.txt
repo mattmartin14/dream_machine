@@ -1,0 +1,127 @@
+### Tokio was slow; took 55 seconds to genreate 10m rows accross 10 files
+
+use fakeit::{name, address, currency, contact};
+use chrono::{NaiveDate, Duration};
+use rand::Rng;
+use std::error::Error;
+use std::env;
+use std::time::Instant;
+use tokio::fs::File;
+use tokio::io::{AsyncWriteExt, BufWriter};
+
+const TOTAL_ROWS: usize = 10_000_000;
+const TOTAL_FILES: usize = 10;
+const BATCH_SIZE: usize = 10_000;
+
+
+// Function to generate a random date
+async fn gen_rand_dt() -> Result<String, Box<dyn Error + Send + Sync>>  {
+    let start_date = NaiveDate::from_ymd_opt(2000, 1, 1).expect("invalid date");
+    let end_date = NaiveDate::from_ymd_opt(2024, 1, 1).expect("invalid date");
+
+    let mut rng = rand::thread_rng();
+    let days = rng.gen_range(0..(end_date - start_date).num_days() + 1);
+    let random_date = start_date + Duration::days(days);
+    Ok(random_date.format("%Y-%m-%d").to_string())
+}
+
+// Function to generate CSV headers
+async fn gen_headers() -> Result<String, Box<dyn Error + Send + Sync>> {
+    Ok(format!("{},{},{},{},{},{},{},{},{},{},{},{}", 
+        "first_name", "last_name", "street", "city", "state", "state_abr", "zip_cd",
+        "latitude", "longitude", "net_worth", "email_adrs", "ref_dt"))
+}
+
+// Function to generate a single data line
+async fn gen_data_line() -> Result<String, Box<dyn Error + Send + Sync>> {
+    let first_name = name::first();
+    let last_name = name::last(); 
+    let street = address::street(); 
+    let city = address::city(); 
+    let state = address::state(); 
+    let state_abr = address::state_abr(); 
+    let zip_cd = address::zip(); 
+    let latitude = address::latitude(); 
+    let longitude = address::longitude(); 
+    let net_worth = currency::price(5000 as f64, 500000 as f64);
+    let email_adrs = contact::email();
+    let ref_dt = gen_rand_dt().await?;
+
+    Ok(format!("{},{},{},{},{},{},{},{},{},{},{},{}", 
+        first_name, last_name, street, city, state, state_abr, zip_cd,
+        latitude, longitude, net_worth, email_adrs, ref_dt))
+}
+
+async fn write_data_to_file(mut writer: BufWriter<File>, start_row: usize, end_row: usize) -> Result<(), Box<dyn Error + Send + Sync>>  {
+    
+    let headers = gen_headers().await?;
+    writer.write_all(headers.as_bytes()).await?;
+    writer.write_all(b"\n").await?;
+
+    let mut rows_buffer = String::new();
+    for row_num in start_row..=end_row {
+        let row = gen_data_line().await?;
+        rows_buffer.push_str(&row);
+        rows_buffer.push('\n');
+
+        if row_num % BATCH_SIZE == 0 || row_num == end_row {
+            writer.write_all(rows_buffer.as_bytes()).await?;
+            writer.flush().await?;
+            rows_buffer.clear();
+        }
+    }
+    Ok(())
+
+    // let headers = gen_headers().await?;
+    // writer.write_all(headers.as_bytes()).await?;
+    // writer.write_all(b"\n").await?;
+    
+    // for row_num in start_row..=end_row {
+    //     let row = gen_data_line().await?;
+    //     writer.write_all(row.as_bytes()).await?;
+    //     writer.write_all(b"\n").await?;
+    //     if row_num % BATCH_SIZE == 0 || row_num == end_row {
+    //         writer.flush().await?; // Flush buffer periodically
+    //     }
+    // }
+    // Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error + Send + Sync>>  {
+    let start_ts = Instant::now();
+    let home_dir = env::var("HOME")?;
+    let row_cnt = TOTAL_ROWS;
+    let files = TOTAL_FILES;
+
+    let mut tasks = vec![];
+
+    for i in 0..files {
+        let file_path = format!("{}/test_dummy_data/rust/data{}.csv", home_dir, i);
+        let file = File::create(&file_path).await?;
+        let writer = BufWriter::new(file);
+
+        let start_row = i * row_cnt / files;
+
+        let end_row = if i == files - 1 {
+            row_cnt - 1
+        } else {
+           ((i + 1) * row_cnt) / files - 1
+        };
+
+       // println!("start row is {}, end row is {}", start_row, end_row);
+        let task = tokio::spawn(write_data_to_file(writer, start_row, end_row));
+        tasks.push(task);
+    }
+
+    // Wait for all tasks to complete
+    for task in tasks {
+        let _ = task.await?;
+    }
+
+    let elapsed = start_ts.elapsed().as_secs();
+    println!("Total Processing Time: {} seconds", elapsed);
+
+    Ok(())
+}
+

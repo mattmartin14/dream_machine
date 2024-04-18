@@ -1,0 +1,14 @@
+[package]
+name = "r_data_gen"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fakeit = "1.2.0"
+chrono = "0.4.19"
+rand = "0.8.4"
+#tokio = { version = "1.37.0", features = ["full"] }
+#futures = "0.3"
+rayon = "1.10.0"
