@@ -5,7 +5,6 @@
     Desc: Generates a fake dataset using Rust. 
         This version uses Rayon for parallel processing
 
-
 */
 
 mod common;
@@ -13,49 +12,17 @@ mod common;
 use clap::{App, Arg};
 use std::error::Error;
 use std::env;
-use std::fs::File;
-use std::io::{Write, BufWriter};
 use std::time::Instant;
 use rayon::prelude::*;
 
-//const TOTAL_ROWS: usize = 10_000;
 const TOTAL_FILES: usize = 10;
 const BATCH_SIZE: usize = 10_000;
 const BUFFER_SIZE: usize = 1024 * 1024 * 10; //1 mb
 
 
-// Function to write data to CSV file
-fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize) -> Result<(), Box<dyn Error>> {
-    
-    let file = File::create(file_path)?;
-    //let mut writer = BufWriter::new(file);
-
-    let mut writer = BufWriter::with_capacity(BUFFER_SIZE, file);
-
-    let headers = common::gen_headers();
-    writeln!(writer, "{}", headers)?;
-
-    let row_cnt = end_row - start_row+1;
-
-    for chunk_start in (1..row_cnt).step_by(BATCH_SIZE) {
-
-        let chunk_end = (chunk_start + BATCH_SIZE-1).min(row_cnt);
-
-        for _row_num in chunk_start..=chunk_end {
-
-            let data = common::gen_data_line();
-            writeln!(writer, "{}", data)?;
-        }
-        writer.flush()?;
-    }
-
-    Ok(())
-}
-
 fn main() -> Result<(), Box<dyn Error>> {
     let start_ts = Instant::now();
     let home_dir = env::var("HOME")?;
-    //let row_cnt = TOTAL_ROWS;
     let files = TOTAL_FILES;
 
 
@@ -82,7 +49,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .expect("Invalid number of rows");
 
 
-    // parallel process the data
+    // parallel process the data using rayon
     (0..files).into_par_iter().for_each(|i| {
         let file_path = format!("{}/test_dummy_data/rust/data{}.csv", home_dir, i);
         let start_row = i * row_cnt / files;
@@ -92,7 +59,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             ((i + 1) * row_cnt) / files - 1
         };
 
-        if let Err(err) = write_data_to_file(&file_path, start_row, end_row) {
+        if let Err(err) = common::write_data_to_file(&file_path, start_row, end_row, BUFFER_SIZE, BATCH_SIZE) {
             eprintln!("Error writing to file {}: {}", file_path, err);
         }
     });

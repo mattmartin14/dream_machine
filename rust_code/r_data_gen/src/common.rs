@@ -5,6 +5,9 @@
 use fakeit::{name, address, currency, contact};
 use chrono::{NaiveDate, Duration};
 use rand::{Rng, thread_rng};
+use std::fs::File;
+use std::io::{Write, BufWriter};
+use std::error::Error;
 
 
 fn gen_rand_dt() -> String {
@@ -22,6 +25,34 @@ fn get_rand_zip() -> String {
     let zip_code: u32 = rng.gen_range(0..100000);
     format!("{:05}", zip_code) 
 }
+
+pub fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize, buffer_size: usize, batch_size: usize) -> Result<(), Box<dyn Error>> {
+    
+    let file = File::create(file_path)?;
+    //let mut writer = BufWriter::new(file);
+
+    let mut writer = BufWriter::with_capacity(buffer_size, file);
+
+    let headers = gen_headers();
+    writeln!(writer, "{}", headers)?;
+
+    let row_cnt = end_row - start_row+1;
+
+    for chunk_start in (1..row_cnt).step_by(batch_size) {
+
+        let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
+
+        for _row_num in chunk_start..=chunk_end {
+
+            let data = gen_data_line();
+            writeln!(writer, "{}", data)?;
+        }
+        writer.flush()?;
+    }
+
+    Ok(())
+}
+
 
 pub fn format_with_commas(value: usize) -> String {
     let mut result = String::new();
