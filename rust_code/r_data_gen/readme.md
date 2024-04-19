@@ -4,7 +4,7 @@
 
 <hr>
 <h3>Overview</h3>
-The purpose of this program is to use Rust to generate fake data to several CSV's in parallel. I've done similar exercises in Python and Go, but I wanted to give Rust a try for reasons of improving my Rust programming skills as well to see if it's any faster than the other languages.
+The purpose of this program is to use Rust to generate fake data to several CSV's in parallel. I've done similar exercises in [Python](https://github.com/mattmartin14/dream_machine/blob/main/polars/volume_testing/gen_volume_data.py) and [Go](https://github.com/mattmartin14/dream_machine/blob/main/go_code/fake_data/readme.md), but I wanted to give Rust a try for reasons of improving my Rust programming skills as well to see if it's any faster than the other languages.
 
 <hr>
 <h3>Overall Architecture</h3>
@@ -40,7 +40,7 @@ Below are the results of running various row counts with this project across Ray
 | -------- | ------- | -------- | --------- |
 | Rayon    | 2 seconds | 22 seconds | 244 seconds |
 | Tokio    | 4 seconds | 48 seconds | 493 seconds |
-| Single Thread | 3 seconds | 9 seconds | 992 seconds |
+| Single Thread | 8 seconds | 81 seconds | 992 seconds |
 
 <hr>
 <h3>Final Thoughts</h3>
