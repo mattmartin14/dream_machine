@@ -14,31 +14,26 @@
 
     Tokio (using async) was suprisingly slower, but its built for more I/O Bound tasks
 
+    Below are the results to generate 100M rows of data accross the 3 strategies:
+
+    Rayon - 256 seconds
+    Tokio - 512 seconds
+    Single Thread - 748 seconds
+
 
 */
 
 mod common;
-use common::*;
 
+use clap::{App, Arg};
 use std::error::Error;
 use std::env;
 use std::fs::File;
 use std::io::{Write, BufWriter};
 use std::time::Instant;
 use rayon::prelude::*;
-//use rand::{thread_rng};
 
-// 5 seconds to write 1M rows
-// 52 seconds for 10M rows
-// 48 seconds with batch size 10k, buffer 10 mb
-// changed the zip code to my own function; writes 10M in 25 seconds now
-    // not using the street address either; it slows it down a lot
-// writes 10 files, 100M rows in about 4 minutes
-// 20 files for 100M rows completed in 236 seconds
-
-// this is the rayon version; might want to try async-std from rust
-
-const TOTAL_ROWS: usize = 100_000_000;
+//const TOTAL_ROWS: usize = 10_000;
 const TOTAL_FILES: usize = 10;
 const BATCH_SIZE: usize = 10_000;
 const BUFFER_SIZE: usize = 1024 * 1024 * 10; //1 mb
@@ -52,7 +47,7 @@ fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize) -> Resu
 
     let mut writer = BufWriter::with_capacity(BUFFER_SIZE, file);
 
-    let headers = gen_headers();
+    let headers = common::gen_headers();
     writeln!(writer, "{}", headers)?;
 
     let row_cnt = end_row - start_row+1;
@@ -61,9 +56,9 @@ fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize) -> Resu
 
         let chunk_end = (chunk_start + BATCH_SIZE-1).min(row_cnt);
 
-        for row_num in chunk_start..=chunk_end {
+        for _row_num in chunk_start..=chunk_end {
 
-            let data = gen_data_line();
+            let data = common::gen_data_line();
             writeln!(writer, "{}", data)?;
         }
         writer.flush()?;
@@ -75,8 +70,30 @@ fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize) -> Resu
 fn main() -> Result<(), Box<dyn Error>> {
     let start_ts = Instant::now();
     let home_dir = env::var("HOME")?;
-    let row_cnt = TOTAL_ROWS;
+    //let row_cnt = TOTAL_ROWS;
     let files = TOTAL_FILES;
+
+    let matches = App::new("Data Generator")
+        .version("1.0")
+        .author("Matt Martin")
+        .about("Generates a fake dataset using Rust")
+        .arg(
+            Arg::with_name("rows")
+                .short('r')
+                .long("rows")
+                .value_name("ROWS")
+                .help("Sets the number of rows to generate")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches();
+
+    let row_cnt: usize = matches
+        .value_of("rows")
+        .expect("Number of rows not provided")
+        .parse()
+        .expect("Invalid number of rows");
+
 
     (0..files).into_par_iter().for_each(|i| {
         let file_path = format!("{}/test_dummy_data/rust/data{}.csv", home_dir, i);
@@ -93,7 +110,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     });
 
     let elapsed = start_ts.elapsed().as_secs();
-    println!("Total Processing Time using Rayon for {} rows sharded to {} files: {} seconds", row_cnt, files, elapsed);
+    println!("Total Processing Time using Rayon for {} rows sharded to {} files: {} seconds", common::format_with_commas(row_cnt), files, elapsed);
 
     Ok(())
 }

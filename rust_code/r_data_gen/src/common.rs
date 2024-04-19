@@ -23,6 +23,20 @@ fn get_rand_zip() -> String {
     format!("{:05}", zip_code) 
 }
 
+pub fn format_with_commas(value: usize) -> String {
+    let mut result = String::new();
+    let value_str = value.to_string();
+
+    for (i, c) in value_str.chars().rev().enumerate() {
+        if i != 0 && i % 3 == 0 {
+            result.push(',');
+        }
+        result.push(c);
+    }
+
+    result.chars().rev().collect::<String>()
+}
+
 // Function to generate CSV headers
 pub fn gen_headers() -> String {
     format!("{},{},{},{},{},{},{},{},{},{},{}",
