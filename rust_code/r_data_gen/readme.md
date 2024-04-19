@@ -4,7 +4,10 @@
 
 <hr>
 <h3>Overview</h3>
-The purpose of this program is to use Rust to generate fake data to several CSV's in parallel. I've done similar exercises in [Python](https://github.com/mattmartin14/dream_machine/blob/main/polars/volume_testing/gen_volume_data.py) and [Go](https://github.com/mattmartin14/dream_machine/blob/main/go_code/fake_data/readme.md), but I wanted to give Rust a try for reasons of improving my Rust programming skills as well to see if it's any faster than the other languages.
+The purpose of this program is to use Rust to generate fake data to several CSV's in parallel. I've done similar exercises in Python and Go (links below), but I wanted to give Rust a try for reasons of improving my Rust programming skills as well to see if it's any faster than the other languages.
+
+- [Python Data Generator](https://github.com/mattmartin14/dream_machine/blob/main/polars/volume_testing/gen_volume_data.py)
+- [Go Data Generator](https://github.com/mattmartin14/dream_machine/blob/main/go_code/fake_data/readme.md)
 
 <hr>
 <h3>Overall Architecture</h3>
