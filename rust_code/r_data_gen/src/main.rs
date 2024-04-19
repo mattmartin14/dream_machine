@@ -73,6 +73,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     //let row_cnt = TOTAL_ROWS;
     let files = TOTAL_FILES;
 
+
+    // using clap to handle parameter passing
     let matches = App::new("Data Generator")
         .version("1.0")
         .author("Matt Martin")
@@ -95,6 +97,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .expect("Invalid number of rows");
 
 
+    // parallel process the data
     (0..files).into_par_iter().for_each(|i| {
         let file_path = format!("{}/test_dummy_data/rust/data{}.csv", home_dir, i);
         let start_row = i * row_cnt / files;
