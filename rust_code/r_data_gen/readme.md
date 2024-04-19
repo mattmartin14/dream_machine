@@ -11,13 +11,13 @@ The purpose of this program is to use Rust to generate fake data to several CSV'
 
 <hr>
 <h3>Overall Architecture</h3>
-For this project, I tried 3 different approaches to see which would go the fastest:
+I'm still relatively new to Rust, so I wanted to explore a couple different options for parallel processing, as well as bench mark a single thread approach. Below are the tests I did:
 
 1. Rayon for parallel processing
-2. Tokio for async processing
+2. Tokio for async ("parallelish") processing
 3. Single Threaded
 
-What I found was the primary package I used for this project (fakeit) puts a heavy CPU load on my system while running. Rayon ended up performing the best since this is a CPU bound task and Rayon was able to fan out to all cores available. Also, I really liked how Rayon's implementation of parallel processing is very clean. For instance, to kick stuff off in parallel, it's as simple as:
+What I found was the primary package I used for this project (fakeit) puts a heavy CPU load on my system while running. Rayon ended up performing the best since this is a CPU bound task and it was able to fan out to all cores available. Also, I really liked how Rayon's implementation of parallel processing is very clean. For instance, to kick stuff off in parallel, it's as simple as:
 
 ```rust
 (0..files).into_par_iter().for_each(|i| {
@@ -33,7 +33,7 @@ This is much cleaner vs. Tokio async where I have to tag every single function a
 I ended up organizing my code into 2 separate files:
 
 1. [main.rs](./src/main.rs) - this is required by rust; this is where Rayon kicks off the parallel writing
-2. [common.rs](./src/common.rs) - this has all the common functions like generating a fake row of data and formatting stuff
+2. [common.rs](./src/common.rs) - this has all the common functions like generating a fake row of data, writing to files, and formatting stuff
 
 <hr>
 <h3>Results</h3>
@@ -53,6 +53,6 @@ I also pulled in the Clap cargo module to enable me to pass in the row count as 
 ./target/release/r_data_gen --rows 100000
 ```
 
-Using Clap was very straight forward. I'm pretty sure I could spend more time to make it clean, but it works well and you can name your parameters like you would with standard posix flags.
+Using Clap was very straight forward and reminded me of Go lang's Cobra API, but a little simpler. I'm pretty sure I could spend more time to make it clean, but it works well and you can name your parameters like you would with standard posix flags.
 
-Overall, I think this was a good exercise. I'm still trying to figure out in my mind where Rust makes sense, and if I should go all-in on it and start to do more DE projects with it instead of Python. At this point, I'm undecided. I see pros to both Python and Rust as a DE programming language.
+Overall, I think this was a good exercise. I'm still trying to figure out in my mind where Rust makes sense, and if I should go all-in on it and start to do more DE projects with it instead of Python. At this point though, I'm undecided. I see pros to both Python and Rust as a DE programming language.
