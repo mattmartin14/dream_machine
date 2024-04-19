@@ -2,23 +2,8 @@
 /*
     Author: Matt Martin
     Date: 4/18/24
-    Desc: Generates a fake dataset using Rust.
-
-    I tried 3 approaches for generating the files fast:
-        1) Tokio async
-        2) Single Threaded
-        3) Rayon
-
-
-    Rayon was the fastest out of the 3; i'm finding that this process is very much CPU bound when I run it.
-
-    Tokio (using async) was suprisingly slower, but its built for more I/O Bound tasks
-
-    Below are the results to generate 100M rows of data accross the 3 strategies:
-
-    Rayon - 256 seconds
-    Tokio - 512 seconds
-    Single Thread - 748 seconds
+    Desc: Generates a fake dataset using Rust. 
+        This version uses Rayon for parallel processing
 
 
 */
