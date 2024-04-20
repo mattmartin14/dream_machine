@@ -16,7 +16,8 @@ int main() {
 
     end = clock(); // Record the end time
 
-    cpu_time_used = ((double) (end - start)) * 1000.0 / CLOCKS_PER_SEC; // Calculate elapsed time in milliseconds
+    // elapsed ms
+    cpu_time_used = ((double) (end - start)) * 1000.0 / CLOCKS_PER_SEC; 
 
     printf("accumulated value is %lld\n", z);
     printf("Time to compute: %f milliseconds\n", cpu_time_used);
