@@ -1,5 +1,5 @@
 use std::time::Instant;
-use rand::prelude::*;
+use rand::{Rng, thread_rng};
 
 fn main() {
     det_looper();
@@ -28,8 +28,8 @@ fn non_det_looper() {
     let start = Instant::now(); 
 
     for i in 0..=1_000_000_000 {
-        let random_value: i64 = rng.gen_range(1, 11); 
-        z += i + random_value;
+        let random_value: u8 = rng.gen_range(1..=26);
+        z += i as i64 + random_value as i64;
     }
 
     let elapsed = start.elapsed();
@@ -37,4 +37,3 @@ fn non_det_looper() {
     println!("accumulated value is {}", z);
     println!("Time taken for non-deterministic loop: {} milliseconds", elapsed.as_millis());
 }
-
