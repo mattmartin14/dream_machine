@@ -28,6 +28,9 @@ fn non_det_looper() {
     let start = Instant::now(); 
 
     for i in 1..=1_000_000_000 {
+        // interesting: If i pre-assign the random value as an i64, the loop takes nearly 3x as long to complete
+        // its faster just to cast the random value later so the add to z works
+        // probably because u8 is a shorter value in ram vs. i64
         let random_value: u8 = rng.gen_range(1..=100);
         z += i as i64 + random_value as i64;
     }
