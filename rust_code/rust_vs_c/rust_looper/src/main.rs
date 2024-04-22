@@ -11,14 +11,14 @@ fn det_looper() {
 
     let start = Instant::now(); 
 
-    for i in 0..=1_000_000_000 {
+    for i in 1..=1_000_000_000 {
         z += i;
     }
 
     let elapsed = start.elapsed();
 
     println!("accumulated value is {}", z);
-    println!("Time taken for deterministic loop: {} milliseconds", elapsed.as_millis());
+    println!("Time taken for deterministic loop in rust: {} milliseconds", elapsed.as_millis());
 }
 
 fn non_det_looper() {
@@ -27,13 +27,13 @@ fn non_det_looper() {
 
     let start = Instant::now(); 
 
-    for i in 0..=1_000_000_000 {
-        let random_value: u8 = rng.gen_range(1..=26);
+    for i in 1..=1_000_000_000 {
+        let random_value: u8 = rng.gen_range(1..=100);
         z += i as i64 + random_value as i64;
     }
 
     let elapsed = start.elapsed();
 
     println!("accumulated value is {}", z);
-    println!("Time taken for non-deterministic loop: {} milliseconds", elapsed.as_millis());
+    println!("Time taken for non-deterministic loop in rust: {} milliseconds", elapsed.as_millis());
 }
