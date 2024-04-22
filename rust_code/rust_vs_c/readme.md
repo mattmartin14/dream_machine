@@ -1,4 +1,4 @@
-### Rust Vs. C For for Performance  
+### Rust Vs. C for Performance  
 #### Author: Matt Martin
 #### Date: 4/20/24
 
@@ -8,7 +8,7 @@ Rust has been getting a lot of traction in the programming world as a potential 
 
 <hr>
 <h3>The Setup</h3>
-I'm running all benchmarks below on a Macbook Pro m12 with 16GB of ram and 12 cores. I used the following tools to compile both the c and rust files:
+I'm running all benchmarks below on a Macbook Pro m2 with 16GB of ram and 12 cores. I used the following tools to compile both the c and rust files:
 
 ```bash
 clang looper.c -o looper;
