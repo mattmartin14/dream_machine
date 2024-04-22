@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int det_loop() {
+int det_looper() {
 
     long long int z = 0;
     clock_t start, end;
@@ -25,15 +25,15 @@ int det_loop() {
     return 0;
 }
 
-int non_det_loop() {
+int non_det_looper() {
 
     long long int z = 0;
     clock_t start, end;
     double cpu_time_used;
 
-    start = clock();
-
     srand(time(NULL)); // Seed the random number generator
+
+    start = clock();
 
     for (long long int i = 1; i <= 1000000000; i++) {
 
@@ -55,6 +55,6 @@ int non_det_loop() {
 
 int main() {
 
-    det_loop();
-    non_det_loop();
+    det_looper();
+    non_det_looper();
 }
