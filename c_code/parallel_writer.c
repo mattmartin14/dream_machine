@@ -9,6 +9,12 @@
 #define NUM_FILES 10
 #define TOTAL_ROWS 1000000000
 
+/*
+    Uses fork to create sub processes to write in parallel.
+    does 10 files @ 1B rows in under 8 seconds
+
+*/
+
 void writeToFiles(int start, int end, int fileNum) {
     char filePath[100];
     snprintf(filePath, sizeof(filePath), "%s/test_dummy_data/c/data_%d.txt", getenv("HOME"), fileNum);
