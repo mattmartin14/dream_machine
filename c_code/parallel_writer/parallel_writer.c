@@ -74,9 +74,9 @@ int main() {
     clock_gettime(CLOCK_REALTIME, &stop_time);
     double duration = getElapsedTime(start_time, stop_time);
 
-    printf("A total of %d files have been written successfully with ", NUM_FILES);
+    printf("Using C, a total of %d files have been written successfully with ", NUM_FILES);
     fmt_num(TOTAL_ROWS);
-    printf(" in %f seconds.\n", duration);
+    printf(" rows in %f seconds.\n", duration);
 
     return 0;
 }
