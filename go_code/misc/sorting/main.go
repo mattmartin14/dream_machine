@@ -13,12 +13,11 @@ func bubble_sort(arr []int) {
 			}
 		}
 	}
-
 }
 
 func main() {
 
-	arr := []int{3, 2, 7, 4, 1}
+	arr := []int{3, 8, 23, 12, 6, 2, 7, 4, 1}
 
 	bubble_sort(arr)
 	fmt.Printf("Sorted array is: %v\n", arr)
