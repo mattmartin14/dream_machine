@@ -3,12 +3,23 @@ package main
 // used this to generate the fake dataset
 // ./fd create --filetype csv --maxworkers 6 --prefix fin_data_ --outputdir ~/test_dummy_data/fd --files 1 --rows 10000
 
+/*
+	to do:
+		move the functions to a separate package
+		add ability to write to parquet
+		add ability to read multiple files based on wild card
+		add ability to do averages and counts
+		-- maybe add ability to do a distinct count?
+
+*/
+
 import (
 	"encoding/csv"
 	"fmt"
 	"os"
 	"os/user"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -94,13 +105,18 @@ func main() {
 	writer := csv.NewWriter(outFile)
 	defer writer.Flush()
 
+	// add current timestamp as output
+	loc, _ := time.LoadLocation("America/New_York")
+	currentTime := time.Now().In(loc)
+	process_ts := currentTime.Format("2006-01-02 15:04:05")
+
 	// Write header
-	header := []string{groupingColName, "Summed" + summingColName}
+	header := []string{groupingColName, "Summed_" + summingColName, "process_ts"}
 	writer.Write(header)
 
 	// Write aggregated net worth for each first name to the CSV file
 	for groupingValue, summingValue := range tsfmData {
-		row := []string{groupingValue, fmt.Sprintf("%.2f", summingValue)}
+		row := []string{groupingValue, fmt.Sprintf("%.2f", summingValue), process_ts}
 		writer.Write(row)
 	}
 
