@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"simple_etl/app"
 	"strconv"
 	"time"
 )
@@ -40,7 +41,23 @@ func main() {
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	records, err := reader.ReadAll()
+
+	// -------------------------------------------------
+	// Grab Header Info
+
+	headers, err := reader.Read()
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	groupingColIndex, summingColIndex, err := app.FindColumnPositions(headers, groupingColName, summingColName)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	data, err := reader.ReadAll()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -48,37 +65,13 @@ func main() {
 
 	tsfmData := make(map[string]float64)
 
-	// find indexes in file for the grouping and summing columns
-	var groupingColIndex, summingColIndex int
-
-	if len(records) > 0 {
-		header := records[0]
-		for i, columnName := range header {
-			if columnName == groupingColName {
-				groupingColIndex = i
-			}
-			if columnName == summingColName {
-				summingColIndex = i
-			}
-		}
-		// Check if the first record is numeric (assuming headers should be strings)
-		_, err := strconv.ParseFloat(records[0][0], 64)
-		if err == nil {
-			hasHeader = false
-		}
-	}
-
 	// Iterate over each record in the CSV file
-	for i, record := range records {
+	for i, record := range data {
 
 		// Skip the header row if it exists
 		if hasHeader && i == 0 {
 			continue
 		}
-
-		// // Extract first name and net worth from the record
-		// firstName := record[5]
-		// netWorthStr := record[8]
 
 		groupingValue := record[groupingColIndex]
 		summingValueStr := record[summingColIndex]
@@ -89,7 +82,6 @@ func main() {
 			continue
 		}
 
-		// Add summing value to the sum for this grouping value
 		tsfmData[groupingValue] += summingValue
 	}
 
