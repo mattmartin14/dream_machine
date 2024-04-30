@@ -6,14 +6,37 @@
 #include <sys/types.h>
 #include <time.h>
 
-#define NUM_FILES 10
+#define NUM_FILES 20
 #define TOTAL_ROWS 1000000000
 
 /*
     Uses fork to create sub processes to write in parallel.
     does 10 files @ 1B rows in under 8 seconds
 
+    -- updated using buffers
+        -- now writes in under 5 seconds spread accross 20 files
+
 */
+
+// void writeToFiles(int start, int end, int fileNum) {
+//     char filePath[100];
+//     snprintf(filePath, sizeof(filePath), "%s/test_dummy_data/c/data_%d.txt", getenv("HOME"), fileNum);
+//     FILE *outFile = fopen(filePath, "w");
+//     if (outFile == NULL) {
+//         perror("Error opening file");
+//         exit(1);
+//     }
+
+//     // for (int i = start; i <= end; ++i) {
+//     //     fprintf(outFile, "%d\n", i);
+//     // }
+
+//     for (int i = start; i <= end; i+=4) {
+//         fprintf(outFile, "%d\n%d\n%d\n%d\n", i, i+1,i+2,i+3);
+//     }
+
+//     fclose(outFile);
+// }
 
 void writeToFiles(int start, int end, int fileNum) {
     char filePath[100];
@@ -24,8 +47,25 @@ void writeToFiles(int start, int end, int fileNum) {
         exit(1);
     }
 
+    const int buffer_size = 4096*32; // Buffer size for storing data
+    char buffer[buffer_size];
+    int buffer_pos = 0;
+
     for (int i = start; i <= end; ++i) {
-        fprintf(outFile, "%d\n", i);
+
+        // Format the number into the buffer
+        buffer_pos += sprintf(buffer + buffer_pos, "%d\n", i);
+        
+        // Flush the buffer if it's full
+        if (buffer_pos >= buffer_size - 10) { // Safety margin for ensuring we don't overrun the buffer
+            fwrite(buffer, sizeof(char), buffer_pos, outFile);
+            buffer_pos = 0;
+        }
+    }
+
+    // Write remaining data in the buffer
+    if (buffer_pos > 0) {
+        fwrite(buffer, sizeof(char), buffer_pos, outFile);
     }
 
     fclose(outFile);
