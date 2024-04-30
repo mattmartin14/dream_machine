@@ -47,7 +47,7 @@ void writeToFiles(int start, int end, int fileNum) {
         exit(1);
     }
 
-    const int buffer_size = 4096*32; // Buffer size for storing data
+    const int buffer_size = 1024*1024; // 100MB
     char buffer[buffer_size];
     int buffer_pos = 0;
 
