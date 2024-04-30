@@ -18,6 +18,8 @@
 
 */
 
+// -- note: single write requires more sys calls; moved to buffers to accumulate and lessen sys calls
+
 // void writeToFiles(int start, int end, int fileNum) {
 //     char filePath[100];
 //     snprintf(filePath, sizeof(filePath), "%s/test_dummy_data/c/data_%d.txt", getenv("HOME"), fileNum);
