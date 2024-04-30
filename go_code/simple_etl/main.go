@@ -63,6 +63,8 @@ func main() {
 		return
 	}
 
+	row_cnt := len(data)
+
 	tsfmData := make(map[string]float64)
 
 	// Iterate over each record in the CSV file
@@ -112,6 +114,6 @@ func main() {
 		writer.Write(row)
 	}
 
-	fmt.Println("Output written to output.csv")
+	fmt.Printf("Total Rows Processed: %s. Output written to output.csv\n", app.Format_nbr_with_commas(row_cnt))
 
 }

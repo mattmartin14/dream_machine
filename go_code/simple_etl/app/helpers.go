@@ -1,6 +1,9 @@
 package app
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // figures out the column positions in the file
 func FindColumnPositions(headers []string, groupColName string, sumColName string) (int32, int32, error) {
@@ -27,4 +30,16 @@ func FindColumnPositions(headers []string, groupColName string, sumColName strin
 	}
 
 	return groupColIndex, sumColIndex, nil
+}
+
+func Format_nbr_with_commas(rows int) string {
+	str := strconv.Itoa(rows)
+	var result string
+	for i, v := range str {
+		if i > 0 && (len(str)-i)%3 == 0 {
+			result += ","
+		}
+		result += string(v)
+	}
+	return result
 }
