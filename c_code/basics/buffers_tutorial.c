@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <sys/types.h>
 
 /*
     To know what makes C tick, you need to get comfortable with buffers;
@@ -13,34 +13,58 @@
 
 */
 
+//#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
-// void reverse(char s[])
-//  {
-//      int i, j;
-//      char c;
- 
-//      for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
-//          c = s[i];
-//          s[i] = s[j];
-//          s[j] = c;
-//      }
-//  }
 
-//  void itoa(int n, char s[])
-//  {
-//      int i, sign;
- 
-//      if ((sign = n) < 0)  /* record sign */
-//          n = -n;          /* make n positive */
-//      i = 0;
-//      do {       /* generate digits in reverse order */
-//          s[i++] = n % 10 + '0';   /* get next digit */
-//      } while ((n /= 10) > 0);     /* delete it */
-//      if (sign < 0)
-//          s[i++] = '-';
-//      s[i] = '\0';
-//      reverse(s);
-//  }
+typedef uint32_t fix4_28;
+
+void itoa_padded(char *buf, uint32_t val)
+{
+    fix4_28 const f1_10000 = (1 << 28) / 10000;
+    fix4_28 tmplo, tmphi;
+
+    uint32_t lo = val % 100000;
+    uint32_t hi = val / 100000;
+
+    tmplo = lo * (f1_10000 + 1) - (lo / 4);
+    tmphi = hi * (f1_10000 + 1) - (hi / 4);
+
+    for(size_t i = 0; i < 5; i++)
+    {
+        buf[i + 0] = '0' + (char)(tmphi >> 28);
+        buf[i + 5] = '0' + (char)(tmplo >> 28);
+        tmphi = (tmphi & 0x0fffffff) * 10;
+        tmplo = (tmplo & 0x0fffffff) * 10;
+    }
+   // return buf+10;
+}
+
+
+// void itoa_unpadded(char *buf, uint32_t val) {
+//     char *p;
+//     itoa_padded(buf, val);
+
+//     p = buf;
+
+//     // Note: will break on GCC, but you can work around it by using memcpy() to dereference p.
+//     if (*((uint64_t *) p) == 0x3030303030303030)
+//         p += 8;
+
+//     if (*((uint32_t *) p) == 0x30303030)
+//         p += 4;
+
+//     if (*((uint16_t *) p) == 0x3030)
+//         p += 2;
+
+//     if (*((uint8_t *) p) == 0x30)
+//         p += 1;
+
+//     return min(p, &buf[15]);
+// }
+
+
+
+
 
 int main() {
 
@@ -103,6 +127,21 @@ int main() {
         return 1;
     }
 
+    // char buf2[11]; // Buffer for holding converted numbers
+    // buf_pos = 0;
+    // for (uint32_t i = 1; i<=50;i++) {
+    //     itoa_padded(buf2, i);
+    //     buf2[buf_pos+10] = '\n';
+    //     fwrite(buf2, sizeof(char), 11, file);
+    // }
+
+    char buf3[11]; // Buffer for holding converted numbers
+    buf_pos = 0;
+    for (uint32_t i = 1; i<=50;i++) {
+        itoa_unpadded(buf3, i);
+        buf3[buf_pos+10] = '\n';
+        fwrite(buf3, sizeof(char), 11, file);
+    }
 
     // char b1[10];
 
@@ -113,7 +152,7 @@ int main() {
 
     //printf("converted asci value is %s\n",b1);
 
-    fwrite(buf, sizeof(char), strlen(buf), file);
+    //fwrite(buf, sizeof(char), strlen(buf), file);
 
     // Close the file
     fclose(file);
