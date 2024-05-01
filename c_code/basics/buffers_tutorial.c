@@ -9,11 +9,44 @@
 
     where it gets tricky is you need to constantly track the position of the buffer 
     as you write data to it so that you don't ovewrite data nor do you hit the end of the buffer
-    
+
 
 */
 
+
+// void reverse(char s[])
+//  {
+//      int i, j;
+//      char c;
+ 
+//      for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+//          c = s[i];
+//          s[i] = s[j];
+//          s[j] = c;
+//      }
+//  }
+
+//  void itoa(int n, char s[])
+//  {
+//      int i, sign;
+ 
+//      if ((sign = n) < 0)  /* record sign */
+//          n = -n;          /* make n positive */
+//      i = 0;
+//      do {       /* generate digits in reverse order */
+//          s[i++] = n % 10 + '0';   /* get next digit */
+//      } while ((n /= 10) > 0);     /* delete it */
+//      if (sign < 0)
+//          s[i++] = '-';
+//      s[i] = '\0';
+//      reverse(s);
+//  }
+
 int main() {
+
+    
+
+
     char buf[20];
 
     int buf_pos = 0;
@@ -69,6 +102,16 @@ int main() {
         printf("Error opening file.\n");
         return 1;
     }
+
+
+    // char b1[10];
+
+    // for (int i=0;i<=1000000000;i++){
+    //     itoa(i, b1);
+    // }
+
+
+    //printf("converted asci value is %s\n",b1);
 
     fwrite(buf, sizeof(char), strlen(buf), file);
 
