@@ -5,7 +5,7 @@
 #include <sys/types.h>
 
 
-#define ROW_CNT 1000
+#define ROW_CNT 1000000000
 
 typedef uint32_t fix4_28;
 
@@ -191,5 +191,5 @@ int main() {
 
     writeViaFprintF(ROW_CNT);
     writeViaTerjePadded(ROW_CNT);
-    writeViaTerjeNonPadded(ROW_CNT);
+    //writeViaTerjeNonPadded(ROW_CNT);
 }
