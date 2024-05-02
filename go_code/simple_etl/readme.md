@@ -49,7 +49,7 @@ So far so good. Now, we need to build what Go calls a "Map" to store our aggrega
 tsfmData := make(map[string]float64)
 ```
 
-Now let's read through the CSV and group by "FirstName" column and sum the NetWorth column:
+Now let's read through the CSV and group by "FirstName" column and sum the "NetWorth" column. A previous part of the code goes and finds those fields in the CSV. If you are curiuos, you can look [here](./app/helpers.go):
 
 ```go
 
