@@ -101,6 +101,6 @@ The Go code was able to plow through a 10M row csv file in about 5 seconds in de
 <h3>Other Thoughts</h3>
 I could probably improve on this code to where the column names are fed dynamically to the various writing modules. Additionally, I'd be curious how much of an exercise it would be to update the code to group on 2 columns instead of just 1. One final thought is how hard it would be to add things like distinct counts. In my head, I think the only way to do this is that I'd have to build another map tracking table and as I'm reading the raw source CSV, add the value if it doesn't exist in the map table. Then at the end, get the length/count of that map tracking table. Here's the full code link in all its glory:
 
-- [Go Attempt at ETL](./main.go).
+- [Go Attempt at ETL](../simple_etl/).
 
 
