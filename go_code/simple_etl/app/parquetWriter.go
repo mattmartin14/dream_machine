@@ -1,5 +1,8 @@
 package app
 
+// to be able to write parquet files
+// go get github.com/xitongsys/parquet-go
+
 import (
 	"fmt"
 

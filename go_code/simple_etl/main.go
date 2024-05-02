@@ -1,20 +1,5 @@
 package main
 
-// used this to generate the fake dataset
-// ./fd create --filetype csv --maxworkers 6 --prefix fin_data_ --outputdir ~/test_dummy_data/fd --files 1 --rows 10000
-
-/*
-   to do:
-       make the export functions dynamically take in the column names for csv and parquet writer
-       add ability to read multiple files based on wild card
-       add ability to do averages and counts
-       -- maybe add ability to do a distinct count?
-
-*/
-
-// to be able to write parquet files
-// go get github.com/xitongsys/parquet-go
-
 import (
 	"encoding/csv"
 	"fmt"
