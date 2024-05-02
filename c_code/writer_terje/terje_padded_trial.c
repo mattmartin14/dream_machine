@@ -5,7 +5,7 @@
 #include <sys/types.h>
 
 
-#define ROW_CNT 1000
+#define ROW_CNT 100000000
 
 typedef uint32_t fix4_28;
 
