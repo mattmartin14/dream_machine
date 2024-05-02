@@ -4,7 +4,7 @@
 
 <hr>
 <h3>Overview</h3>
-As a well respected DE recently mentioned, Rust has won the DE war against Go. Rust has better code safety in place, is faster, and has a well supported dataframe library known as Polars. Go has some dataframe libraries floating around the interwebs, but they have not been maintained in over 2 or 3 years, which makes me think they are dead. If you are curious, you can google "Go Dataframe" and see for yourself. With that said though, I wanted to grease the wheels and see if we could use Go for some light weight ETL. Read on if you like to learn more.
+A well respected DE recently mentioned, Rust has won the DE war against Go. Rust has better code safety in place, is faster, and has a well supported dataframe library known as Polars. Go has some dataframe libraries floating around the interwebs, but they have not been maintained in over 2 or 3 years, which makes me think they are dead. If you are curious, you can google "Go Dataframe" and see for yourself. With that said though, I wanted to grease the wheels and see if we could use Go for some light weight ETL. Read on if you like to learn more.
 
 <hr>
 <h3>The Setup</h3>
