@@ -88,7 +88,7 @@ Testing the code...hey, that's what ChatGPT is for right? Given I'm using a parq
 select * from read_parquet('~/dream_machine/go_code/simple_etl/output.parquet');
 ```
 
-And Voila
+**And Voila**
 <h4></h4>
 ![duckdb](./photos/duck.jpg)
 
