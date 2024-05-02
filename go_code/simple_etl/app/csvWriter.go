@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"time"
 )
 
 func WriteToCSV(data map[string]float64, groupingColName string, summingColName string, fpath string) error {
@@ -20,10 +19,7 @@ func WriteToCSV(data map[string]float64, groupingColName string, summingColName 
 	writer := csv.NewWriter(outFile)
 	defer writer.Flush()
 
-	// add current timestamp as output
-	loc, _ := time.LoadLocation("America/New_York")
-	currentTime := time.Now().In(loc)
-	process_ts := currentTime.Format("2006-01-02 15:04:05")
+	process_ts, err := GetProcessTS()
 
 	// Write header
 	header := []string{groupingColName, "Summed_" + summingColName, "process_ts"}

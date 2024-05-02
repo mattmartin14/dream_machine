@@ -5,8 +5,7 @@ package main
 
 /*
    to do:
-       move the functions to a separate package
-       add ability to write to parquet
+       make the export functions dynamically take in the column names for csv and parquet writer
        add ability to read multiple files based on wild card
        add ability to do averages and counts
        -- maybe add ability to do a distinct count?
@@ -23,9 +22,12 @@ import (
 	"os/user"
 	"simple_etl/app"
 	"strconv"
+	"time"
 )
 
 func main() {
+
+	start := time.Now()
 
 	hasHeader := true
 
@@ -108,6 +110,8 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Total Rows Processed: %s. Output written to output.csv\n", app.Format_nbr_with_commas(row_cnt))
+	elapsed := time.Since(start) // Calculate the elapsed time
+
+	fmt.Printf("Total Rows Processed: %s. Total time to process: %s\n", app.Format_nbr_with_commas(row_cnt), elapsed)
 
 }

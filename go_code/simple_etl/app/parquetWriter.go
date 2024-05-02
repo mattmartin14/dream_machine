@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/writer"
@@ -34,9 +33,7 @@ func WriteToParquet(data map[string]float64, file_path string) error {
 
 	defer pw.WriteStop()
 
-	loc, _ := time.LoadLocation("America/New_York")
-	currentTime := time.Now().In(loc)
-	process_ts := currentTime.Format("2006-01-02 15:04:05")
+	process_ts, err := GetProcessTS()
 
 	// Write aggregated net worth to Parquet file
 	for groupingValue, summingValue := range data {

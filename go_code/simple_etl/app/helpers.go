@@ -3,7 +3,19 @@ package app
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
+
+func GetProcessTS() (string, error) {
+	// add current timestamp as output
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		return "", fmt.Errorf("Error getting timestamp tz info")
+	}
+	currentTime := time.Now().In(loc)
+	process_ts := currentTime.Format("2006-01-02 15:04:05")
+	return process_ts, nil
+}
 
 // figures out the column positions in the file
 func FindColumnPositions(headers []string, groupColName string, sumColName string) (int32, int32, error) {
