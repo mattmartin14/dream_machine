@@ -90,6 +90,7 @@ select * from read_parquet('~/dream_machine/go_code/simple_etl/output.parquet');
 
 **And Voila**
 <h4></h4>
+
 ![duckdb](./photos/duck.jpg)
 
 <hr>
