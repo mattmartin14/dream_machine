@@ -8,7 +8,7 @@ A well respected DE recently mentioned, Rust has won the DE war against Go. Rust
 
 <hr>
 <h3>The Setup</h3>
-For this process, we will generate a fake dataset using a previous go project i worked on found [here](../fake_data/readme.md). After that, the code in this program will do the following:
+For this process, we will generate a fake dataset using a previous go project i worked on found at this link: https://github.com/mattmartin14/dream_machine/tree/main/go_code/fake_data. After that, the code in this program will do the following:
 
 1. Read in the CSV dataset that we generated
 2. Group on one column and sum on another
