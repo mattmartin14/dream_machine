@@ -95,7 +95,7 @@ select * from read_parquet('~/dream_machine/go_code/simple_etl/output.parquet');
 
 <hr>
 <h3>Conclusion</h3>
-The Go code =was able to plow through a 10M row csv file in about 5 seconds in debug mode, which is pretty darn fast. As a built binary, it ran under 4 seconds. Overall, I'm impressed with its ability to read and write data to multiple file formats. Would this be ideal though for data engineering if you had access to Polars or Spark? Probably not since those can acccomplish what I did in just a few lines of code with those dataframe packages. But nonetheless, it worked!
+The Go code was able to plow through a 10M row csv file in about 5 seconds in debug mode, which is pretty darn fast. As a built binary, it ran under 4 seconds. Overall, I'm impressed with its ability to read and write data to multiple file formats. Would this be ideal though for data engineering if you had access to Polars or Spark? Probably not since those can acccomplish what I did in just a few lines of code with those dataframe packages. But nonetheless, it worked!
 
 <hr>
 <h3>Other Thoughts</h3>
