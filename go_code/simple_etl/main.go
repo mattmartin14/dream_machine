@@ -23,7 +23,6 @@ import (
 	"os/user"
 	"simple_etl/app"
 	"strconv"
-	"time"
 )
 
 func main() {
@@ -93,34 +92,15 @@ func main() {
 		tsfmData[groupingValue] += summingValue
 	}
 
-	// Write the aggregated net worth to a new CSV file
-	outFile, err := os.Create("output.csv")
+	// write aggregate to csv
+	csv_fpath := "data.csv"
+	err = app.WriteToCSV(tsfmData, groupingColName, summingColName, csv_fpath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	defer outFile.Close()
 
-	// Create a CSV writer
-	writer := csv.NewWriter(outFile)
-	defer writer.Flush()
-
-	// add current timestamp as output
-	loc, _ := time.LoadLocation("America/New_York")
-	currentTime := time.Now().In(loc)
-	process_ts := currentTime.Format("2006-01-02 15:04:05")
-
-	// Write header
-	header := []string{groupingColName, "Summed_" + summingColName, "process_ts"}
-	writer.Write(header)
-
-	// Write aggregated net worth for each first name to the CSV file
-	for groupingValue, summingValue := range tsfmData {
-		row := []string{groupingValue, fmt.Sprintf("%.2f", summingValue), process_ts}
-		writer.Write(row)
-	}
-
-	// write to parquet
+	// write aggregate to parquet
 	p_fpath := "output.parquet"
 	err = app.WriteToParquet(tsfmData, p_fpath)
 	if err != nil {
