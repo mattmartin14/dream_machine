@@ -9,15 +9,108 @@
     body {
       background-color: orange; /* orange color */
     }
+    /* CSS styles for header */
+    header {
+      text-align: left;
+      padding: 20px;
+    }
+    hr {
+      border: none;
+      height: 3px; /* Adjust thickness as needed */
+      background-color: black;
+    }
+    /* CSS for dropdown and selection text */
+    #dropdownContainer {
+      display: flex;
+      align-items: center;
+    }
+    #dropdown, #selectionText, #textInput {
+      font-size: 20px; /* Adjust font size as needed */
+    }
+    #selectionText {
+      margin-left: 10px;
+    }
+    /* CSS for text area and submit button */
+    #textAreaContainer {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    #textInput {
+      margin-right: 10px;
+    }
+    #submitBtn {
+      font-size: 20px; /* Adjust font size as needed */
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 18px; /* Adjust font size as needed */
+    }
   </style>
 </head>
 <body>
-  <h1>Welcome Overlords</h1>
-  <!-- Use the <select> element to create a dropdown menu -->
-  <select id="dropdown" name="dropdown">
-    <option value="banana">Banana</option>
-    <option value="carrot">Carrot</option>
-    <option value="cheese">Cheese</option>
-  </select>
+  <header>
+    <h1>Welcome Overlords</h1>
+  </header>
+  <hr>
+  <!-- Container for dropdown and selection text -->
+  <div id="dropdownContainer">
+    <!-- Use the <select> element to create a dropdown menu -->
+    <select id="dropdown" name="dropdown">
+      <option value="banana">Banana</option>
+      <option value="carrot">Carrot</option>
+      <option value="cheese">Cheese</option>
+    </select>
+    <!-- Container for selection text -->
+    <div id="selectionText"></div>
+  </div>
+  <!-- Container for text area and submit button -->
+  <div id="textAreaContainer">
+    <textarea id="textInput" rows="5" cols="50" placeholder="Enter several lines of text"></textarea>
+    <button id="submitBtn">Submit</button>
+  </div>
+  <!-- Output area -->
+  <div id="output"></div>
+
+  <script>
+    // Get the dropdown element
+    var dropdown = document.getElementById("dropdown");
+    // Get the div element where selection text will be displayed
+    var selectionText = document.getElementById("selectionText");
+    // Get the textarea element
+    var textInput = document.getElementById("textInput");
+    // Get the submit button
+    var submitBtn = document.getElementById("submitBtn");
+    // Get the output div
+    var outputDiv = document.getElementById("output");
+
+    // Add event listener to the dropdown
+    dropdown.addEventListener("change", function() {
+      // Get the selected option
+      var selectedOption = dropdown.options[dropdown.selectedIndex];
+      // Display the selected text
+      selectionText.textContent = "You selected " + selectedOption.textContent;
+    });
+
+    // Add event listener to the submit button
+    submitBtn.addEventListener("click", function() {
+      // Get the value of the textarea
+      var inputText = textInput.value.trim(); // Trim whitespace
+      // Check if the textarea is empty
+      if (inputText === "") {
+        // Display an alert if the textarea is empty
+        alert("Text box cannot be empty!");
+        return; // Stop further execution
+      }
+      // Clear the textarea
+      textInput.value = "";
+      // Create a new paragraph element to display the input text
+      var paragraph = document.createElement("p");
+      // Set the text content of the paragraph to the input text
+      paragraph.textContent = inputText;
+      // Append the paragraph to the output div
+      outputDiv.appendChild(paragraph);
+    });
+  </script>
 </body>
 </html>
