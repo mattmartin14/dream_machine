@@ -1,6 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+// #include <time.h>
+// #include <string.h>
+// #include <sys/types.h>
+
+/*
+    for validation, you can use these commands for quick lookups
+
+    first 5 rows > head -n 5 numbers.txt
+    last 5 rows > tail -n 5 numbers.txt
+
+    i've gotten this down to less than 32 seconds
+
+*/
 
 // Function to convert an integer to ASCII
 int int_to_ascii(int value, char* buffer, size_t buffer_size) {
@@ -42,16 +57,20 @@ int main() {
 
     clock_t start_time = clock();
 
+    char f_path[100];
+    snprintf(f_path, sizeof(f_path), "%s/test_dummy_data/c/data.txt", getenv("HOME"));
 
     // Open a file for writing
-    FILE* file = fopen("numbers.txt", "w");
+    FILE *file = fopen(f_path,"w");
     if (file == NULL) {
         perror("Error opening file");
         return 1;
     }
 
+    int buffer_size = 200*1024;
+
     // Buffer to accumulate multiple numbers
-    char buffer[4*4096*2];  // Large enough to hold multiple numbers
+    char buffer[buffer_size];  // Large enough to hold multiple numbers
     memset(buffer, 0, sizeof(buffer));  // Clear the buffer
 
     int pos = 0;  // Position in the buffer
@@ -69,20 +88,36 @@ int main() {
             return 1;
         }
 
-        // If adding this number exceeds the buffer size, flush
-        if (pos + chars_written + 1 >= sizeof(buffer)) {  // +1 for newline
-            // Write the buffer to the file
-            fwrite(buffer, 1, pos, file);
-            // Clear the buffer and reset the position
-            memset(buffer, 0, sizeof(buffer));
-            pos = 0;
+        // If adding this number exceeds the remaining buffer space, write buffer to file
+        // we know that each number at most is 10 characters + the 2 for a new line; thuse we check for 12
+        if (pos + 12 >= buffer_size) { // Maximum number of characters for any number representation
+            fwrite(buffer, 1, pos, file); // Write the buffer to the file
+            pos = 0; // Reset the position in the buffer
         }
+
+
+        // If adding this number exceeds the buffer size, flush
+        // if (pos + chars_written + 1 >= sizeof(buffer)) {  // +1 for newline
+        //     // Write the buffer to the file
+        //     fwrite(buffer, 1, pos, file);
+        //     // Clear the buffer and reset the position
+        //     memset(buffer, 0, sizeof(buffer));
+        //     pos = 0;
+        // }
 
         // Accumulate the converted number and a newline in the buffer
         memcpy(buffer + pos, temp, chars_written);  // Add the number
         pos += chars_written;
-        buffer[pos++] = '\n';  // Add a newline for separation
-        // could do buffer[pos] = '\n'; pos++; the thing above is a shortcut to write and advance the buffer after write
+
+        // add new line (1 byte) and advance the buffer
+        //buffer[pos] = '\n';
+        // the \n and 0x0A are same thing; 0x0A is hexidecimal/ascii byte rep of \n
+        // no speed diff between the 2
+        buffer[pos] = '\n';
+        //buffer[pos] = 0x0A;
+        pos++;
+        // this is shorthand and does the same thing; writes the value then adavances the buffer by 1
+        //buffer[pos++] = '\n';  // Add a newline for separation
     }
 
     // If there's data in the buffer, flush it
