@@ -1,0 +1,3 @@
+so far v2 is the fastest; got it to run in 35 seconds
+; 
+need to see if i can add the terje no pad method now that i have an affective fwrite process

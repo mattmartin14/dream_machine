@@ -8,23 +8,17 @@ int int_to_ascii(int value, char* buffer, size_t buffer_size) {
         return -1;  // No space in the buffer
     }
 
-    // int is_negative = value < 0;  // Check if the integer is negative
-    // if (is_negative) {
-    //     value = -value;  // Convert to positive for extraction
-    // }
-
     char temp[12];  // Temporary buffer for the integer
     int temp_pos = 0;
+
+    // Ensure value is positive
+    value = (value < 0) ? -value : value;
 
     do {
         int digit = value % 10;
         temp[temp_pos++] = '0' + digit;  // Convert to ASCII
         value /= 10;
     } while (value > 0);
-
-    // if (is_negative) {
-    //     temp[temp_pos++] = '-';  // Add the negative sign if needed
-    // }
 
     // Reverse the characters and copy to the output buffer
     if (temp_pos > buffer_size) {
@@ -39,9 +33,7 @@ int int_to_ascii(int value, char* buffer, size_t buffer_size) {
 }
 
 int main() {
-
     clock_t start_time = clock();
-
 
     // Open a file for writing
     FILE* file = fopen("numbers.txt", "w");
@@ -51,13 +43,13 @@ int main() {
     }
 
     // Buffer to accumulate multiple numbers
-    char buffer[4*4096*2];  // Large enough to hold multiple numbers
+    char buffer[10000];  // Large enough to hold multiple numbers
     memset(buffer, 0, sizeof(buffer));  // Clear the buffer
 
     int pos = 0;  // Position in the buffer
-    int max_rows = 1000000000;
+    unsigned int max_rows = 1000000000;
 
-    for (int i = 1; i <= max_rows; i++) {
+    for (unsigned int i = 1; i <= max_rows; i++) {
         // Convert the integer to ASCII
         char temp[20];  // Temporary buffer for each number
         memset(temp, 0, sizeof(temp));  // Clear the temporary buffer
@@ -82,7 +74,6 @@ int main() {
         memcpy(buffer + pos, temp, chars_written);  // Add the number
         pos += chars_written;
         buffer[pos++] = '\n';  // Add a newline for separation
-        // could do buffer[pos] = '\n'; pos++; the thing above is a shortcut to write and advance the buffer after write
     }
 
     // If there's data in the buffer, flush it
@@ -98,8 +89,7 @@ int main() {
     // Calculate the elapsed time in seconds
     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
 
-
-    printf("Numbers 1 - %d have been written to numbers.txt\n", max_rows);
+    printf("Numbers 1 - %u have been written to numbers.txt\n", max_rows);
     printf("Elapsed time: %.2f seconds\n", elapsed_time);
 
     return 0;
