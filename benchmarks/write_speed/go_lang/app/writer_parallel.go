@@ -4,8 +4,7 @@ package app
 	Author: Matt Martin
 	Create Date: 2023-09-14
 	Last Mod: 2023-09-14
-	Desc: builds on the single thread byte slice writer that runs in 13 seconds and sees if we can crank it out faster
-		with parallel processing. Me thinks we canz :P
+	Uses go routines to write 1B rows to 20 files in parallel. Can run in about 2.96 seconds
 
 */
 
