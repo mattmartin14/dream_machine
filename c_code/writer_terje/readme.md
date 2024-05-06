@@ -31,7 +31,7 @@ fwrite(buffer, pos, 1, file);
 When I worked through getting an ascii converter function up and running, I was suggested the Terje Mathisen algorithm by Thomas Kejser on LinkedIn; he provided the function in a post reply, but more detail can be found [here](https://stackoverflow.com/questions/7890194/optimized-itoa-function). The algorithm uses a clever trick of splitting the int into 2 parts and processing them both, then sandwiching them back together for the final ascii output. I also tested my own int to ascii function. Both methods were able to write 1B row across 30 files in under 4 seconds. I also tested using C's snprintf to convert the int's to strings. All three version are linked below:
 
 1. [Terje Algorithm](./terje_nopad_v2.c) - runs in 2.9 seconds
-2. [My Own Int to Ascii](./parallel_v2.c) - runs in 3.8 seconds
+2. [My Own Int to Ascii](./parallel_iota.c) - runs in 3.8 seconds
 3. [Stadard C sprintf](./parallel_writer.c) - runs in 8 seconds
 
 ---
