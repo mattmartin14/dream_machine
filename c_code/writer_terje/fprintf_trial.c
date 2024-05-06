@@ -4,6 +4,8 @@
 #include <string.h>
 
 
+//single thread test using fprintf
+
 #define ROW_CNT 1000
 
 

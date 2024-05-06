@@ -10,11 +10,11 @@
 #define TOTAL_ROWS 1000000000
 
 /*
-    Uses fork to create sub processes to write in parallel.
-    does 10 files @ 1B rows in under 4 seconds
+    Uses a custom Iota function (Integer to Ascii)
+    to convert ints to bytes fast and load to buffer for writing
 
-    -- updated using buffers
-        -- now writes in under 5 seconds spread accross 20 files
+    uses forks to run in parallel
+    can write 1B rows across 30 files under 4 seconds
 
 */
 

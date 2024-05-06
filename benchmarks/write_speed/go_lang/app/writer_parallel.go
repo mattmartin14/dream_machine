@@ -22,9 +22,9 @@ import (
 //var max_rows_per_buffer int = 200000
 
 var buffer_size int = 10 * 1024 * 1024
-var max_workers int = 20
+var max_workers int = 30
 var row_cnt int = 1000000000
-var total_files int = 20
+var total_files int = 30
 
 // with 20 workers and 20 files, it did it in 2.96 seconds
 

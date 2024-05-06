@@ -1,3 +1,6 @@
+
+### just a sample python version to see how much slower it is vs. c
+
 import os
 import time
 from concurrent.futures import ProcessPoolExecutor
