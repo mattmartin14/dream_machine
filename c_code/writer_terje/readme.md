@@ -38,3 +38,13 @@ WHen I worked through getting an ascii converter function up and running, I was 
 #### Some Other Thoughts
 
 Working with buffers and pointers in C is always tricky. But once you get it working, it's very rewarding. One thing to remember though is in C, you have to roll your own functions a lot of the time to get the performance boost. In more modern languages like Go, they have implemented a very fast Int to Ascii function, which can be found [here](https://github.com/golang/go/blob/master/src/strconv/itoa.go). When I use Go's Int to Ascii (Iota) function, I can get the same performance I'm getting with C, where I can write 1B rows in under 4 seconds. Here's the link to that one: [Go Parallel Writer](https://github.com/mattmartin14/dream_machine/blob/main/benchmarks/write_speed/go_lang/app/writer_v2.go).
+
+Additionally, some handy validation tricks I used when looking at the files are the built in head and tail commands in terminal. They can allow you to very quickly look at the first and last N rows of a file. Below are examples of using each:
+
+```bash
+tail -n 5 data20.txt
+head -n 10 data1.txt
+```
+
+These methods will print out the rows you want to sample in the terminal so you can quickly see if the files are writing correctly.
+
