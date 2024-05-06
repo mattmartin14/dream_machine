@@ -23,8 +23,7 @@ import (
 
 func Writer_V2() {
 
-	tot_rows := 1000000000
-	//tot_rows = 10005
+	var tot_rows int64 = 1000000000
 
 	buffer_size := 1 * 1024 * 1024
 
@@ -42,10 +41,10 @@ func Writer_V2() {
 	var buffer []byte
 
 	// the nice thing about bufio writer is we dont need to calc batch sizes and flushes. it will flush when buffer gets full
-	for i := 1; i <= tot_rows; i++ {
+	for i := int64(1); i <= tot_rows; i++ {
 
 		// this first part appends the integer to the beginning of the byte buffer
-		buffer = strconv.AppendInt(buffer[:0], int64(i), 10)
+		buffer = strconv.AppendInt(buffer[:0], i, 10)
 
 		//appends a new line
 		buffer = append(buffer, '\n')
@@ -62,6 +61,6 @@ func Writer_V2() {
 	}
 
 	elapsed_time := time.Since(start_ts).Seconds()
-	msg := fmt.Sprintf("Single Thread Benchmark: Elapsed Time (v2) using Go Lang to process %s rows: %.2f seconds", format_nbr_with_commas(tot_rows), elapsed_time)
+	msg := fmt.Sprintf("Single Thread Benchmark: Elapsed Time (v2) using Go Lang to process %s rows: %.2f seconds", format_nbr_with_commas(int(tot_rows)), elapsed_time)
 	fmt.Println(msg)
 }
