@@ -14,6 +14,8 @@ import (
 	Last Mod: 2023-09-06
 		-- updated to write byte slices and time was cut in half. now runs under 13 seconds
 
+		-- this is a single thread writer; for the parallel version, see writer_parallel.go
+
 */
 
 // go build -o go_writer
