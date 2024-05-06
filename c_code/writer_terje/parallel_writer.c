@@ -10,8 +10,10 @@
 #define TOTAL_ROWS 1000000000
 
 /*
-    Parallel Writer using sprintf to write to ints
+    Parallel Writer using sprintf to convert ints to chars
     ..slower than custom iota
+
+    runs in about 7 seconds
 
 */
 
