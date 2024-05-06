@@ -1,0 +1,8 @@
+i worked on my own version called int_to_ascii_v2.c
+- it writes 1B rows across 30 files in a little under 4 seconds
+
+the terje_nopad_v2.c file runs in about 3.3 seconds on 1B rows to 30 files...slightly faster than mine.
+
+a deep dive on the terje method can be found here: 
+
+https://stackoverflow.com/questions/7890194/optimized-itoa-function
