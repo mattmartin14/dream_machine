@@ -110,7 +110,7 @@ int main() {
         if (pid == 0) {
             // Child process
             int start = i * rows_per_file + 1;
-            int end = start + rows_per_file - 1;
+            int end = (i == NUM_FILES - 1) ? TOTAL_ROWS : (i + 1) * rows_per_file;
             writeToFilesV2(start, end, i + 1);
             exit(0);
         } else if (pid < 0) {
