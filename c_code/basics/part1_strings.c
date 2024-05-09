@@ -40,6 +40,7 @@ int main() {
 
     strcpy(p, "abc");
 
+    // advance the pointer 3 slots now that abc has been added
     p+=3;
     strcpy(p, "def");
 
