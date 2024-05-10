@@ -1,2 +1,0 @@
-Integer: 123, String: Hello
-Integer: 456, String: World
