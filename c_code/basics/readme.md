@@ -16,7 +16,7 @@ For this tutorial, I will cover the following topics in C:
 
 At that point, that is pretty much all you really need to know about C for data engineering (just my opinion). I would not reach for C for any DE task in today's landscape. And why you might ask?
 
-- Because C does not have a built-in dataframe library
+- Because C does not have a native dataframe library
 - Because C does not have a native parquet reader or writer
 - Because Rust is nearly as fast as C and has a lot more to offer
 - Because C requires a lot of extra code to things like query a SQL Server.
