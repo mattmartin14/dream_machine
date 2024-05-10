@@ -84,6 +84,8 @@ int main() {
     buf[3] = '\0';
 
     printf("contents of the buffer are [%s]\n",buf);
+
+    return 0;
 }
 ```
 You might be asking yourself...what the heck is that ```\0``` thing at the end?? In C code, when you create an array of characters, you have to explicitely terminate it at the end with what is called the null terminator a.k.a. ```\0```. If you do not add that null terminator at the end, the print statement will add some weird looking characters at the end.
@@ -104,6 +106,8 @@ int main() {
     strcpy(buf, "abc");
 
     printf("The contents of the buffer are [%s]\n",buf);
+
+    return 0;
 }
 ```
 
@@ -136,6 +140,8 @@ int main() {
     strcpy(p,"def");
 
     printf("The contents of the buffer are [%s]\n",buf);
+
+    return 0;
 }
 
 ```
@@ -162,6 +168,8 @@ int main() {
     strcpy(p,"def");
 
     printf("The contents of the buffer are [%s]\n",buf);
+
+    return 0;
 }
 ```
 
@@ -238,7 +246,7 @@ int main() {
 
     printf("File has been written successfully.\n");
 
-    return 0; // Successful execution
+    return 0;
 }
 
 ```
@@ -273,7 +281,7 @@ int main() {
 
     printf("File has been written successfully.\n");
 
-    return 0; // Successful execution
+    return 0; 
 }
 ```
 
@@ -310,7 +318,7 @@ int main() {
 
     printf("File has been written successfully.\n");
 
-    return 0; // Successful execution
+    return 0; 
 }
 
 ```
