@@ -17,7 +17,7 @@ int main() {
     strcpy(buf+buf_pos, "abc");
 
     // update the buffer position (we have added 3 characters)
-    buf_pos +=3;
+    buf_pos +=strlen("abc");
 
     strcpy(buf+buf_pos,"def");
 

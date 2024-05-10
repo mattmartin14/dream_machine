@@ -1,0 +1,4 @@
+name|age 
+bob|42
+ted|55
+nancy|37
