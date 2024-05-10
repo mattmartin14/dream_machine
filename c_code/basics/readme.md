@@ -18,6 +18,7 @@ At that point, that is pretty much all you really need to know about C for data 
 
 - Because C does not have a built-in dataframe library
 - Because C does not have a native parquet reader or writer
+- Because Rust is nearly as fast as C and has a lot more to offer
 - Because C requires a lot of extra code to things like query a SQL Server.
 - Because C is considered an "unsafe" language
 - Because...just don't :-)
