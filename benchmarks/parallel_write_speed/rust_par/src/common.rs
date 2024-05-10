@@ -3,35 +3,63 @@ use std::fs::File;
 use std::io::{Write, BufWriter};
 use std::error::Error;
 
+// slower than writeln!
+pub fn write_data_to_file_v3(file_path: &str, start_row: usize, end_row: usize, buffer_size: usize, batch_size: usize) -> Result<(), Box<dyn Error>> {
+    let file = File::create(file_path)?;
+    let mut writer = BufWriter::with_capacity(buffer_size, file);
 
-// pub fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize, buffer_size: usize, batch_size: usize) -> Result<(), Box<dyn Error>> {
-    
-//     let file = File::create(file_path)?;
-//     //let mut writer = BufWriter::new(file);
+    let mut row_num = start_row;
+    let mut chunk = Vec::with_capacity(batch_size * 12); // Assuming an average of 12 bytes per integer
 
-//     let mut writer = BufWriter::with_capacity(buffer_size, file);
+    while row_num <= end_row {
+        let chunk_end = (row_num + batch_size - 1).min(end_row);
+        for chunk_row_num in row_num..=chunk_end {
+            chunk.extend_from_slice(chunk_row_num.to_string().as_bytes());
+            chunk.push(b'\n'); // Add a newline after each number
+        }
+        writer.write_all(&chunk)?;
+        writer.flush()?;
+        chunk.clear();
+        row_num = chunk_end + 1;
+    }
 
-//     let row_cnt = end_row - start_row+1;
+    Ok(())
+}
 
-//     for chunk_start in (1..row_cnt).step_by(batch_size) {
+//slower than writeln!
+pub fn write_data_to_file_v2(file_path: &str, start_row: usize, end_row: usize, buffer_size: usize, batch_size: usize) -> Result<(), Box<dyn Error>> {
+    let file = File::create(file_path)?;
+    let mut writer = BufWriter::with_capacity(buffer_size, file);
 
-//         let chunk_end = (chunk_start + batch_size-1).min(row_cnt);
+    let mut row_num = start_row;
+    while row_num <= end_row {
+        let chunk_end = (row_num + batch_size - 1).min(end_row);
+        for chunk_row_num in row_num..=chunk_end {
+            let num_str = chunk_row_num.to_string();
+            writer.write(num_str.as_bytes())?;
+            writer.write(b"\n")?;
+        }
+        writer.flush()?;
+        row_num = chunk_end + 1;
+    }
 
-//         for row_num in chunk_start..=chunk_end {
+    Ok(())
+}
 
-//             writeln!(writer, "{}", row_num)?;
-//         }
-//         writer.flush()?;
-//     }
-
-//     Ok(())
-// }
 
 pub fn write_data_to_file(file_path: &str, start_row: usize, end_row: usize, buffer_size: usize, batch_size: usize) -> Result<(), Box<dyn Error>> {
     let file = File::create(file_path)?;
     let mut writer = BufWriter::with_capacity(buffer_size, file);
 
     let mut row_num = start_row;
+
+
+    // this is slower; batching the flushes is faster
+    // for row in row_num..=end_row {
+    //     writeln!(writer, "{}", row)?;
+    // }
+
+
     while row_num <= end_row {
         let chunk_end = (row_num + batch_size - 1).min(end_row);
         for chunk_row_num in row_num..=chunk_end {

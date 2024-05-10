@@ -15,7 +15,7 @@ use rayon::prelude::*;
 
 const TOTAL_FILES: usize = 20;
 const BATCH_SIZE: usize = 10_000;
-const BUFFER_SIZE: usize = 1024 * 1024 * 10; //1 mb
+const BUFFER_SIZE: usize = 1024 * 1024 * 100; //1 mb
 const TOT_ROWS: usize = 1_000_000_000;
 
 
