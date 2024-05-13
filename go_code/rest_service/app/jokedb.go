@@ -2,22 +2,13 @@ package app
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
 
 	_ "github.com/lib/pq"
 )
 
 //go get github.com/lib/pq
 
-type chuck_joke struct {
-	Joke       string `json:"value"`
-	Created_at string `json:"created_at"`
-}
-
-func GetCNJokeCache() (string, error) {
+func GetCnJokeDb() (string, error) {
 	db, err := sql.Open("postgres", "postgresql://localhost/testdb1?sslmode=disable")
 	if err != nil {
 		return "", err
@@ -27,7 +18,7 @@ func GetCNJokeCache() (string, error) {
 	// q := "create table test_sch1.cn_jokes (joke_txt varchar(1000), jk_ts timestamp)"
 	// db.Query(q)
 
-	rows, err := db.Query("SELECT joke_txt FROM test_sch1.cn_jokes")
+	rows, err := db.Query("SELECT joke_txt FROM test_sch1.cn_jokes ORDER BY RANDOM() limit 1")
 	if err != nil {
 		return "", err
 	}
@@ -48,32 +39,4 @@ func GetCNJokeCache() (string, error) {
 	}
 
 	return joke_txt, nil
-}
-
-func GetCNJokeLive() (string, error) {
-	url := "https://api.chucknorris.io/jokes/random"
-
-	response, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error making GET request: ", err)
-		return "", err
-	}
-	defer response.Body.Close()
-
-	// Read the response body
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error reading response from CN Joke API: ", err)
-		return "", err
-	}
-
-	joke := chuck_joke{}
-	err = json.Unmarshal(body, &joke)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return "", err
-	}
-
-	return joke.Joke, nil
-
 }

@@ -11,21 +11,29 @@ type Message struct {
 }
 
 func LaunchRestServer() {
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			handleGet(w, r)
-		// case http.MethodPost:
-		// 	handlePost(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 
-	http.HandleFunc("/getjoke", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/getjokeapi", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			getjoke(w, r)
+			getJokeApi(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	http.HandleFunc("/getjokedb", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			getJokeDb(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -37,47 +45,38 @@ func LaunchRestServer() {
 	http.ListenAndServe(port, nil)
 }
 
-// update to do joke cached, joke live
+// update to do joke api direct, joke db
 
-func getjoke(w http.ResponseWriter, r *http.Request) {
+func getJokeApi(w http.ResponseWriter, r *http.Request) {
 
-	j, err := GetCNJokeLive()
+	j, err := GetCnJokeApi()
 	if err != nil {
-		http.Error(w, "Failed to fetch joke", http.StatusInternalServerError)
+		err_msg := fmt.Sprintf("Failed to fetch joke from API: %v", err)
+		http.Error(w, err_msg, http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintf(w, "%s", j)
+	fmt.Fprintf(w, "Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
+}
 
-	// if we wanted to serve as a json
-	// message := Message{
-	// 	Text: j,
-	// }
+func getJokeDb(w http.ResponseWriter, r *http.Request) {
 
-	// w.Header().Set("Content-Type", "application/json")
-	// json.NewEncoder(w).Encode(message)
+	j, err := GetCnJokeDb()
+	if err != nil {
+		err_msg := fmt.Sprintf("Failed to fetch joke from Database: %v", err)
+		http.Error(w, err_msg, http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
 }
 
 // default
 func handleGet(w http.ResponseWriter, r *http.Request) {
 	message := Message{
-		Text: "Hello, World! 123",
+		Text: "Demo Go Lang Web Request Server",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(message)
 }
-
-// func handlePost(w http.ResponseWriter, r *http.Request) {
-// 	var message Message
-
-// 	err := json.NewDecoder(r.Body).Decode(&message)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	// Assuming successful processing
-// 	w.WriteHeader(http.StatusCreated)
-// 	fmt.Fprintf(w, "Received message: %s", message.Text)
-// }
