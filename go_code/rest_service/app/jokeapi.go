@@ -7,7 +7,8 @@ import (
 	"net/http"
 )
 
-func GetCnJokeApi() (string, error) {
+func GetCnJokeApi() (joke string, err error) {
+
 	url := "https://api.chucknorris.io/jokes/random"
 
 	response, err := http.Get(url)
@@ -21,16 +22,18 @@ func GetCnJokeApi() (string, error) {
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Println("Error reading response from CN Joke API: ", err)
-		return "", err
+		return
 	}
 
-	joke := chuck_joke{}
-	err = json.Unmarshal(body, &joke)
+	j := chuck_joke{}
+	err = json.Unmarshal(body, &j)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
-		return "", err
+		return
 	}
 
-	return joke.Joke, nil
+	joke = j.Joke
+
+	return
 
 }

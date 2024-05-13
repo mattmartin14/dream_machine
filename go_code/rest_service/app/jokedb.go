@@ -8,10 +8,10 @@ import (
 
 //go get github.com/lib/pq
 
-func GetCnJokeDb() (string, error) {
+func GetCnJokeDb() (joke string, err error) {
 	db, err := sql.Open("postgres", "postgresql://localhost/testdb1?sslmode=disable")
 	if err != nil {
-		return "", err
+		return
 	}
 	defer db.Close()
 
@@ -20,7 +20,7 @@ func GetCnJokeDb() (string, error) {
 
 	rows, err := db.Query("SELECT joke_txt FROM test_sch1.cn_jokes ORDER BY RANDOM() limit 1")
 	if err != nil {
-		return "", err
+		return
 	}
 	defer rows.Close()
 
@@ -29,14 +29,17 @@ func GetCnJokeDb() (string, error) {
 	// Iterate over the rows
 	for rows.Next() {
 
-		err := rows.Scan(&joke_txt)
+		err = rows.Scan(&joke_txt)
 		if err != nil {
-			return "", err
+			return
 		}
 	}
-	if err := rows.Err(); err != nil {
-		return "", err
+
+	if err = rows.Err(); err != nil {
+		return
 	}
 
-	return joke_txt, nil
+	joke = joke_txt
+
+	return
 }
