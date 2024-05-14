@@ -181,35 +181,19 @@ func GetCnJokeDb() (joke string, err error) {
 	if err != nil {
 		return
 	}
+
 	defer db.Close()
 
-	rows, err := db.Query("SELECT joke_txt FROM test_sch1.cn_jokes ORDER BY RANDOM() limit 1")
+	err = db.QueryRow("SELECT joke_txt FROM test_sch1.cn_jokes ORDER BY RANDOM() LIMIT 1").Scan(&joke)
 	if err != nil {
 		return
 	}
-	defer rows.Close()
-
-	var joke_txt string
-
-	// Iterate over the rows
-	for rows.Next() {
-
-		err = rows.Scan(&joke_txt)
-		if err != nil {
-			return
-		}
-	}
-
-	if err = rows.Err(); err != nil {
-		return
-	}
-
-	joke = joke_txt
 
 	return
 }
+
 ```
-This code queries a random joke from our Postgres joke table and sends the text back.
+This code queries a random joke from our Postgres joke table and sends the text back. The QueryRow function is nice in that it's meant to query a single row and we can bootstrap the result to our local variable in one shot.
 
 ---
 ### Wiring It All Up
