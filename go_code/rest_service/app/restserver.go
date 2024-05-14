@@ -13,30 +13,15 @@ type Message struct {
 func LaunchRestServer() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			handleGet(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
+		handleHome(w, r)
 	})
 
 	http.HandleFunc("/getjokeapi", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			getJokeApi(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
+		getJokeApi(w, r)
 	})
 
 	http.HandleFunc("/getjokedb", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			getJokeDb(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
+		getJokeDb(w, r)
 	})
 
 	port := ":8080"
@@ -56,7 +41,7 @@ func getJokeApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
+	fmt.Fprintf(w, "(Via Live API Call), Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
 }
 
 func getJokeDb(w http.ResponseWriter, r *http.Request) {
@@ -68,11 +53,11 @@ func getJokeDb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
+	fmt.Fprintf(w, "(Via Database Fetch), Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
 }
 
 // default
-func handleGet(w http.ResponseWriter, r *http.Request) {
+func handleHome(w http.ResponseWriter, r *http.Request) {
 	message := Message{
 		Text: "Demo Go Lang Web Request Server",
 	}
