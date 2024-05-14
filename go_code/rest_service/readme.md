@@ -179,7 +179,7 @@ func GetCnJokeDb() (joke string, err error) {
 }
 
 ```
-This code queries a random joke from our Postgres joke table and sends the text back. The QueryRow function is nice in that it's meant to query a single row and we can bootstrap the result to our local variable in one shot.
+This code queries a random joke from our Postgres joke table and sends the text back. The `QueryRow` function is nice in that it's meant to query a single row and we can bootstrap the result to our local variable in one shot.
 
 ---
 ### Wiring It All Up
