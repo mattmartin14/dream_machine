@@ -12,7 +12,7 @@ Well if you are interested, then keep reading this article. It provides a simple
 --- 
 ### Creating the Rest API Service
 
-Creating a Rest API service in Go is pretty straight forward. You can use Go's `net/http` package as seen below. In the example below, we are creating 3 different routes:
+Creating a Rest API service in Go is pretty straight forward. You can use Go's `net/http` package as seen below. In the example, we are creating 3 different routes:
 
 1. The Default path (localhost:8080/)
 2. Joke Path to live API hit (localhost:8080/getjokeapi)
@@ -56,7 +56,7 @@ func LaunchRestServer() {
 
 ```
 
-You will notice inside each handle function, we ahve a specific sub function we are calling. That sub function is what will actually display back the JSON to the client on the webpage. Below are the sub functions assigned to each handler.
+You will notice inside each handle function, we have a specific sub function we are calling. That sub function is what will actually display back the JSON to the client on the webpage. Below are the sub functions assigned to each handler.
 
 ```GO
 func handleJokeApi(w http.ResponseWriter, r *http.Request) {
@@ -106,11 +106,11 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-For the API and DB functions, you will notice that each calls a separate function to actually retrieve the joke text, either from a live API call or a database. The default path just serves up a standard message and does not sub calls.
+For the API and DB functions, you will notice that each calls a separate function to actually retrieve the joke text, either from a live API call or a database. The default path just serves up a standard message and does not do any sub calls.
 
 ---
 ### Fetching the data from an API
-Alright, so now our routes are setup, let's take a look at the actual code that gets the joke text and sends it back to the handlers. Below is the code that does a live api call to the public free Chuck Norris API:
+Alright, so now that our routes are setup, let's take a look at the actual code that gets the joke text and sends it back to the handlers. Below is the code that does a live api call to the public free Chuck Norris API:
 
 ```GO
 package app
@@ -118,40 +118,26 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
 
 func GetCnJokeApi() (joke string, err error) {
-
 	url := "https://api.chucknorris.io/jokes/random"
-
-	response, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error making GET request: ", err)
-		return "", err
+		return "", fmt.Errorf("error making GET request: %v", err)
 	}
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	// Read the response body
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error reading response from CN Joke API: ", err)
-		return
+	var j struct {
+		Joke string `json:"value"`
 	}
-
-	j := chuck_joke{}
-	err = json.Unmarshal(body, &j)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return
+	if err := json.NewDecoder(resp.Body).Decode(&j); err != nil {
+		return "", fmt.Errorf("error parsing JSON: %v", err)
 	}
-
-	joke = j.Joke
-
-	return
-
+	return j.Joke, nil
 }
+
 
 ```
 

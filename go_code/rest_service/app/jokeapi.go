@@ -3,37 +3,22 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
 
 func GetCnJokeApi() (joke string, err error) {
-
 	url := "https://api.chucknorris.io/jokes/random"
-
-	response, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error making GET request: ", err)
-		return "", err
+		return "", fmt.Errorf("error making GET request: %v", err)
 	}
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	// Read the response body
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error reading response from CN Joke API: ", err)
-		return
+	var j struct {
+		Joke string `json:"value"`
 	}
-
-	j := chuck_joke{}
-	err = json.Unmarshal(body, &j)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return
+	if err := json.NewDecoder(resp.Body).Decode(&j); err != nil {
+		return "", fmt.Errorf("error parsing JSON: %v", err)
 	}
-
-	joke = j.Joke
-
-	return
-
+	return j.Joke, nil
 }
