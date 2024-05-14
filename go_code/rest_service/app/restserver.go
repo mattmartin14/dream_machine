@@ -14,15 +14,15 @@ type Message struct {
 func LaunchRestServer() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		handleHome(w, r)
+		handleHome(w)
 	})
 
 	http.HandleFunc("/getjokeapi", func(w http.ResponseWriter, r *http.Request) {
-		handleJokeApi(w, r)
+		handleJokeApi(w)
 	})
 
 	http.HandleFunc("/getjokedb", func(w http.ResponseWriter, r *http.Request) {
-		handleJokeDb(w, r)
+		handleJokeDb(w)
 	})
 
 	port := ":8080"
@@ -31,7 +31,7 @@ func LaunchRestServer() {
 	http.ListenAndServe(port, nil)
 }
 
-func handleJokeApi(w http.ResponseWriter, r *http.Request) {
+func handleJokeApi(w http.ResponseWriter) {
 
 	j, err := GetCnJokeApi()
 	if err != nil {
@@ -49,7 +49,7 @@ func handleJokeApi(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func handleJokeDb(w http.ResponseWriter, r *http.Request) {
+func handleJokeDb(w http.ResponseWriter) {
 
 	j, err := GetCnJokeDb()
 	if err != nil {
@@ -68,7 +68,7 @@ func handleJokeDb(w http.ResponseWriter, r *http.Request) {
 }
 
 // default
-func handleHome(w http.ResponseWriter, r *http.Request) {
+func handleHome(w http.ResponseWriter) {
 	message := Message{
 		Joke: "Not a joke here; Demo Go Lang Web Request Server",
 	}

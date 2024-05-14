@@ -59,7 +59,7 @@ func LaunchRestServer() {
 You will notice inside each handle function, we have a specific sub function we are calling. That sub function is what will actually display back the JSON to the client on the webpage. Below are the sub functions assigned to each handler.
 
 ```GO
-func handleJokeApi(w http.ResponseWriter, r *http.Request) {
+func handleJokeApi(w http.ResponseWriter) {
 
 	j, err := GetCnJokeApi()
 	if err != nil {
@@ -77,7 +77,7 @@ func handleJokeApi(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func handleJokeDb(w http.ResponseWriter, r *http.Request) {
+func handleJokeDb(w http.ResponseWriter) {
 
 	j, err := GetCnJokeDb()
 	if err != nil {
@@ -96,7 +96,7 @@ func handleJokeDb(w http.ResponseWriter, r *http.Request) {
 }
 
 // default
-func handleHome(w http.ResponseWriter, r *http.Request) {
+func handleHome(w http.ResponseWriter) {
 	message := Message{
 		Joke: "Not a joke here; Demo Go Lang Web Request Server",
 	}
