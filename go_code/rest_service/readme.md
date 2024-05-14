@@ -54,6 +54,11 @@ func LaunchRestServer() {
 	http.ListenAndServe(port, nil)
 }
 
+```
+
+You will notice inside each handle function, we ahve a specific sub function we are calling. That sub function is what will actually display back the JSON to the client on the webpage. Below are the sub functions assigned to each handler.
+
+```GO
 func handleJokeApi(w http.ResponseWriter, r *http.Request) {
 
 	j, err := GetCnJokeApi()
@@ -99,15 +104,13 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(message)
 }
-
 ```
 
-
-Ok, so now that we have created the Rest service and our routes, how do we have the routes actually go and execute code? Let's look at route function `getJokeApi`. You will notice inside that function, we are calling a function `GetCnJokeApi()`. This is the function that actually pings the Chuck Norris Joke API and returns back the joke text. Keep reading below to see how that is accomplished.
+For the API and DB functions, you will notice that each calls a separate function to actually retrieve the joke text, either from a live API call or a database. The default path just serves up a standard message and does not sub calls.
 
 ---
 ### Fetching the data from an API
-Alright, so our routes are setup, we have them each calling their individual functions to do work based on the particular route chosen. For the joke API route, we have it run this function below that returns the joke:
+Alright, so now our routes are setup, let's take a look at the actual code that gets the joke text and sends it back to the handlers. Below is the code that does a live api call to the public free Chuck Norris API:
 
 ```GO
 package app
@@ -230,9 +233,20 @@ To launch it, in terminal, we simply run `go run main.go` and Voila! Once the pr
 
 ![rlaunch](./photos/r_launch.jpg)
 
-At this point, we can test our various endpoints. Here is what it looks like for the live API route in Safari:
+At this point, we can test our various endpoints. Here is what it looks like for the live API route in Safari using URL `http://localhost:8080/getjokeapi`:
+
+![j1](./photos/api.jpg)
+
+And here is what it looks like when we call our Postgres DB endpoint URL `localhost:8080/getjokedb`:
+
+![j2](./photos/db.jpg)
 
 
+And that's how a rest server serves information back to the user!
 
 ---
 ### Conclusion
+
+This article demonstrated a simple overview of how to create a RESTful service using Go lang. There are projects out there that are a lot more thorough and involved like [this one](https://github.com/learning-cloud-native-go/myapp), but if you don't need all the bells and whistles and just need something simple to serve up, the code in this article should suffice. But you might be asking "How can I actually deploy this code in the cloud?" There are many options. The easiest one I know is to package this up into docker container and send it up the [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk). You can also create AWS Lambda endpoints, or if you really want control, you can put it on EC2. And those are just a few of the options out there. All the big 3 cloud providers support a multitude of ways to deploy RESTFul servers/applications. 
+
+Thanks for reading - Matt
