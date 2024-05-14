@@ -7,7 +7,8 @@ import (
 )
 
 type Message struct {
-	Text string `json:"text"`
+	Joke   string `json:"joke"`
+	Source string `json:"source"`
 }
 
 func LaunchRestServer() {
@@ -17,11 +18,11 @@ func LaunchRestServer() {
 	})
 
 	http.HandleFunc("/getjokeapi", func(w http.ResponseWriter, r *http.Request) {
-		getJokeApi(w, r)
+		handleJokeApi(w, r)
 	})
 
 	http.HandleFunc("/getjokedb", func(w http.ResponseWriter, r *http.Request) {
-		getJokeDb(w, r)
+		handleJokeDb(w, r)
 	})
 
 	port := ":8080"
@@ -30,9 +31,7 @@ func LaunchRestServer() {
 	http.ListenAndServe(port, nil)
 }
 
-// update to do joke api direct, joke db
-
-func getJokeApi(w http.ResponseWriter, r *http.Request) {
+func handleJokeApi(w http.ResponseWriter, r *http.Request) {
 
 	j, err := GetCnJokeApi()
 	if err != nil {
@@ -41,10 +40,16 @@ func getJokeApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "(Via Live API Call), Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
+	message := Message{
+		Joke:   j,
+		Source: "Live API",
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(message)
+
 }
 
-func getJokeDb(w http.ResponseWriter, r *http.Request) {
+func handleJokeDb(w http.ResponseWriter, r *http.Request) {
 
 	j, err := GetCnJokeDb()
 	if err != nil {
@@ -53,13 +58,19 @@ func getJokeDb(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "(Via Database Fetch), Here is your daily dose of Chuck Norris jokes:\n\n%s", j)
+	message := Message{
+		Joke:   j,
+		Source: "Database Fetch",
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(message)
+
 }
 
 // default
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	message := Message{
-		Text: "Demo Go Lang Web Request Server",
+		Joke: "Not a joke here; Demo Go Lang Web Request Server",
 	}
 
 	w.Header().Set("Content-Type", "application/json")

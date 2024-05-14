@@ -15,9 +15,6 @@ func GetCnJokeDb() (joke string, err error) {
 	}
 	defer db.Close()
 
-	// q := "create table test_sch1.cn_jokes (joke_txt varchar(1000), jk_ts timestamp)"
-	// db.Query(q)
-
 	rows, err := db.Query("SELECT joke_txt FROM test_sch1.cn_jokes ORDER BY RANDOM() limit 1")
 	if err != nil {
 		return
