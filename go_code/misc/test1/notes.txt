@@ -1,0 +1,1 @@
+just some simple testing of go routines, iteration, maps, structs
