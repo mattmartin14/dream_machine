@@ -8,7 +8,7 @@ import (
 type peep struct {
 	first_name string
 	last_name  string
-	age        int32
+	age        uint16
 	age2       uint8
 }
 
