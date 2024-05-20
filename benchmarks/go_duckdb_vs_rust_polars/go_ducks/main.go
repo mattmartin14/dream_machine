@@ -9,8 +9,6 @@ import (
 	_ "github.com/marcboeker/go-duckdb"
 )
 
-// go get github.com/marcboeker/go-duckdb
-
 func main() {
 
 	start := time.Now()

@@ -1,0 +1,67 @@
+use polars::prelude::*;
+use std::error::Error;
+use std::env;
+use std::fs::File;
+use std::path::PathBuf;
+use glob::glob;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let home_dir = env::var("HOME")?;
+    let csv_f_path_pattern = format!("{}/test_dummy_data/fd/*.csv", home_dir);
+
+    let csv_files = glob(&csv_f_path_pattern).expect("Failed to read glob pattern");
+
+    let mut dfs: Vec<DataFrame> = Vec::new();
+
+    for entry in csv_files {
+        match entry {
+            Ok(path) => match read_csv(path.to_path_buf()) {
+                Ok(df) => dfs.push(df),
+                Err(e) => println!("Failed to read file {:?}: {}", path, e),
+            },
+            Err(e) => println!("Failed to process entry: {}", e),
+        }
+    }
+
+    if dfs.is_empty() {
+        return Err("No dataframes were loaded, cannot proceed".into());
+    }
+
+    // Use vstack to concatenate DataFrames
+    let concatenated_df = dfs.iter().skip(1).fold(Ok(dfs[0].clone()), |acc, df| {
+        acc.and_then(|acc_df| acc_df.vstack(df))
+    })?;
+
+    // Use the concatenated DataFrame for transformations
+    let lazy_df = concatenated_df.lazy()
+        .group_by([col("FirstName")])
+        .agg([
+            col("TxnKey").n_unique().alias("KEY_CNT"),
+            col("NetWorth").sum().alias("NET_WORTH_AMT"),
+        ]);
+
+    let result_df = lazy_df.collect()?;
+
+    // Sample top 5 rows
+    println!("{}", result_df.head(Some(5)));
+
+    // Export result to Parquet
+    let par_f_path = format!("{}/test_dummy_data/fd/bears.parquet", home_dir);
+    export_to_parquet(&result_df, &par_f_path)?;
+
+    Ok(())
+}
+
+fn read_csv(filepath: PathBuf) -> PolarsResult<DataFrame> {
+    CsvReader::from_path(filepath)
+        .expect("Failed to initiate CSVReader")
+        .has_header(true)
+        .finish()
+}
+
+// Export the DataFrame to Parquet
+fn export_to_parquet(df: &DataFrame, par_f_path: &str) -> Result<(), PolarsError> {
+    let file = File::create(par_f_path)?;
+    ParquetWriter::new(file).finish(&mut df.clone())  // Pass df as a cloned DataFrame
+        .map(|_bytes_written| ())  // Ignore the byte count and return unit type ()
+}

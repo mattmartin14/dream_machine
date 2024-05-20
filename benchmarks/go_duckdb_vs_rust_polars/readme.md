@@ -98,6 +98,7 @@ With DuckDB, I did the entire pipeline in one shot. Some might not like that and
 ---
 #### Rust+Polars Program
 
+As expected, the Rust version of this is definitely more involved. 
 
 ---
 #### Conclusion
