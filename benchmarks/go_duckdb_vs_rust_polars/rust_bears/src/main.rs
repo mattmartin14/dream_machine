@@ -5,6 +5,14 @@ use std::fs::File;
 use std::path::PathBuf;
 use glob::glob;
 
+
+/*
+    to do:
+        add process_ts column
+        speed this up; seems like we could benefit of going lazy route
+        add millisecond elapsed time to calc
+*/
+
 fn main() -> Result<(), Box<dyn Error>> {
     let home_dir = env::var("HOME")?;
     let csv_f_path_pattern = format!("{}/test_dummy_data/fd/*.csv", home_dir);
