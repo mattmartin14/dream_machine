@@ -14,7 +14,7 @@ Duckdb and Polars have been on a collision course for a good bit now. Both offer
 
 However... :smiley:, that has all changed now that I have found out that Go can run Duckdb. This got me thinking...do I dare try to do a comparison that some might call sacrilegious of Go+Duckdb vs. Rust+Polars?
 
-Before we go any further, let's address the elephant in the room and what this write-up is not intended to address. It is well-documented that as of 5/20/24, Duckdb does struggle when the amount of data you want to use exceeds the ram on your machine. This write-up is not inteneded to test anything like that. This write-up will work with a dataset that is 7GB in size. The avaialable ram on my machine is 16GB, so it's well within the limits. Throughout my career, I have found that roughly 90% of the time, the data pipelines I'm building work with a 5GB or less data...shocking right? I thought it was all "big data"...sure the dataset in itself is large, but most of the time, I'm having to load or modify a slice/partition of the dataset. Even if a dataset overall is terabytes in size, a partition slice usually is way less.
+Before we go any further, let's address the elephant in the room and what this article is not intended to tackle. It is well-documented that as of 5/20/24, Duckdb does struggle when the amount of data you want to use exceeds the ram on your machine. This article is not inteneded to test anything like that. This article will work with a dataset that is 7GB in size. The available ram on my machine is 16GB, so it's well within the limits. Throughout my career, I have found that roughly 90% of the time, the data pipelines I'm building work with a 5GB or less set of data...shocking right? I thought it was all "big data"...sure the table in itself can be large, but most of the time, I'm having to load or modify a slice/partition of the table. Even if a dataset overall is terabytes in size, a partition slice usually is way less.
 
 Now that we have that out of the way, let's continue.
 
@@ -26,17 +26,17 @@ We will build a simple ETL pipeline in Go using DuckDB and the same pipeline in 
 1. Ingest several CSV's
 2. Aggregate up and group by a column
 3. Add on a process timestamp
-4. Export Aggregated Results to a single parquet file
+4. Export aggregated results to a single parquet file
 
 --- 
 #### Generating Test Dataset
-Like I have shared before in previous write-ups, I'll use my [Go Lang Fake Data Generator](https://github.com/mattmartin14/dream_machine/blob/main/go_code/fake_data/readme.md) program to generate 7 GB of test data with the command below.
+Like I have shared before in previous articles, I'll use my [Go Lang Fake Data Generator](https://github.com/mattmartin14/dream_machine/blob/main/go_code/fake_data/readme.md) program to generate 7 GB of test data with the command below.
 
 ```Bash
 fd create --filetype csv --maxworkers 8 --prefix test_data_ --outputdir ~/test_dummy_data/fd --files 20 --rows 50000000
 ```
 
-Alright, we now have 50M records. Let's go crunch some data
+Alright, we now have 50M records spread across 20 csv files. Let's go crunch some data.
 
 ---
 #### Go+Duckdb Program
@@ -93,12 +93,12 @@ func main() {
 
 ```
 
-With DuckDB, I did the entire pipeline in one shot. Some might not like that and say "how dare you! There is no way to test the individual parts of this...blah blah blah"...but hey, it works. 
+With DuckDB, I did the entire pipeline in one shot. Some might not like that and say "How dare you! There is no way to test the individual parts of this...blah blah blah"...but hey, it works. 
 
 ---
 #### Rust+Polars Program
 
-As expected, the Rust version of this is definitely more involved. But I'd maybe argue in a good way, since Rust and Polars forces you to break the ETL into its true components of Extract, Transform, Load. Below is the rust code:
+As expected, the Rust version of this is definitely more involved. But I'd maybe argue in a good way, since Rust and Polars forces you to break the ETL into its true components of Extract, Transform, Load, which will enable easier unit testing. Below is the rust code:
 
 ```RUST
 use polars::prelude::*;
@@ -121,7 +121,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         .agg([
             col("TxnKey").n_unique().alias("TXK_KEY_CNT"),
             col("NetWorth").sum().alias("NET_WORTH_TOT"),
-            col("TxnKey").count().alias("ROW_CNT"),
         ])
         .collect()
         .expect("Error getting dataframe created")
@@ -156,12 +155,12 @@ fn export_to_parquet(df: &mut DataFrame, par_f_path: &str) -> Result<(), PolarsE
 }
 ```
 
-One thing I've found with Rust and Polars is that it appears the standard dataframe csv reader does not support a wildcard for the file names, and what you have to do is iterate over each file and stack the dataframes with a vector...which is a lot of work. The lazy reader though does support wildcards in the file names, which makes reading the files in much cleaner.
+One thing I've found with Rust and Polars is that it appears the standard dataframe csv reader does not support a wildcard for the file names, and what you have to do is iterate over each file and stack the dataframes with a vector and combine at the end...which is a lot of work. The lazy reader though does support wildcards in the file names, which makes reading the files in much cleaner.
 
 ---
 #### Results
 
-Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are:
+Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are. I'm pretty sure there is a dev out there that can look at my rust code and make it more performant.
 
 | Program | Total Time (Seconds) |
 | ------- | -------------------  |
@@ -180,4 +179,4 @@ Both approaches I think are fine for a data engineering pipeline. In my opinion,
 ---
 #### Other Thoughts
 
-- In case you are curious how I generated the image at the top of this write-up, my prompt for Bing Image creator was "a gopher and a duck team vs. polar bear and crab team"
+- In case you are curious how I generated the image at the top of this article, my prompt for Bing Image creator was "a gopher and a duck team vs. polar bear and crab team".
