@@ -1,75 +1,52 @@
 use polars::prelude::*;
 use std::error::Error;
 use std::env;
-use std::fs::File;
-use std::path::PathBuf;
-use glob::glob;
-
-
-/*
-    to do:
-        add process_ts column
-        speed this up; seems like we could benefit of going lazy route
-        add millisecond elapsed time to calc
-*/
+use chrono::prelude::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
+
+    let start_time = Utc::now();
+
     let home_dir = env::var("HOME")?;
-    let csv_f_path_pattern = format!("{}/test_dummy_data/fd/*.csv", home_dir);
-
-    let csv_files = glob(&csv_f_path_pattern).expect("Failed to read glob pattern");
-
-    let mut dfs: Vec<DataFrame> = Vec::new();
-
-    for entry in csv_files {
-        match entry {
-            Ok(path) => match read_csv(path.to_path_buf()) {
-                Ok(df) => dfs.push(df),
-                Err(e) => println!("Failed to read file {:?}: {}", path, e),
-            },
-            Err(e) => println!("Failed to process entry: {}", e),
-        }
-    }
-
-    if dfs.is_empty() {
-        return Err("No dataframes were loaded, cannot proceed".into());
-    }
-
-    // Use vstack to concatenate DataFrames
-    let concatenated_df = dfs.iter().skip(1).fold(Ok(dfs[0].clone()), |acc, df| {
-        acc.and_then(|acc_df| acc_df.vstack(df))
-    })?;
-
-    // Use the concatenated DataFrame for transformations
-    let lazy_df = concatenated_df.lazy()
+    let csv_f_path = format!("{}/test_dummy_data/fd/*.csv", home_dir);
+    
+    let lf = LazyCsvReader::new(csv_f_path).finish()?;
+  
+    //transform
+    let mut tsf = lf.clone().lazy()
         .group_by([col("FirstName")])
         .agg([
-            col("TxnKey").n_unique().alias("KEY_CNT"),
-            col("NetWorth").sum().alias("NET_WORTH_AMT"),
-        ]);
+            col("TxnKey").n_unique().alias("TXK_KEY_CNT"),
+            col("NetWorth").sum().alias("NET_WORTH_TOT"),
+        ])
+        .collect()
+        .expect("Error getting dataframe created")
+    ;
 
-    let result_df = lazy_df.collect()?;
+    // add current timestamp to the transformed dataframe
+    let current_time_et = Local::now().with_timezone(&chrono_tz::America::New_York).naive_local();
+    //println!("{}",current_time_et);
+    let _result = tsf.with_column(
+        Series::new("process_ts", vec![current_time_et])
+    );
 
-    // Sample top 5 rows
-    println!("{}", result_df.head(Some(5)));
+    //sample top 5 rows
+    //println!("{}", tsf.head(Some(5)));
 
-    // Export result to Parquet
+    // export result to parquet
     let par_f_path = format!("{}/test_dummy_data/fd/bears.parquet", home_dir);
-    export_to_parquet(&result_df, &par_f_path)?;
+    export_to_parquet(&mut tsf, &par_f_path)?;
+
+    let end_time = Utc::now();
+    let total_time = end_time - start_time;
+    println!("Total time to process data: {:.2} seconds", total_time.num_seconds() as f64);
 
     Ok(())
 }
 
-fn read_csv(filepath: PathBuf) -> PolarsResult<DataFrame> {
-    CsvReader::from_path(filepath)
-        .expect("Failed to initiate CSVReader")
-        .has_header(true)
-        .finish()
-}
-
-// Export the DataFrame to Parquet
-fn export_to_parquet(df: &DataFrame, par_f_path: &str) -> Result<(), PolarsError> {
-    let file = File::create(par_f_path)?;
-    ParquetWriter::new(file).finish(&mut df.clone())  // Pass df as a cloned DataFrame
-        .map(|_bytes_written| ())  // Ignore the byte count and return unit type ()
+//exports the dataframe to parquet
+fn export_to_parquet(df: &mut DataFrame, par_f_path: &str) -> Result<(), PolarsError> {
+    let mut file = std::fs::File::create(par_f_path)?;
+    ParquetWriter::new(&mut file).finish(df)?;
+    Ok(())
 }

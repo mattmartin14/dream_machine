@@ -249,8 +249,20 @@ checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
+ "wasm-bindgen",
  "windows-targets 0.52.5",
+]
+
+[[package]]
+name = "chrono-tz"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2554a3155fec064362507487171dcc4edc3df60cb10f3a1fb10ed8094822b120"
+dependencies = [
+ "chrono",
+ "parse-zoneinfo",
 ]
 
 [[package]]
@@ -948,7 +960,7 @@ dependencies = [
  "atoi_simd",
  "bytemuck",
  "chrono",
- "chrono-tz",
+ "chrono-tz 0.8.6",
  "dyn-clone",
  "either",
  "ethnum",
@@ -1009,7 +1021,7 @@ dependencies = [
  "bitflags",
  "bytemuck",
  "chrono",
- "chrono-tz",
+ "chrono-tz 0.8.6",
  "comfy-table",
  "either",
  "hashbrown",
@@ -1112,7 +1124,7 @@ dependencies = [
  "base64",
  "bytemuck",
  "chrono",
- "chrono-tz",
+ "chrono-tz 0.8.6",
  "either",
  "hashbrown",
  "hex",
@@ -1190,7 +1202,7 @@ checksum = "ff48362bd1b078bbbec7e7ba9ec01fea58fee2887db22a8e3deaf78f322fa3c4"
 dependencies = [
  "ahash",
  "bytemuck",
- "chrono-tz",
+ "chrono-tz 0.8.6",
  "once_cell",
  "percent-encoding",
  "polars-arrow",
@@ -1245,7 +1257,7 @@ checksum = "86eb74ea6ddfe675aa5c3f33c00dadbe2b85f0e8e3887b85db1fd5a3397267fd"
 dependencies = [
  "atoi",
  "chrono",
- "chrono-tz",
+ "chrono-tz 0.8.6",
  "now",
  "once_cell",
  "polars-arrow",
@@ -1412,7 +1424,8 @@ checksum = "adad44e29e4c806119491a7f06f03de4d1af22c3a680dd47f1e6e179439d1f56"
 name = "rust_bears"
 version = "0.1.0"
 dependencies = [
- "glob",
+ "chrono",
+ "chrono-tz 0.5.3",
  "polars",
  "polars-lazy",
 ]

@@ -98,10 +98,83 @@ With DuckDB, I did the entire pipeline in one shot. Some might not like that and
 ---
 #### Rust+Polars Program
 
-As expected, the Rust version of this is definitely more involved. 
+As expected, the Rust version of this is definitely more involved. But I'd maybe argue in a good way, since Rust and Polars forces you to break the ETL into its true components of Extract, Transform, Load. Below is the rust code:
+
+```RUST
+use polars::prelude::*;
+use std::error::Error;
+use std::env;
+use chrono::prelude::*;
+
+fn main() -> Result<(), Box<dyn Error>> {
+
+    let start_time = Utc::now();
+
+    let home_dir = env::var("HOME")?;
+    let csv_f_path = format!("{}/test_dummy_data/fd/*.csv", home_dir);
+    
+    let lf = LazyCsvReader::new(csv_f_path).finish()?;
+  
+    //transform
+    let mut tsf = lf.clone().lazy()
+        .group_by([col("FirstName")])
+        .agg([
+            col("TxnKey").n_unique().alias("TXK_KEY_CNT"),
+            col("NetWorth").sum().alias("NET_WORTH_TOT"),
+            col("TxnKey").count().alias("ROW_CNT"),
+        ])
+        .collect()
+        .expect("Error getting dataframe created")
+    ;
+
+    // add current timestamp to the transformed dataframe
+    let current_time_et = Local::now().with_timezone(&chrono_tz::America::New_York).naive_local();
+    //println!("{}",current_time_et);
+    let _result = tsf.with_column(
+        Series::new("process_ts", vec![current_time_et])
+    );
+
+    //sample top 5 rows
+    //println!("{}", tsf.head(Some(5)));
+
+    // export result to parquet
+    let par_f_path = format!("{}/test_dummy_data/fd/bears.parquet", home_dir);
+    export_to_parquet(&mut tsf, &par_f_path)?;
+
+    let end_time = Utc::now();
+    let total_time = end_time - start_time;
+    println!("Total time to process data: {:.2} seconds", total_time.num_seconds() as f64);
+
+    Ok(())
+}
+
+//exports the dataframe to parquet
+fn export_to_parquet(df: &mut DataFrame, par_f_path: &str) -> Result<(), PolarsError> {
+    let mut file = std::fs::File::create(par_f_path)?;
+    ParquetWriter::new(&mut file).finish(df)?;
+    Ok(())
+}
+```
+
+One thing I've found with Rust and Polars is that it appears the standard dataframe csv reader does not support a wildcard for the file names, and what you have to do is iterate over each file and stack the dataframes with a vector...which is a lot of work. The lazy reader though does support wildcards in the file names, which makes reading the files in much cleaner.
+
+---
+#### Results
+
+Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster, but the results are what they are:
+
+| Program | Total Time (Seconds) |
+| ------- | -------------------  |
+| Go + Duckdb | 4 seconds |
+| Rust + Polars | 14 seconds |
 
 ---
 #### Conclusion
+
+Both approaches I think are fine for a data engineering pipeline. Even though Duckdb performed faster, I'm not really loosing sleep over it because we are still talking seconds. Of course, if this pipeline were to fire several thousand times a day, then I would consider taking Go over Rust. Additionally, Duckdb's SQL just makes the process so easy to author and get going. The rust code took a significantly longer time investment to get working correctly. Here's a link to each code set:
+
+- [Go + DuckDb](./go_ducks/main.go)
+- [Rust + Polars](./rust_bears/src/main.rs)
 
 
 ---

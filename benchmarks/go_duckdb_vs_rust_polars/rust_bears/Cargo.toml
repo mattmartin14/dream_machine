@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+chrono-tz = "0.5"
+chrono = "0.4"
 polars-lazy = "0.38.3"
 polars = { version = "0.38.3", features = ["lazy", "strings", "regex", "to_dummies","parquet"] }
-glob = "0.3"
