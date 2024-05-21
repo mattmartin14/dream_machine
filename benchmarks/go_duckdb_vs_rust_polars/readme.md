@@ -161,7 +161,7 @@ One thing I've found with Rust and Polars is that it appears the standard datafr
 ---
 #### Results
 
-Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster, but the results are what they are:
+Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are:
 
 | Program | Total Time (Seconds) |
 | ------- | -------------------  |
@@ -171,7 +171,7 @@ Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb wa
 ---
 #### Conclusion
 
-Both approaches I think are fine for a data engineering pipeline. Even though Duckdb performed faster, I'm not really loosing sleep over it because we are still talking seconds. Of course, if this pipeline were to fire several thousand times a day, then I would consider taking Go over Rust. Additionally, Duckdb's SQL just makes the process so easy to author and get going. The rust code took a significantly longer time investment to get working correctly. Here's a link to each code set:
+Both approaches I think are fine for a data engineering pipeline. In my opinion, Go is significantly easier to program in vs. Rust, which means I can get a solution running and tested a lot faster. And given the Go program performed faster, I think I'd reach for Go and Duckdb when I need to do a compiled ETL pipeline as long as the overall datasize is not too large for my machine or the machine I'll end up running it on. Below is a link to the full code for both programs.
 
 - [Go + DuckDb](./go_ducks/main.go)
 - [Rust + Polars](./rust_bears/src/main.rs)
@@ -180,4 +180,4 @@ Both approaches I think are fine for a data engineering pipeline. Even though Du
 ---
 #### Other Thoughts
 
-- In case you are curious how I generated this image, my prompt for Bing Image creator was "a gopher and a duck team vs. polar bear and crab team"
+- In case you are curious how I generated the image at the top of this write-up, my prompt for Bing Image creator was "a gopher and a duck team vs. polar bear and crab team"
