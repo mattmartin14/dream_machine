@@ -16,15 +16,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Load CSV files lazily
     let lf = LazyCsvReader::new(&csv_f_path).finish()?;
 
-    //let lf = LazyCsvReader::new(&csv_f_path).with_column(Some(vec!["FirstName","TxnKey","NetWorth"])).finish()?;
-
-
     // Transform the data
     let mut tsf = lf
         .lazy()
         .group_by([col("FirstName")])
         .agg([
-            col("TxnKey").n_unique().alias("TXK_KEY_CNT"),
+            col("TxnKey").n_unique().alias("TXN_KEY_CNT"),
             col("NetWorth").sum().alias("NET_WORTH_TOT"),
         ])
         .collect()?;

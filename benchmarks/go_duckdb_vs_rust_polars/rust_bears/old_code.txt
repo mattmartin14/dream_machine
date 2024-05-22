@@ -1,3 +1,6 @@
+
+## This code used the standard csv reader to dataframe (not lazy reader)
+
 use polars::prelude::*;
 use std::error::Error;
 use std::env;

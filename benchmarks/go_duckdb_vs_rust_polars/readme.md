@@ -1,6 +1,8 @@
 ### Go and Duckdb Vs. Rust and Polars
 #### Author: Matt Martin
-#### Last Updated: 5/20/24
+#### Last Updated: 5/22/24
+
+<span style="background-color: green;">Update: Polars performance improved dramatically when I upgraded the rust crate from version 0.38.3 to 0.40.0. From reading the rust release docs, there have been some significant changes on the polars csv reader when going across those versions.</span>
 
 ---
 
@@ -105,40 +107,39 @@ use polars::prelude::*;
 use std::error::Error;
 use std::env;
 use chrono::prelude::*;
+//use chrono_tz::Tz;
+use std::fs::File;
+
+// updated crate from 0.38.3 to 0.40.0 and time went from 14 seconds to 5 seconds
 
 fn main() -> Result<(), Box<dyn Error>> {
-
     let start_time = Utc::now();
 
     let home_dir = env::var("HOME")?;
     let csv_f_path = format!("{}/test_dummy_data/fd/*.csv", home_dir);
-    
-    let lf = LazyCsvReader::new(csv_f_path).finish()?;
-  
-    //transform
-    let mut tsf = lf.clone().lazy()
+
+    // Load CSV files lazily
+    let lf = LazyCsvReader::new(&csv_f_path).finish()?;
+
+    // Transform the data
+    let mut tsf = lf
+        .lazy()
         .group_by([col("FirstName")])
         .agg([
-            col("TxnKey").n_unique().alias("TXK_KEY_CNT"),
+            col("TxnKey").n_unique().alias("TXN_KEY_CNT"),
             col("NetWorth").sum().alias("NET_WORTH_TOT"),
         ])
-        .collect()
-        .expect("Error getting dataframe created")
-    ;
+        .collect()?;
 
-    // add current timestamp to the transformed dataframe
+    // Add current timestamp to the transformed dataframe
     let current_time_et = Local::now().with_timezone(&chrono_tz::America::New_York).naive_local();
-    //println!("{}",current_time_et);
-    let _result = tsf.with_column(
-        Series::new("process_ts", vec![current_time_et])
-    );
+    let tsf = tsf.with_column(
+        Series::new("process_ts", vec![current_time_et; tsf.height()])
+    )?;
 
-    //sample top 5 rows
-    //println!("{}", tsf.head(Some(5)));
-
-    // export result to parquet
+    // Export result to parquet
     let par_f_path = format!("{}/test_dummy_data/fd/bears.parquet", home_dir);
-    export_to_parquet(&mut tsf, &par_f_path)?;
+    export_to_parquet(tsf, &par_f_path)?;
 
     let end_time = Utc::now();
     let total_time = end_time - start_time;
@@ -147,12 +148,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-//exports the dataframe to parquet
+// Exports the dataframe to parquet
 fn export_to_parquet(df: &mut DataFrame, par_f_path: &str) -> Result<(), PolarsError> {
-    let mut file = std::fs::File::create(par_f_path)?;
+    let mut file = File::create(par_f_path)?;
     ParquetWriter::new(&mut file).finish(df)?;
     Ok(())
 }
+
 ```
 
 One thing I've found with Rust and Polars is that it appears the standard dataframe csv reader does not support a wildcard for the file names, and what you have to do is iterate over each file and stack the dataframes with a vector and combine at the end...which is a lot of work. The lazy reader though does support wildcards in the file names, which makes reading the files in much cleaner.
@@ -160,12 +162,16 @@ One thing I've found with Rust and Polars is that it appears the standard datafr
 ---
 #### Results
 
-Below are the run times for Go+Duckdb and Rust+Polars. Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are. I'm pretty sure there is a dev out there that can look at my rust code and make it more performant.
+Below are the run times for Go+Duckdb and Rust+Polars. <span style="color: red;"><s>Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are. I'm pretty sure there is a dev out there that can look at my rust code and make it more performant.</s></span>
+
+* Updated Results after upgrading the Polars Crate from 0.38.3 to 0.40.0
+
+Duckdb slightly outperformed Polars by 1 second. Odds are, thats because DuckDB did all the stuff in one shot and was able to build a single logical plan.
 
 | Program | Total Time (Seconds) |
 | ------- | -------------------  |
 | Go + Duckdb | 4 seconds |
-| Rust + Polars | 14 seconds |
+| Rust + Polars | <span style="color: red;"><s>14</s></span> 5 seconds |
 
 ---
 #### Conclusion
