@@ -2,7 +2,9 @@
 #### Author: Matt Martin
 #### Last Updated: 5/22/24
 
-<span style="background-color: green;">Update: Polars performance improved dramatically when I upgraded the rust crate from version 0.38.3 to 0.40.0. From reading the rust release docs, there have been some significant changes on the polars csv reader when going across those versions.</span>
+```diff
++ Update: Polars performance improved dramatically when I upgraded the rust crate from version 0.38.3 to 0.40.0. From reading the rust release docs, there have been some significant changes on the polars csv reader when going across those versions.
+```
 
 ---
 
@@ -162,7 +164,11 @@ One thing I've found with Rust and Polars is that it appears the standard datafr
 ---
 #### Results
 
-Below are the run times for Go+Duckdb and Rust+Polars. <span style="color: red;"><s>Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are. I'm pretty sure there is a dev out there that can look at my rust code and make it more performant.</s></span>
+Below are the run times for Go+Duckdb and Rust+Polars. 
+
+
+~~Suprisingly, Go+Duckdb was significantly faster than Rust+Polars. I'm not sure if there is some other optimization trick I can do in Polars to make it go faster considering I used the lazy frame, but the results are what they are. I'm pretty sure there is a dev out there that can look at my rust code and make it more performant.~~
+
 
 * Updated Results after upgrading the Polars Crate from 0.38.3 to 0.40.0
 
