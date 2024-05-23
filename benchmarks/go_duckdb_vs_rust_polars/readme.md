@@ -40,6 +40,8 @@ Like I have shared before in previous articles, I'll use my [Go Lang Fake Data G
 fd create --filetype csv --maxworkers 8 --prefix test_data_ --outputdir ~/test_dummy_data/fd --files 20 --rows 50000000
 ```
 
+- A sample 50k rows of this dataset can be found [here](./sample_data_1.csv)
+
 Alright, we now have 50M records spread across 20 csv files. Let's go crunch some data.
 
 ---
