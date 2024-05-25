@@ -5,6 +5,13 @@ import (
 	"sync"
 )
 
+/*
+	to do
+	experiment with slices
+	work on a wrapper/error check function to reduce lines of if nil blah
+
+*/
+
 type peep struct {
 	firstName string
 	lastName  string
