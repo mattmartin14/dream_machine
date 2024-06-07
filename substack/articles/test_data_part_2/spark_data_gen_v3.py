@@ -1,28 +1,19 @@
 from pyspark.sql import SparkSession
-import uuid, random, os
-from pyspark.sql.functions import current_date, udf, monotonically_increasing_id, expr
-from pyspark.sql.types import StringType, IntegerType
-import time
-
-@udf(StringType())
-def generate_uuid():
-    return str(uuid.uuid4())
-
-@udf(IntegerType())
-def generate_random_int():
-    return random.randint(0, 100)
+from pyspark.sql.functions import current_date, rand, floor, expr
+import time, os
 
 home_dir = os.path.expanduser("~")
 
 def write_data(spark, rows):
 
     df = spark.range(0, rows) \
-        .withColumn("txn_key", generate_uuid()) \
-        .withColumn("rpt_dt", current_date()) \
-        .withColumn("some_val", generate_random_int()) \
-        .withColumn("row_id", monotonically_increasing_id()) \
-        .select("row_id", "txn_key", "rpt_dt", "some_val")
-
+        .withColumn('rpt_dt', current_date()) \
+        .withColumn('some_val', floor(rand() * 100)) \
+        .withColumn("txn_key", expr("uuid()")) \
+        .withColumnRenamed('id', 'row_id') \
+        .toDF('row_id', 'rpt_dt', 'some_val', 'txn_key') 
+    
+    #df.show(5)
     f_path = os.path.join(home_dir, f"test_dummy_data/spark")
     #print(f_path)
 
@@ -31,14 +22,12 @@ def write_data(spark, rows):
 def main():
     start_time = time.time()
 
-    num_batches = 10
     rows = 500_000_000
 
-    #  .config("spark.sql.shuffle.partitions", "200") \
     spark = SparkSession.builder \
         .appName("Spark Data Generation") \
         .config("spark.driver.memory", "4g") \
-        .config("spark.executor.memory", "8g") \
+        .config("spark.executor.memory", "12g") \
         .config("spark.executor.cores", "8") \
         .getOrCreate()
 
