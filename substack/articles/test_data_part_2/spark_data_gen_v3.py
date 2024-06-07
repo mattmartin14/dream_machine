@@ -13,10 +13,7 @@ def write_data(spark, rows):
         .withColumnRenamed('id', 'row_id') \
         .toDF('row_id', 'rpt_dt', 'some_val', 'txn_key') 
     
-    #df.show(5)
     f_path = os.path.join(home_dir, f"test_dummy_data/spark")
-    #print(f_path)
-
     df.write.mode('overwrite').parquet(f_path)
 
 def main():
