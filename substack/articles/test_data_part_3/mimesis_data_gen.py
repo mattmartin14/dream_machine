@@ -16,6 +16,7 @@ sch = {
     "lat": pl.String,
     "long": pl.String,
     "hire_dt": pl.Date,
+    "crt_ts": pl.Datetime,
     "txn_key": pl.String,
     "net_worth": pl.Int32
 }
@@ -32,6 +33,7 @@ def write_data(file_num, rows):
         data.append([peep.first_name(), peep.last_name(), dt.date(), peep.email()
                     , adrs.country(), adrs.zip_code(), adrs.city(), str(adrs.latitude(False)), str(adrs.longitude(False))
                     , dt.date()
+                    , dt.datetime()
                     , str(uuid.uuid4())
                     , n.integer_number(1_000, 100_000)
                     ])
