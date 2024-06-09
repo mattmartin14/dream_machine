@@ -10,12 +10,14 @@ sch = {
     "last_name": pl.String,
     "birth_dt": pl.Date,
     "email_adrs": pl.String,
-    "country": pl.String,
     "zip_cd": pl.String,
     "city": pl.String,
+    "state": pl.String,
     "lat": pl.String,
     "long": pl.String,
+    "occupation": pl.String,
     "hire_dt": pl.Date,
+    "salary": pl.Int32,
     "crt_ts": pl.Datetime,
     "txn_key": pl.String,
     "net_worth": pl.Int32
@@ -31,11 +33,13 @@ def write_data(file_num, rows):
     data = []
     for i in range(rows):
         data.append([peep.first_name(), peep.last_name(), dt.date(), peep.email()
-                    , adrs.country(), adrs.zip_code(), adrs.city(), str(adrs.latitude(False)), str(adrs.longitude(False))
+                    , adrs.zip_code(), adrs.city(), adrs.state(), str(adrs.latitude(False)), str(adrs.longitude(False))
+                    , peep.occupation()
                     , dt.date()
+                    , n.integer_number(50_000, 150_000)
                     , dt.datetime()
                     , str(uuid.uuid4())
-                    , n.integer_number(1_000, 100_000)
+                    , n.integer_number(1_000, 1_000_000)
                     ])
 
     df = pl.DataFrame(data, schema=sch)
