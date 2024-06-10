@@ -56,7 +56,7 @@ def main():
     start_time = time.time()
 
     max_workers = 8
-    num_files = 25
+    num_files = 50
     rows_per_file = 1_000_000
     tot_rows = num_files * rows_per_file
 
