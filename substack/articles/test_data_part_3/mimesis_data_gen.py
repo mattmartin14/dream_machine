@@ -1,3 +1,9 @@
+"""
+    Author: Matt Martin
+    Date: 6/8/24
+    Desc: Generates a dataset using mimesis and parallel processing
+"""
+
 from mimesis import Person, Address, Datetime, Numeric
 from mimesis.locales import Locale
 import polars as pl
@@ -49,11 +55,12 @@ def main():
 
     start_time = time.time()
 
-    num_files = 10
+    max_workers = 8
+    num_files = 25
     rows_per_file = 1_000_000
     tot_rows = num_files * rows_per_file
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=num_files) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(write_data, i + 1, rows_per_file) for i in range(num_files)]
         
         for future in concurrent.futures.as_completed(futures):
