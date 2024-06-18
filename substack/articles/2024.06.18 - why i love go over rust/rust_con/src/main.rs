@@ -28,7 +28,7 @@ async fn main() {
         "http://www.space.com",
     ];
 
-    let semaphore = Arc::new(Semaphore::new(5));
+    let semaphore = Arc::new(Semaphore::new(5)); // limit concurrency
     let mut tasks = vec![];
 
     for url in &urls {

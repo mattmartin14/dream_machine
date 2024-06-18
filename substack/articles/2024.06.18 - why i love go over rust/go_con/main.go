@@ -7,8 +7,13 @@ import (
 	"sync"
 )
 
-func fetchURL(wg *sync.WaitGroup, url string) {
-	defer wg.Done() // Decrement the counter when the goroutine completes
+func fetchURL(wg *sync.WaitGroup, sem chan struct{}, url string) {
+
+	defer wg.Done()
+
+	sem <- struct{}{}        // acquire semaphore slot
+	defer func() { <-sem }() // Release the semaphore slot
+
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("Failed to fetch URL %s: %v\n", url, err)
@@ -33,9 +38,11 @@ func main() {
 		"http://www.space.com",
 	}
 
+	sem := make(chan struct{}, 5) // limit concurrency
+
 	for _, url := range urls {
 		wg.Add(1)
-		go fetchURL(&wg, url)
+		go fetchURL(&wg, sem, url)
 	}
 
 	wg.Wait()
