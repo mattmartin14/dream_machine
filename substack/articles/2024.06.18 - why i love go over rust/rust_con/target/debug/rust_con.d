@@ -1,1 +1,0 @@
-/Users/matthewmartin/dream_machine/substack/articles/2024.06.18\ -\ why\ i\ love\ go\ over\ rust/rust_con/target/debug/rust_con: /Users/matthewmartin/dream_machine/substack/articles/2024.06.18\ -\ why\ i\ love\ go\ over\ rust/rust_con/src/main.rs
