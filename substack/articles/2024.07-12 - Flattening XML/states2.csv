@@ -1,0 +1,41 @@
+Path,Value
+states/state[0]/@land_size,423967
+states/state[0]/name,California
+states/state[0]/population,39538223
+states/state[0]/city,Los Angeles
+states/state[1]/@land_size,695662
+states/state[1]/name,Texas
+states/state[1]/population,29145505
+states/state[1]/city,Houston
+states/state[2]/@land_size,170312
+states/state[2]/name,Florida
+states/state[2]/population,21538187
+states/state[2]/city,Miami
+states/state[3]/@land_size,141297
+states/state[3]/name,New York
+states/state[3]/population,20201249
+states/state[3]/city,New York City
+states/state[4]/@land_size,119280
+states/state[4]/name,Pennsylvania
+states/state[4]/population,13002700
+states/state[4]/city,Philadelphia
+states/state[5]/@land_size,149995
+states/state[5]/name,Illinois
+states/state[5]/population,12812508
+states/state[5]/city,Chicago
+states/state[6]/@land_size,116096
+states/state[6]/name,Ohio
+states/state[6]/population,11799448
+states/state[6]/city,Columbus
+states/state[7]/@land_size,153910
+states/state[7]/name,Georgia
+states/state[7]/population,10711908
+states/state[7]/city,Atlanta
+states/state[8]/@land_size,139391
+states/state[8]/name,North Carolina
+states/state[8]/population,10439388
+states/state[8]/city,Charlotte
+states/state[9]/@land_size,250487
+states/state[9]/name,Michigan
+states/state[9]/population,10077331
+states/state[9]/city,Detroit

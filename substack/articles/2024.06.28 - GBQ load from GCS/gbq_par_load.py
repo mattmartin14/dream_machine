@@ -20,7 +20,7 @@ def load_table_file(bq_client, dataset_id, table_id, bucket_name, blob_name):
         skip_leading_rows=1,
         autodetect=True,
         write_disposition=bigquery.WriteDisposition.WRITE_APPEND,
-        create_disposition=bigquery.CreateDisposition.CREATE_IF_NEEDED
+        create_disposition=bigquery.CreateDisposition.CREATE_NEVER
     )
 
     load_job = bq_client.load_table_from_uri(
