@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <states>
   <state>
-    <name>Georgia</name>
+    <name nickname="Peach State" climate="warm">Georgia</name>
     <population>10711908</population>
     <largest_city>Atlanta</largest_city>
     <land_mass_sqmi>57906</land_mass_sqmi>
   </state>
   <state>
-    <name>California</name>
+    <name nickname="Granola State">California</name>
     <population>39538223</population>
     <largest_city>Los Angeles</largest_city>
     <land_mass_sqmi>163696</land_mass_sqmi>
