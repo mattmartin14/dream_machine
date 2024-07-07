@@ -1,0 +1,23 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. WriteNumbers.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  NUMBERS-FILE
+           RECORDS ARE RECORD DELIMITED BY LINE
+           DATA RECORD IS NUM-RECORD.
+       01  NUM-RECORD PIC X(5).  *> Allocate enough space to include digits and newline.
+
+       WORKING-STORAGE SECTION.
+       01  NUM-VALUE     PIC 9(3) VALUE 0.
+
+       PROCEDURE DIVISION.
+           OPEN OUTPUT NUMBERS-FILE
+           PERFORM WRITE-NUMBERS
+           CLOSE NUMBERS-FILE
+           STOP RUN.
+
+       WRITE-NUMBERS.
+           PERFORM VARYING NUM-VALUE FROM 0 BY 1 UNTIL NUM-VALUE > 100
+               MOVE NUM-VALUE TO NUM-RECORD
+               WRITE NUM-RECORD
+           END-PERFORM.

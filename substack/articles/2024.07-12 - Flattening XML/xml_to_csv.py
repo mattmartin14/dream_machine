@@ -22,6 +22,7 @@ def flatten_xml_to_csv(xml_file: str, csv_file_path: str) -> None:
 
     xd = xmltodict.parse(xml_payload)
 
+    #handles arrays/lists
     def flatten_array(arr: list, parent_key = '', sep = '/'):
         items = []
         for i, val in enumerate(arr):
@@ -34,6 +35,7 @@ def flatten_xml_to_csv(xml_file: str, csv_file_path: str) -> None:
 
         return items
     
+    #handles the main dictionary that was created
     def flatten_dict(d: dict, parent_key='', sep='/'):
         items = []
         for k, v in d.items():
