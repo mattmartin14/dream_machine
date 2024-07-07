@@ -1,16 +1,15 @@
 <?xml version="1.0" ?>
 <states>
   <state>
-    <name>Georgia</name>
-    <population>10711908</population>
-    <largest_city>Atlanta</largest_city>
-    <land_mass_sqmi>57906</land_mass_sqmi>
+    <name>Texas</name>
+    <population>30503301</population>
+    <largest_city>Houston</largest_city>
+    <land_mass_sqmi>261232</land_mass_sqmi>
   </state>
   <state>
-    <name>California</name>
-    <population>39538223</population>
-    <largest_city>Los Angeles</largest_city>
-    <land_mass_sqmi>163696</land_mass_sqmi>
-    <water_sqmi>7737</water_sqmi>
+    <name>New York</name>
+    <population>19571216</population>
+    <largest_city>New York City</largest_city>
+    <land_mass_sqmi>54555</land_mass_sqmi>
   </state>
 </states>
