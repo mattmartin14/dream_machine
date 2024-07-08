@@ -1,81 +1,78 @@
 
 import xml.etree.ElementTree as ET
+from xml.dom.minidom import parseString
 
-
-def gen_xml_doc_1():
+def states_simple_xml():
     
-
-    # Create the root element
     root = ET.Element("states")
 
-    # Define the states data
-    states_data = [
-        {"name": "California", "population": "39538223", "city": "Los Angeles"},
-        {"name": "Texas", "population": "29145505", "city": "Houston"},
-        {"name": "Florida", "population": "21538187", "city": "Miami"},
-        {"name": "New York", "population": "20201249", "city": "New York City"},
-        {"name": "Pennsylvania", "population": "13002700", "city": "Philadelphia"},
-        {"name": "Illinois", "population": "12812508", "city": "Chicago"},
-        {"name": "Ohio", "population": "11799448", "city": "Columbus"},
-        {"name": "Georgia", "population": "10711908", "city": "Atlanta"},
-        {"name": "North Carolina", "population": "10439388", "city": "Charlotte"},
-        {"name": "Michigan", "population": "10077331", "city": "Detroit"}
+    data = [
+        {"name": "Texas", "population": "30503301", "largest_city": "Houston", "land_mass_sqmi": "261232"},
+        {"name": "New York", "population": "19571216", "largest_city": "New York City", "land_mass_sqmi": "54555"},
     ]
 
-    # Populate the XML tree with state data
-    for state in states_data:
+    for state in data:
         state_element = ET.SubElement(root, "state")
         name_element = ET.SubElement(state_element, "name")
         name_element.text = state["name"]
         population_element = ET.SubElement(state_element, "population")
         population_element.text = state["population"]
-        city_element = ET.SubElement(state_element, "city")
-        city_element.text = state["city"]
+        city_element = ET.SubElement(state_element, "largest_city")
+        city_element.text = state["largest_city"]
+        land_mass_element = ET.SubElement(state_element, "land_mass_sqmi")
+        land_mass_element.text = state["land_mass_sqmi"]
 
-    # Create the tree and write to an XML file
-    tree = ET.ElementTree(root)
-    tree.write("./files/states.xml", encoding="utf-8", xml_declaration=True)
+    # Convert the ElementTree to a string
+    rough_string = ET.tostring(root, encoding="utf-8")
+    # Parse the string with minidom for pretty printing
+    reparsed = parseString(rough_string)
+    pretty_xml_as_string = reparsed.toprettyxml(indent="  ")
 
+    # Write the pretty-printed XML to a file
+    with open("./files/states_simple.xml", "w", encoding="utf-8") as f:
+        f.write(pretty_xml_as_string)
 
-def gen_xml_doc_2():
+def states_complex_xml():
 
-    # Create the root element
     root = ET.Element("states")
 
-    # Define the states data
-    states_data = [
-        {"name": "California", "population": "39538223", "city": "Los Angeles", "land_size": "423967"},
-        {"name": "Texas", "population": "29145505", "city": "Houston", "land_size": "695662"},
-        {"name": "Florida", "population": "21538187", "city": "Miami", "land_size": "170312"},
-        {"name": "New York", "population": "20201249", "city": "New York City", "land_size": "141297"},
-        {"name": "Pennsylvania", "population": "13002700", "city": "Philadelphia", "land_size": "119280"},
-        {"name": "Illinois", "population": "12812508", "city": "Chicago", "land_size": "149995"},
-        {"name": "Ohio", "population": "11799448", "city": "Columbus", "land_size": "116096"},
-        {"name": "Georgia", "population": "10711908", "city": "Atlanta", "land_size": "153910"},
-        {"name": "North Carolina", "population": "10439388", "city": "Charlotte", "land_size": "139391"},
-        {"name": "Michigan", "population": "10077331", "city": "Detroit", "land_size": "250487"}
+    data = [
+        {"name": "Georgia", "nickname": "Peach State", "population": "10711908", "largest_city": "Atlanta", "land_mass_sqmi": "57906", "misc": [{"climate": "warm"}, {"state_flower": "Cherokee Rose"}]},
+        {"name": "California", "nickname": "Granola State", "population": "39538223", "largest_city": "Los Angeles", "land_mass_sqmi": "163696", "water_sqmi": "7737", "misc":[{"bird":"California Quail"}]},
     ]
 
-    # Populate the XML tree with state data
-    for state in states_data:
-        state_element = ET.SubElement(root, "state", land_size=state["land_size"])
-        
-        name_element = ET.SubElement(state_element, "name")
+    for state in data:
+        state_element = ET.SubElement(root, "state")
+        attributes = {"nickname": state["nickname"]}
+        name_element = ET.SubElement(state_element, "name", **attributes)
         name_element.text = state["name"]
-        
         population_element = ET.SubElement(state_element, "population")
         population_element.text = state["population"]
-        
-        city_element = ET.SubElement(state_element, "city")
-        city_element.text = state["city"]
+        city_element = ET.SubElement(state_element, "largest_city")
+        city_element.text = state["largest_city"]
+        land_mass_element = ET.SubElement(state_element, "land_mass_sqmi")
+        land_mass_element.text = state["land_mass_sqmi"]
+        if "water_sqmi" in state:
+            water_mass_element = ET.SubElement(state_element, "water_sqmi")
+            water_mass_element.text = state["water_sqmi"]
+        if "misc" in state:
+            misc_el = ET.SubElement(state_element, "misc")
+            for misc_item in state['misc']:
+                for key, value in misc_item.items():
+                    misc_sub_el = ET.SubElement(misc_el, key)
+                    misc_sub_el.text = value
 
-    # Create the tree and write to an XML file
-    tree = ET.ElementTree(root)
-    tree.write("./files/states2.xml", encoding="utf-8", xml_declaration=True)
+    # Convert the ElementTree to a string
+    rough_string = ET.tostring(root, encoding="utf-8")
+    # Parse the string with minidom for pretty printing
+    reparsed = parseString(rough_string)
+    pretty_xml_as_string = reparsed.toprettyxml(indent="  ")
+
+    # Write the pretty-printed XML to a file
+    with open("./files/states_complex.xml", "w", encoding="utf-8") as f:
+        f.write(pretty_xml_as_string)
 
 
 if __name__ == "__main__":
-    gen_xml_doc_1()
-    gen_xml_doc_2()
-
-
+    states_simple_xml()
+    states_complex_xml()
