@@ -1,0 +1,9 @@
+Path,Value
+states/state[0]/name,Texas
+states/state[0]/population,30503301
+states/state[0]/largest_city,Houston
+states/state[0]/land_mass_sqmi,261232
+states/state[1]/name,New York
+states/state[1]/population,19571216
+states/state[1]/largest_city,New York City
+states/state[1]/land_mass_sqmi,54555
