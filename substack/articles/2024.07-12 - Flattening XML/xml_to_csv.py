@@ -77,13 +77,13 @@ def flatten_xml_to_csv(xml_file: str, csv_file_path: str) -> None:
 
 
 def main():
-    x_path = './files/states_simple.xml'
-    c_path = './files/states_simple.csv'
+    x_path = './files/Georgia.xml'
+    c_path = './files/Georgia.csv'
 
     flatten_xml_to_csv(x_path, c_path)
 
-    x_path = './files/states_complex.xml'
-    c_path = './files/states_complex.csv'
+    x_path = './files/California.xml'
+    c_path = './files/California.csv'
 
     flatten_xml_to_csv(x_path, c_path)
 

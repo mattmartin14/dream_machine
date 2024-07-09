@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<states>
+  <state>
+    <name>California</name>
+    <population>39538223</population>
+    <largest_city>Los Angeles</largest_city>
+    <land_mass_sqmi>163696</land_mass_sqmi>
+  </state>
+</states>
