@@ -22,3 +22,4 @@ for ((i=0; i<$num_rows; i++)); do
 done
 
 echo "Random dates and GUIDs written to $output_file"
+
