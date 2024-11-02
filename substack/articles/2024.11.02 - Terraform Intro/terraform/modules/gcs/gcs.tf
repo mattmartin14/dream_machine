@@ -13,6 +13,8 @@ resource "google_storage_bucket" "gcs_bucket" {
   location = var.region                     
   force_destroy = true          
 
+  labels = merge(var.tags)
+
   storage_class = "STANDARD"      
 
   uniform_bucket_level_access = true
@@ -30,11 +32,7 @@ resource "google_storage_bucket" "gcs_bucket" {
     }
   }
 
-  labels = merge(var.tags)
-
-
   #disable public access unless you want some cryptobro using your bucket for bitcoin storage
   public_access_prevention = "enforced"
 
-  
 }
