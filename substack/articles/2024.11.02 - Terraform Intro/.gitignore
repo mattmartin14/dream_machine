@@ -1,8 +1,5 @@
-venv/
-.venv/
-**/.venv/
 *.tfstate*
-**/.terraform*
 *.terraform*
 .terraform
 .terraform.lock.hcl
+terraform/temp*.tfvars
