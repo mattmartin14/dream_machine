@@ -10,8 +10,13 @@ def download_iceberg_jar(spark_version, scala_version, iceberg_version, target_d
     jar_name = f"iceberg-spark-runtime-{spark_version}_{scala_version}-{iceberg_version}.jar"
     jar_url = f"{base_url}/iceberg-spark-runtime-{spark_version}_{scala_version}/{iceberg_version}/{jar_name}"
     
-    os.makedirs(target_dir, exist_ok=True)
     jar_path = os.path.join(target_dir, jar_name)
+
+    if os.path.exists(jar_path):
+        return jar_path
+
+    os.makedirs(target_dir, exist_ok=True)
+    
     
     print(f"Downloading {jar_name} from {jar_url}...")
     response = requests.get(jar_url, stream=True)
