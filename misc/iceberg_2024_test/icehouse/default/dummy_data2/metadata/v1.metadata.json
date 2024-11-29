@@ -1,0 +1,89 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "bf83e4e3-b967-4c12-b926-f4639fc62408",
+  "location" : "./icehouse/default/dummy_data2",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1732877944617,
+  "last-column-id" : 4,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "row_id",
+      "required" : false,
+      "type" : "long"
+    }, {
+      "id" : 2,
+      "name" : "rpt_dt",
+      "required" : false,
+      "type" : "date"
+    }, {
+      "id" : 3,
+      "name" : "some_val",
+      "required" : false,
+      "type" : "long"
+    }, {
+      "id" : 4,
+      "name" : "txn_key",
+      "required" : false,
+      "type" : "string"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "matthewmartin",
+    "write.format.default" : "parquet",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 1418577534179898215,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 1418577534179898215,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 1418577534179898215,
+    "timestamp-ms" : 1732877944617,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1732877870625",
+      "added-data-files" : "12",
+      "added-records" : "5000",
+      "added-files-size" : "128442",
+      "changed-partition-count" : "1",
+      "total-records" : "5000",
+      "total-files-size" : "128442",
+      "total-data-files" : "12",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0",
+      "engine-version" : "3.5.3",
+      "app-id" : "local-1732877870625",
+      "engine-name" : "spark",
+      "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
+    },
+    "manifest-list" : "icehouse/default/dummy_data2/metadata/snap-1418577534179898215-1-1047212c-ed35-4142-b83b-333e98557c85.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1732877944617,
+    "snapshot-id" : 1418577534179898215
+  } ],
+  "metadata-log" : [ ]
+}
