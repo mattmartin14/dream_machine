@@ -2,8 +2,8 @@
   "format-version" : 2,
   "table-uuid" : "3b408c7a-1808-4e14-bafc-13f1eb634b9b",
   "location" : "./icehouse/dummy_ns/dummy_data",
-  "last-sequence-number" : 2,
-  "last-updated-ms" : 1733135316141,
+  "last-sequence-number" : 3,
+  "last-updated-ms" : 1733135363763,
   "last-column-id" : 4,
   "current-schema-id" : 0,
   "schemas" : [ {
@@ -47,10 +47,10 @@
     "write.format.default" : "parquet",
     "write.parquet.compression-codec" : "zstd"
   },
-  "current-snapshot-id" : 3784801863796712698,
+  "current-snapshot-id" : 2685951615149627680,
   "refs" : {
     "main" : {
-      "snapshot-id" : 3784801863796712698,
+      "snapshot-id" : 2685951615149627680,
       "type" : "branch"
     }
   },
@@ -102,6 +102,30 @@
     },
     "manifest-list" : "icehouse/dummy_ns/dummy_data/metadata/snap-3784801863796712698-1-c7ec048a-ced6-4e1e-aafb-3c41974c6306.avro",
     "schema-id" : 0
+  }, {
+    "sequence-number" : 3,
+    "snapshot-id" : 2685951615149627680,
+    "timestamp-ms" : 1733135363763,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1733135306065",
+      "added-data-files" : "12",
+      "added-records" : "5000",
+      "added-files-size" : "128367",
+      "changed-partition-count" : "1",
+      "total-records" : "5000",
+      "total-files-size" : "128367",
+      "total-data-files" : "12",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0",
+      "engine-version" : "3.5.3",
+      "app-id" : "local-1733135306065",
+      "engine-name" : "spark",
+      "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
+    },
+    "manifest-list" : "icehouse/dummy_ns/dummy_data/metadata/snap-2685951615149627680-1-ceec0745-b2f5-443a-8b14-b5486a291f7b.avro",
+    "schema-id" : 0
   } ],
   "statistics" : [ ],
   "partition-statistics" : [ ],
@@ -111,9 +135,15 @@
   }, {
     "timestamp-ms" : 1733135316141,
     "snapshot-id" : 3784801863796712698
+  }, {
+    "timestamp-ms" : 1733135363763,
+    "snapshot-id" : 2685951615149627680
   } ],
   "metadata-log" : [ {
     "timestamp-ms" : 1732879427546,
     "metadata-file" : "icehouse/dummy_ns/dummy_data/metadata/v1.metadata.json"
+  }, {
+    "timestamp-ms" : 1733135316141,
+    "metadata-file" : "icehouse/dummy_ns/dummy_data/metadata/v2.metadata.json"
   } ]
 }

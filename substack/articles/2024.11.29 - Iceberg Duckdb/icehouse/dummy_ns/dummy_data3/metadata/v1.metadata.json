@@ -1,9 +1,9 @@
 {
   "format-version" : 2,
-  "table-uuid" : "3b408c7a-1808-4e14-bafc-13f1eb634b9b",
-  "location" : "./icehouse/dummy_ns/dummy_data",
+  "table-uuid" : "a2f1e91c-51ba-404c-a8ef-d470e25900a8",
+  "location" : "./icehouse/dummy_ns/dummy_data3",
   "last-sequence-number" : 1,
-  "last-updated-ms" : 1732879427546,
+  "last-updated-ms" : 1733135323064,
   "last-column-id" : 4,
   "current-schema-id" : 0,
   "schemas" : [ {
@@ -44,46 +44,45 @@
   } ],
   "properties" : {
     "owner" : "matthewmartin",
-    "write.format.default" : "parquet",
     "write.parquet.compression-codec" : "zstd"
   },
-  "current-snapshot-id" : 3507767330752867349,
+  "current-snapshot-id" : 3732971742531864748,
   "refs" : {
     "main" : {
-      "snapshot-id" : 3507767330752867349,
+      "snapshot-id" : 3732971742531864748,
       "type" : "branch"
     }
   },
   "snapshots" : [ {
     "sequence-number" : 1,
-    "snapshot-id" : 3507767330752867349,
-    "timestamp-ms" : 1732879427546,
+    "snapshot-id" : 3732971742531864748,
+    "timestamp-ms" : 1733135323064,
     "summary" : {
       "operation" : "append",
-      "spark.app.id" : "local-1732878572792",
+      "spark.app.id" : "local-1733135306065",
       "added-data-files" : "12",
       "added-records" : "5000",
-      "added-files-size" : "128418",
+      "added-files-size" : "128367",
       "changed-partition-count" : "1",
       "total-records" : "5000",
-      "total-files-size" : "128418",
+      "total-files-size" : "128367",
       "total-data-files" : "12",
       "total-delete-files" : "0",
       "total-position-deletes" : "0",
       "total-equality-deletes" : "0",
       "engine-version" : "3.5.3",
-      "app-id" : "local-1732878572792",
+      "app-id" : "local-1733135306065",
       "engine-name" : "spark",
       "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
     },
-    "manifest-list" : "icehouse/dummy_ns/dummy_data/metadata/snap-3507767330752867349-1-64e8eca1-f30a-460d-8145-18b24f0884b4.avro",
+    "manifest-list" : "icehouse/dummy_ns/dummy_data3/metadata/snap-3732971742531864748-1-fdf2bd05-9921-4893-937e-ca6b2dcac37b.avro",
     "schema-id" : 0
   } ],
   "statistics" : [ ],
   "partition-statistics" : [ ],
   "snapshot-log" : [ {
-    "timestamp-ms" : 1732879427546,
-    "snapshot-id" : 3507767330752867349
+    "timestamp-ms" : 1733135323064,
+    "snapshot-id" : 3732971742531864748
   } ],
   "metadata-log" : [ ]
 }
