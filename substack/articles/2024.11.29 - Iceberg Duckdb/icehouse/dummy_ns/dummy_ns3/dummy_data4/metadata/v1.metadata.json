@@ -1,0 +1,88 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "3837e47c-5b76-46c6-bf72-7d298e1277ce",
+  "location" : "./icehouse/dummy_ns/dummy_ns3/dummy_data4",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1733395117899,
+  "last-column-id" : 4,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "row_id",
+      "required" : false,
+      "type" : "long"
+    }, {
+      "id" : 2,
+      "name" : "rpt_dt",
+      "required" : false,
+      "type" : "date"
+    }, {
+      "id" : 3,
+      "name" : "some_val",
+      "required" : false,
+      "type" : "long"
+    }, {
+      "id" : 4,
+      "name" : "txn_key",
+      "required" : false,
+      "type" : "string"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "matthewmartin",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 1103719631904909077,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 1103719631904909077,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 1103719631904909077,
+    "timestamp-ms" : 1733395117899,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1733393640397",
+      "added-data-files" : "12",
+      "added-records" : "5000",
+      "added-files-size" : "128477",
+      "changed-partition-count" : "1",
+      "total-records" : "5000",
+      "total-files-size" : "128477",
+      "total-data-files" : "12",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0",
+      "engine-version" : "3.5.3",
+      "app-id" : "local-1733393640397",
+      "engine-name" : "spark",
+      "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
+    },
+    "manifest-list" : "icehouse/dummy_ns/dummy_ns3/dummy_data4/metadata/snap-1103719631904909077-1-9d16e813-518f-4a41-975c-33a601479980.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1733395117899,
+    "snapshot-id" : 1103719631904909077
+  } ],
+  "metadata-log" : [ ]
+}
