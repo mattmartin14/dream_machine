@@ -2,7 +2,7 @@ CREATE OR REPLACE EXTERNAL TABLE bicycle_shop.ord_hdr
 WITH CONNECTION us.test_cn_matt
 OPTIONS (
   format = 'DELTA_LAKE',
-  uris = ['gs://data-mattm-test-sbx/bicycle_shop/processed/ord_hdr']
+  uris = ['gs://{bucket}/bicycle_shop/processed/ord_hdr']
 );
 
 
@@ -10,7 +10,7 @@ CREATE OR REPLACE EXTERNAL TABLE bicycle_shop.ord_dtl
 WITH CONNECTION us.test_cn_matt
 OPTIONS (
   format = 'DELTA_LAKE',
-  uris = ['gs://data-mattm-test-sbx/bicycle_shop/processed/ord_dtl']
+  uris = ['gs://{bucket}/bicycle_shop/processed/ord_dtl']
 );
 
 
