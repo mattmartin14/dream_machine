@@ -39,12 +39,11 @@ def create_or_merge_table(table_path: str, df: pl.DataFrame, merge_predicate: st
 
     else:
         df.write_delta(target=table_path, mode='overwrite')
-        print('header table created')
+        print('table created')
 
 
 
-if __name__ == "__main__":
-
+def process_datasets():
     bucket = os.getenv("GCS_BUCKET")
     warehouse_path = f'gs://{bucket}/bicycle_shop'
 
@@ -59,3 +58,8 @@ if __name__ == "__main__":
 
     create_or_merge_table(delta_header_path, df_order_header, "s.order_id = t.order_id")
     create_or_merge_table(delta_detail_path, df_order_detail, "s.order_id = t.order_id and s.product_id = t.product_id")
+
+if __name__ == "__main__":
+    process_datasets()
+
+   
