@@ -1,3 +1,0 @@
-when creating both external tables in gbq, they both took
-
-however, delta lake was queryable, and iceberg threw an error when trying to query saying "invalid URI"
