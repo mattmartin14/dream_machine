@@ -1,0 +1,10 @@
+[package]
+name = "polar_rust1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+polars-lazy = "0.45.1"
+google-cloud-storage = "0.18"
+
+polars = { version = "0.45.1", features = ["lazy", "strings", "regex", "to_dummies","parquet"] }
