@@ -1,1 +1,6 @@
 target/
+*.tfstate*
+*.terraform*
+.terraform
+.terraform.lock.hcl
+terraform/temp*.tfvars
