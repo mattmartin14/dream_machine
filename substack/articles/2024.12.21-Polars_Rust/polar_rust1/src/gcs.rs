@@ -28,19 +28,14 @@ pub async fn upload_file_to_gcs(client: &Client, bucket_nm: &str, local_f_path: 
 
     // Check the result and print the outcome
     match result {
-        // Ok(upload_response) => {
-        //     // Print the response on success
-        //     println!("Upload successful: {:#?}", upload_response);
-        // }
         Err(err) => {
             // Print the error in case of failure
             eprintln!("Upload failed: {:#?}", err);
             return Err(err); // Propagate the error
         }
         Ok(_) => {
-            
-        }
 
+        }
     }
 
     Ok(())
