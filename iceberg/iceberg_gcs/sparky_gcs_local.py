@@ -4,6 +4,19 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_date, rand, floor, expr
 import warnings
 
+"""
+    Author: Matt Martin
+    Date: 12/27/24
+    Desc:
+
+        This program demonstrates how to use spark to directly write iceberg tables to gcs, but on a local workstation
+            - no expensive cloud notebook UI needed!
+
+        At the end for validation, we pull in duckdb and query the iceberg table
+
+"""
+
+
 # Suppress specific Google Cloud SDK warning
 warnings.filterwarnings(
     "ignore",
@@ -89,7 +102,6 @@ df.writeTo(f"{catalog_name}.{namespace}.{table_name}") \
 print('data written to gcs')
 
 ### part 2: query it via duckdb
-
 import duckdb
 from fsspec import filesystem
 cn = duckdb.connect()
