@@ -1,0 +1,10 @@
+{"timestamp": "2023-04-16T10:00:00Z", "host": "example.com", "method": "GET", "path": "/", "status_code": 200, "size": 1234}
+{"timestamp": "2023-04-16T10:01:15Z", "host": "example.com", "method": "POST", "path": "/login", "status_code": 401, "size": 567}
+{"timestamp": "2023-04-16T10:02:30Z", "host": "example.com", "method": "GET", "path": "/products", "status_code": 200, "size": 4567}
+{"timestamp": "2023-04-16T10:03:45Z", "host": "example.com", "method": "PUT", "path": "/profile", "status_code": 204, "size": 0}
+{"timestamp": "2023-04-16T10:04:55Z", "host": "example.com", "method": "DELETE", "path": "/account", "status_code": 403, "size": 0}
+{"timestamp": "2023-04-16T10:05:30Z", "host": "example.com", "method": "GET", "path": "/search", "status_code": 200, "size": 234}
+{"timestamp": "2023-04-16T10:06:20Z", "host": "example.com", "method": "POST", "path": "/checkout", "status_code": 201, "size": 789}
+{"timestamp": "2023-04-17T10:07:10Z", "host": "example.com", "method": "GET", "path": "/cart", "status_code": 200, "size": 567}
+{"timestamp": "2023-04-17T10:08:05Z", "host": "example.com", "method": "PUT", "path": "/order", "status_code": 200, "size": 123}
+{"timestamp": "2023-04-17T10:09:15Z", "host": "example.com", "method": "DELETE", "path": "/product/123", "status_code": 204, "size": 0}
