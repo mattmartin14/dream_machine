@@ -1,0 +1,4 @@
+if you wanted to use a google service acct, you'd need to add in these configs:
+    .config("spark.hadoop.google.cloud.auth.service.account.enable","true") \
+    .config("spark.hadoop.google.cloud.auth.service.account.json.keyfile", os.getenv("GOOGLE_APPLICATION_CREDENTIALS")) \
+you'd also need to create a gsa and store it locally (not recommened for security reasons)
