@@ -75,9 +75,6 @@ def get_spark_instance_via_adc(catalog_name: str, gcs_bucket: str) -> SparkSessi
 
 ## #################################################################
 
-
-
-
 def process_data(catalog_name: str, gcs_bucket:str, namespace: str, table_name: str):
 
     spark = get_spark_instance_via_adc(catalog_name=catalog_name, gcs_bucket = gcs_bucket)
