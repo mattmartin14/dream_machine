@@ -42,6 +42,8 @@ def get_spark_instance_via_adc(catalog_name: str, gcs_bucket: str) -> SparkSessi
     scala_version = os.getenv("SCALA_VERSION", "2.12")
     iceberg_version = os.getenv("ICEBERG_VERSION", "1.7.0")
 
+    iceberg_package = f"org.apache.iceberg:iceberg-spark-runtime-{spark_version}_{scala_version}:{iceberg_version}"
+
     # Define the Iceberg warehouse path
     warehouse_path = f"gs://{gcs_bucket}/icehouse"
 
@@ -60,7 +62,7 @@ def get_spark_instance_via_adc(catalog_name: str, gcs_bucket: str) -> SparkSessi
         .config(f"spark.sql.catalog.{catalog_name}", "org.apache.iceberg.spark.SparkCatalog") \
         .config(f"spark.sql.catalog.{catalog_name}.type", "hadoop") \
         .config(f"spark.sql.catalog.{catalog_name}.warehouse", warehouse_path) \
-        .config("spark.jars.packages", f"org.apache.iceberg:iceberg-spark-runtime-{spark_version}_{scala_version}:{iceberg_version}") \
+        .config("spark.jars.packages", iceberg_package) \
         .config("spark.jars", local_jar_path) \
         .config("spark.hadoop.google.cloud.auth.service.account.enable", "false") \
         .config("spark.hadoop.fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem") \
@@ -71,52 +73,64 @@ def get_spark_instance_via_adc(catalog_name: str, gcs_bucket: str) -> SparkSessi
         .getOrCreate()
 
 
-catalog_name = "icyhot"
-namespace = "dummy_dataset"
-table_name = "dummy_data"
+## #################################################################
 
 
-gcs_bucket = os.getenv("GCS_BUCKET")
 
-spark = get_spark_instance_via_adc(catalog_name=catalog_name, gcs_bucket = gcs_bucket)
-print('spark instance created')
 
-spark.sparkContext.setLogLevel("ERROR")
+def process_data(catalog_name: str, gcs_bucket:str, namespace: str, table_name: str):
 
-#generate some data in a data frame
+    spark = get_spark_instance_via_adc(catalog_name=catalog_name, gcs_bucket = gcs_bucket)
+    print('spark instance created')
 
-row_cnt = 5_000
-df = spark.range(0, row_cnt) \
-    .withColumn('rpt_dt', current_date()) \
-    .withColumn('some_val', floor(rand() * 100)) \
-    .withColumn("txn_key", expr("uuid()")) \
-    .withColumnRenamed('id', 'row_id') \
-    .toDF('row_id', 'rpt_dt', 'some_val', 'txn_key')
+    spark.sparkContext.setLogLevel("ERROR")
 
-print('dummy dataset created')
+    #generate some data in a data frame
 
-df.writeTo(f"{catalog_name}.{namespace}.{table_name}") \
-    .using("iceberg") \
-    .createOrReplace()
+    row_cnt = 5_000
+    df = spark.range(0, row_cnt) \
+        .withColumn('rpt_dt', current_date()) \
+        .withColumn('some_val', floor(rand() * 100)) \
+        .withColumn("txn_key", expr("uuid()")) \
+        .withColumnRenamed('id', 'row_id') \
+        .toDF('row_id', 'rpt_dt', 'some_val', 'txn_key')
 
-print('data written to gcs')
+    print('dummy dataset created')
 
-### part 2: query it via duckdb
-import duckdb
-from fsspec import filesystem
-cn = duckdb.connect()
-cn.register_filesystem(filesystem('gcs'))
-cn.execute("""
-    INSTALL ICEBERG;
-    LOAD ICEBERG;
-""")
+    df.writeTo(f"{catalog_name}.{namespace}.{table_name}") \
+        .using("iceberg") \
+        .createOrReplace()
 
-table_path = f"gs://{gcs_bucket}/icehouse/{namespace}/{table_name}"
+    print('data written to gcs')
 
-sql = f"""
-select *
-from iceberg_scan('{table_path}')
-limit 5
-"""
+def validate_data(gcs_bucket: str, namespace: str, table_name: str) ->None:
 
-cn.sql(sql).show()
+    ### part 2: query it via duckdb
+    import duckdb
+    from fsspec import filesystem
+    cn = duckdb.connect()
+    cn.register_filesystem(filesystem('gcs'))
+    cn.execute("""
+        INSTALL ICEBERG;
+        LOAD ICEBERG;
+    """)
+
+    table_path = f"gs://{gcs_bucket}/icehouse/{namespace}/{table_name}"
+
+    sql = f"""
+    select *
+    from iceberg_scan('{table_path}')
+    limit 5
+    """
+
+    cn.sql(sql).show()
+
+if __name__ == "__main__":
+
+    catalog_name = "icyhot"
+    namespace = "dummy_dataset"
+    table_name = "dummy_data"
+    gcs_bucket = os.getenv("GCS_BUCKET")
+
+    process_data(catalog_name, gcs_bucket, namespace, table_name)
+    validate_data(gcs_bucket, namespace, table_name)
