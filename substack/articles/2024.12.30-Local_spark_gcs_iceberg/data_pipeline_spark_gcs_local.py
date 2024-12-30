@@ -101,6 +101,9 @@ def process_data(catalog_name: str, gcs_bucket:str, namespace: str, table_name: 
 
     print('data written to gcs')
 
+    spark.sql(f"select count(*) as row_cnt, max(first_promise_dt) as mx_dt from ({sql}) as sub").write.mode('overwrite').parquet("validation")
+    print("validators written out")
+
 
 if __name__ == "__main__":
 

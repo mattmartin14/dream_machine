@@ -15,7 +15,6 @@ warnings.filterwarnings(
 
 def validate_data(gcs_bucket: str, namespace: str, table_name: str) ->None:
 
-    ### part 2: query it via duckdb
 
     cn = duckdb.connect()
     cn.register_filesystem(filesystem('gcs'))
@@ -32,7 +31,23 @@ def validate_data(gcs_bucket: str, namespace: str, table_name: str) ->None:
     limit 5
     """
 
+    #sample iceberg data
     cn.sql(sql).show()
+
+    #agg up validation attributes
+    sql = f"select count(*) as row_cnt, max(first_promise_dt) as mx_dt from iceberg_scan('{table_path}')"
+    row_cnt, mx_dt = cn.execute(sql).fetchone()
+    
+    #this is from the data pipeline process; it wrote out some columns at the end for downstream validation
+    sql_pipeline = f"select row_cnt, mx_dt from read_parquet('./validation/*.parquet')"
+    row_cnt_pipe, mx_dt_pipe = cn.execute(sql_pipeline).fetchone()
+
+    #assert them
+    assert row_cnt == row_cnt_pipe, f"Row count mismatch: Expected {row_cnt_pipe}, but got {row_cnt}"
+    assert mx_dt == mx_dt_pipe, f"Max Date mismatch: Expected {mx_dt_pipe}, but got {mx_dt}"
+
+    print('validation completed')
+
 
 if __name__ == "__main__":
 
