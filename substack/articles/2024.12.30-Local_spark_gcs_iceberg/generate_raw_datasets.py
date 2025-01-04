@@ -19,6 +19,6 @@ print("order header data copied")
 
 sql_order_detail = "select * from lineitem where l_orderkey between 1 and 10000"
 cn.execute(f"copy ({sql_order_detail}) to '{dataset_path}/order_dtl.parquet'")
-print("order header data copied")
+print("order detail data copied")
 
 
