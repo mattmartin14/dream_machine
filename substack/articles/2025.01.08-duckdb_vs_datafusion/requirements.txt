@@ -1,0 +1,4 @@
+pyiceberg
+datafusion
+duckdb
+sqlalchemy
