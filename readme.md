@@ -2,6 +2,6 @@
 
 You have stumbled upon Matt's brain dump. I am a big data engineer by trait, but like to experiment with other programming languages.
 
-Currently, I'm on a journey of learning Go Lang, as I see it as a very benefitial programming language for data engineering when you need to process things in parallel.
+Currently, I'm exploring data lakehouse formats such as Iceberg and Delta Lake; I also like to use simple data processing tools like polars an duckdb. Spark is great and all, but sometimes you don't need a sledgehammer to crack a peanut
 
-I also have an old repo in here called "sqletl" which automated the assembly and execution of SSIS packages on the fly. 
+My first major project was called "SQL ETL". It would from T-SQL assemble and create an SSIS package on the fly. That repo can be found [here](https://github.com/mattmartin14/dream_machine/tree/main/sqletl).
