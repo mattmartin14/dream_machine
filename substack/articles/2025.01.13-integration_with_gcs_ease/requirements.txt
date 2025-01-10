@@ -1,0 +1,8 @@
+datafusion
+duckdb
+polars
+pyiceberg
+sqlalchemy
+fsspec
+gcsfs
+getdaft
