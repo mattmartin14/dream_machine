@@ -2,9 +2,9 @@ class BuildBike:
     def __init__(self, customer_name: str):
         self.customer_name = customer_name
         self.has_big_tires = False
-        self.is_18_speed = False  # Renamed attribute for clarity
-        self.cup_holder_included = False  # Renamed attribute
-        self.reflectors_included = False  # Renamed attribute
+        self.is_18_speed = False 
+        self.cup_holder_included = False  
+        self.reflectors_included = False  
 
     def use_big_tires(self):
         self.has_big_tires = True
@@ -15,11 +15,11 @@ class BuildBike:
         return self
 
     def include_cup_holder(self):
-        self.cup_holder_included = True  # Updated to reflect renamed attribute
+        self.cup_holder_included = True 
         return self
 
     def include_reflectors(self):
-        self.reflectors_included = True  # Updated to reflect renamed attribute
+        self.reflectors_included = True 
         return self
 
     def build(self):
