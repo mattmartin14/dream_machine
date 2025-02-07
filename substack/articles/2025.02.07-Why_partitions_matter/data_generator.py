@@ -54,9 +54,9 @@ def generate_dummy_order_details(order_header_df, max_items_per_order=5):
     })
 
 
-def save_parquet_files(df_order_header, df_order_detail, base_path, file_date):
-    header_table_path = f"{base_path}/raw_data/ord_hdr/order_header_{file_date}.parquet"
-    detail_table_path = f"{base_path}/raw_data/ord_dtl/order_detail_{file_date}.parquet"
+def save_parquet_files(df_order_header, df_order_detail, base_path, version):
+    header_table_path = f"{base_path}/raw_data/ord_hdr/order_header_{version}.parquet"
+    detail_table_path = f"{base_path}/raw_data/ord_dtl/order_detail_{version}.parquet"
 
     print(f"Saving header file to {header_table_path}")
     df_order_header.write_parquet(header_table_path)
