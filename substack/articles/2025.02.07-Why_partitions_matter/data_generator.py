@@ -64,17 +64,6 @@ def save_parquet_files(df_order_header, df_order_detail, base_path, file_date):
     print(f"Saving detail file to {detail_table_path}")
     df_order_detail.write_parquet(detail_table_path)
 
-def save_csv_files(df_order_header, df_order_detail, base_path, file_date):
-    header_table_path = f"{base_path}/raw_data/ord_hdr/order_header_{file_date}.csv"
-    detail_table_path = f"{base_path}/raw_data/ord_dtl/order_detail_{file_date}.csv"
-
-    print(f"Saving header file to {header_table_path}")
-    df_order_header.write_csv(header_table_path, include_header=True)
-
-    print(f"Saving detail file to {detail_table_path}")
-    df_order_detail.write_csv(detail_table_path, include_header=True)
-
-
 if __name__ == "__main__":
     df = generate_dummy_order_data(_ROW_CNT,1)
     dfo = generate_dummy_order_details(df, 5)
