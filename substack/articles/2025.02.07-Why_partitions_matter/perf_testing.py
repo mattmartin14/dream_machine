@@ -31,25 +31,25 @@ namespace = "test_ns"
 spark.sql(f"select * from {catalog_name}.{namespace}.ord_hdr_no_partition limit 5").show()
 
 non_partitioned_sql = f"""
-    SELECT hdr.order_id, sum(dtl.price) as ext_price
+    SELECT hdr.order_status, sum(dtl.price) as ext_price
     from {catalog_name}.{namespace}.ord_hdr_no_partition as hdr
         inner join {catalog_name}.{namespace}.ord_dtl_no_partition as dtl
             USING(order_date, order_id)
     where hdr.order_date = cast('2023-01-01' as date)
         and dtl.order_date = cast('2023-01-01' as date)
-    GROUP BY hdr.order_id
+    GROUP BY hdr.order_status
 """
 
 #spark.sql(sql).show()
 
 partitioned_sql = f"""
-    SELECT hdr.order_id, sum(dtl.price) as ext_price
+    SELECT hdr.order_status, sum(dtl.price) as ext_price
     from {catalog_name}.{namespace}.ord_hdr_partitioned as hdr
         inner join {catalog_name}.{namespace}.ord_dtl_partitioned as dtl
             USING(order_date, order_id)
     where hdr.order_date = cast('2023-01-01' as date)
         and dtl.order_date = cast('2023-01-01' as date)
-    GROUP BY hdr.order_id
+    GROUP BY hdr.order_status
 """
 
 def run_timed_query(query, description="Query"):
@@ -75,6 +75,14 @@ def benchmark_query(query, description, runs=5):
 benchmark_query(non_partitioned_sql, "Non-Partitioned Query")
 benchmark_query(partitioned_sql, "Partitioned Query")
 
+print('table stats')
+print('header table counts)')
+spark.sql(f"select count(*) from {catalog_name}.{namespace}.ord_hdr_partitioned").show()
+spark.sql(f"select count(*) from {catalog_name}.{namespace}.ord_hdr_no_partition").show()
+
+print('detail table counts)')
+spark.sql(f"select count(*) from {catalog_name}.{namespace}.ord_dtl_partitioned").show()
+spark.sql(f"select count(*) from {catalog_name}.{namespace}.ord_dtl_no_partition").show()
 
 print('explain plans -------------')
 spark.sql(f"explain {partitioned_sql}").show(truncate=False)
