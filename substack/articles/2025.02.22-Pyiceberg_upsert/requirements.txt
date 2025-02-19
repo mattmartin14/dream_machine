@@ -1,0 +1,4 @@
+git+https://github.com/apache/iceberg-python.git#egg=pyiceberg[pyarrow]
+datafusion
+duckdb
+sqlalchemy
