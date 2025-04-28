@@ -1,9 +1,9 @@
 {
   "format-version" : 2,
-  "table-uuid" : "9e007342-ccdc-4db5-8f8f-1610a75bfd40",
+  "table-uuid" : "885b0916-a82d-4644-a6b9-e950ee102df6",
   "location" : "./icehouse/stock_stuff/tickers",
   "last-sequence-number" : 1,
-  "last-updated-ms" : 1745834540965,
+  "last-updated-ms" : 1745844601700,
   "last-column-id" : 2,
   "current-schema-id" : 0,
   "schemas" : [ {
@@ -36,20 +36,20 @@
     "owner" : "matthewmartin",
     "write.parquet.compression-codec" : "zstd"
   },
-  "current-snapshot-id" : 8382731912505897397,
+  "current-snapshot-id" : 7391578844974642703,
   "refs" : {
     "main" : {
-      "snapshot-id" : 8382731912505897397,
+      "snapshot-id" : 7391578844974642703,
       "type" : "branch"
     }
   },
   "snapshots" : [ {
     "sequence-number" : 1,
-    "snapshot-id" : 8382731912505897397,
-    "timestamp-ms" : 1745834540965,
+    "snapshot-id" : 7391578844974642703,
+    "timestamp-ms" : 1745844601700,
     "summary" : {
       "operation" : "append",
-      "spark.app.id" : "local-1745834536091",
+      "spark.app.id" : "local-1745844589468",
       "added-data-files" : "2",
       "added-records" : "2",
       "added-files-size" : "1356",
@@ -61,18 +61,18 @@
       "total-position-deletes" : "0",
       "total-equality-deletes" : "0",
       "engine-version" : "3.5.5",
-      "app-id" : "local-1745834536091",
+      "app-id" : "local-1745844589468",
       "engine-name" : "spark",
       "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
     },
-    "manifest-list" : "icehouse/stock_stuff/tickers/metadata/snap-8382731912505897397-1-df0ef857-6252-4083-9bc9-c173a915ee5c.avro",
+    "manifest-list" : "icehouse/stock_stuff/tickers/metadata/snap-7391578844974642703-1-6a9d26dc-cc95-4f36-ae14-6dd7f24ff391.avro",
     "schema-id" : 0
   } ],
   "statistics" : [ ],
   "partition-statistics" : [ ],
   "snapshot-log" : [ {
-    "timestamp-ms" : 1745834540965,
-    "snapshot-id" : 8382731912505897397
+    "timestamp-ms" : 1745844601700,
+    "snapshot-id" : 7391578844974642703
   } ],
   "metadata-log" : [ ]
 }
