@@ -1,0 +1,78 @@
+{
+  "format-version" : 2,
+  "table-uuid" : "7ebb57fb-465a-4ee1-9567-c65d59196005",
+  "location" : "./icehouse/test_ns/stocks",
+  "last-sequence-number" : 1,
+  "last-updated-ms" : 1746621643584,
+  "last-column-id" : 2,
+  "current-schema-id" : 0,
+  "schemas" : [ {
+    "type" : "struct",
+    "schema-id" : 0,
+    "fields" : [ {
+      "id" : 1,
+      "name" : "ticker_symbol",
+      "required" : false,
+      "type" : "string"
+    }, {
+      "id" : 2,
+      "name" : "price",
+      "required" : false,
+      "type" : "decimal(4, 2)"
+    } ]
+  } ],
+  "default-spec-id" : 0,
+  "partition-specs" : [ {
+    "spec-id" : 0,
+    "fields" : [ ]
+  } ],
+  "last-partition-id" : 999,
+  "default-sort-order-id" : 0,
+  "sort-orders" : [ {
+    "order-id" : 0,
+    "fields" : [ ]
+  } ],
+  "properties" : {
+    "owner" : "matthewmartin",
+    "write.parquet.compression-codec" : "zstd"
+  },
+  "current-snapshot-id" : 5961758645105765063,
+  "refs" : {
+    "main" : {
+      "snapshot-id" : 5961758645105765063,
+      "type" : "branch"
+    }
+  },
+  "snapshots" : [ {
+    "sequence-number" : 1,
+    "snapshot-id" : 5961758645105765063,
+    "timestamp-ms" : 1746621643584,
+    "summary" : {
+      "operation" : "append",
+      "spark.app.id" : "local-1746621637008",
+      "added-data-files" : "2",
+      "added-records" : "2",
+      "added-files-size" : "1356",
+      "changed-partition-count" : "1",
+      "total-records" : "2",
+      "total-files-size" : "1356",
+      "total-data-files" : "2",
+      "total-delete-files" : "0",
+      "total-position-deletes" : "0",
+      "total-equality-deletes" : "0",
+      "engine-version" : "3.5.5",
+      "app-id" : "local-1746621637008",
+      "engine-name" : "spark",
+      "iceberg-version" : "Apache Iceberg 1.7.0 (commit 5f7c992ca673bf41df1d37543b24d646c24568a9)"
+    },
+    "manifest-list" : "icehouse/test_ns/stocks/metadata/snap-5961758645105765063-1-30537e4f-2a71-44f0-9212-64dc925198c4.avro",
+    "schema-id" : 0
+  } ],
+  "statistics" : [ ],
+  "partition-statistics" : [ ],
+  "snapshot-log" : [ {
+    "timestamp-ms" : 1746621643584,
+    "snapshot-id" : 5961758645105765063
+  } ],
+  "metadata-log" : [ ]
+}
