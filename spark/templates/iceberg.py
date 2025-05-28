@@ -1,13 +1,12 @@
-spark_version = "3.5"
-scala_version = "2.12"
-iceberg_version = "1.7.0"
+# spark_version = "3.5"
+# scala_version = "2.12"
+# iceberg_version = "1.7.0"
+# catalog_name = "iceberg"
+# warehouse_path = "./icehouse"
 
 from pyspark.sql import SparkSession
 
-catalog_name = "iceberg"
-warehouse_path = "./icehouse"
-
-def create_iceberg_spark_session():
+def create_iceberg_spark_session(spark_version = "3.5", scala_version = "2.12", iceberg_version = "1.7.0", catalog_name = "iceberg", warehouse_path = "./icehouse"):
 
     spark = (
             SparkSession.builder 
