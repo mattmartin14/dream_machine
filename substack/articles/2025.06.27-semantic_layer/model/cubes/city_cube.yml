@@ -1,0 +1,29 @@
+cubes:
+- name: city_cube
+  sql_table: data
+
+  dimensions:
+
+  - name: id
+    sql: id
+    type: number
+    primary_key: true
+
+  - name: city_name
+    sql: city
+    type: string
+
+  - name: state_abrv
+    sql: state
+    type: string
+
+
+  measures:
+  - name: count
+    sql: id
+    type: count
+
+  - name: total_population
+    sql: population
+    type: sum
+  
