@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sql2022:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql2022
+    hostname: sql2022
+    platform: linux/amd64
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "PA11Word$"
+    restart: unless-stopped
+    networks:
+      - sqlnetwork
+    volumes:
+      - ./scripts:/scripts
+
+networks:
+  sqlnetwork:
+    driver: bridge

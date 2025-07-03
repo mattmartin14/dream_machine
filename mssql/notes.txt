@@ -1,0 +1,19 @@
+0. in terminal, run colima start --arch x86_64 --memory 4 --cpu 2
+
+- that gets you into the emulator needed for m2 pro mac silicon
+
+1. run docker compose up
+2. then run docker exec -it sql2022 "bash"
+
+that gets on you on the container
+
+
+once on sql server container, run this to login
+
+cd /opt/mssql-tools18/bin
+./sqlcmd -S localhost -U sa -P "PA11Word$" -C
+
+once logged in, to run our scripts, do:
+
+:r /scripts/sp.sql
+
