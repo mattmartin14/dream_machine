@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  python-runner:
+    container_name: python_duckdb_runner
+    image: python:3.10-slim
+    volumes:
+      - ./scripts:/scripts
+    command: /bin/sh -c "pip install duckdb && python /scripts/duckdb_script.py && sleep infinity"
