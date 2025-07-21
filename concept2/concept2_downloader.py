@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # --- Configuration ---
 LOGIN_URL = "https://log.concept2.com/login"
-SEASON_URL = "https://log.concept2.com/season/2025"
+SEASON_URL = "https://log.concept2.com/season/2026"
 BASE_URL = "https://log.concept2.com"
 # The script will save workouts to the user's home directory.
 WORKOUTS_DIR = os.path.expanduser("~/concept2/workouts")
@@ -143,7 +143,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 
