@@ -13,7 +13,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 LOGIN_URL = "https://log.concept2.com/login"
 SEASON_URL = "https://log.concept2.com/season/2025"
 BASE_URL = "https://log.concept2.com"
-WORKOUTS_DIR = "workouts"
+# The script will save workouts to the user's home directory.
+WORKOUTS_DIR = os.path.expanduser("~/concept2/workouts")
 MAX_RETRIES = 3
 RETRY_DELAY = 5 # seconds
 # --- End Configuration ---
@@ -56,8 +57,9 @@ def download_workout(session, workout, profile_id):
             
             return f"Successfully downloaded {filename}"
         except requests.exceptions.RequestException as e:
+            # No need to retry on a 404 Not Found error
             if e.response and e.response.status_code == 404:
-                return f"Failed to download {filename} (404 Not Found). Skipping."
+                return f"Skipping {filename} (404 Not Found)."
             
             print(f"Attempt {attempt + 1} failed for {filename}. Retrying in {RETRY_DELAY}s... Error: {e}")
             time.sleep(RETRY_DELAY)
@@ -133,7 +135,7 @@ def main():
                 for future in as_completed(futures):
                     print(future.result())
 
-            print(f"\nDownload process complete.")
+            print(f"\nDownload process complete. All files are saved in '{WORKOUTS_DIR}'.")
 
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -141,6 +143,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
