@@ -1,0 +1,1 @@
+SELECT * FROM `test-matt-219200.sandbox.test_internal_from_ext` LIMIT 1000
