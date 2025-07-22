@@ -12,9 +12,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # --- Configuration ---
-SEASON_YEAR = 2024
 LOGIN_URL = "https://log.concept2.com/login"
-SEASON_URL = f"https://log.concept2.com/season/{SEASON_YEAR}"
 BASE_URL = "https://log.concept2.com"
 # The script will save workouts to the user's home directory.
 WORKOUTS_DIR = os.path.expanduser("~/concept2/workouts")
@@ -44,7 +42,7 @@ def get_workout_details_from_row(row):
         "id": workout_id
     }
 
-def download_summary_workout(session, workout, profile_id):
+def download_summary_workout(session, workout, profile_id, season_year):
     """Downloads a summary of a workout when a detailed CSV is not available."""
     filename = f"{workout['date']}_{workout['machine']}_summary_workout_{workout['id']}.csv"
     workout_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}"
@@ -77,7 +75,7 @@ def download_summary_workout(session, workout, profile_id):
         with open(file_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(['date', 'machine_type', 'year', 'meters', 'time', 'pace', 'calories', 'drag_factor', 'stroke_rate', 'average_watts'])
-            writer.writerow([workout['date'], workout['machine'], SEASON_YEAR, meters, time, pace, calories, drag_factor, stroke_rate, avg_watts])
+            writer.writerow([workout['date'], workout['machine'], season_year, meters, time, pace, calories, drag_factor, stroke_rate, avg_watts])
 
         return f"Successfully downloaded summary for {filename}"
 
@@ -85,7 +83,7 @@ def download_summary_workout(session, workout, profile_id):
         return f"Failed to download summary for {filename}. Error: {e}"
 
 
-def download_workout(session, workout, profile_id):
+def download_workout(session, workout, profile_id, season_year):
     """Downloads a single workout CSV with retry logic."""
     filename = f"{workout['date']}_{workout['machine']}_detail_workout_{workout['id']}.csv"
     csv_download_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}/export/csv"
@@ -106,7 +104,7 @@ def download_workout(session, workout, profile_id):
             headers.extend(['season', 'date', 'machine_type'])
             
             for i in range(1, len(rows)):
-                rows[i].extend([SEASON_YEAR, workout['date'], workout['machine']])
+                rows[i].extend([season_year, workout['date'], workout['machine']])
 
             # Write the modified CSV content back to the file
             output = io.StringIO()
@@ -118,14 +116,24 @@ def download_workout(session, workout, profile_id):
             
             return f"Successfully downloaded {filename}"
         except requests.exceptions.RequestException as e:
-            # If a 404 error occurs, try to download the summary.
+            # If a 404 error occurs, it means no detailed CSV is available.
             if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
-                return download_summary_workout(session, workout, profile_id)
+                return f"No detailed CSV available for workout {workout['id']}."
             
             print(f"Attempt {attempt + 1} failed for {filename}. Retrying in {RETRY_DELAY}s... Error: {e}")
             time.sleep(RETRY_DELAY)
     
     return f"Failed to download {filename} after {MAX_RETRIES} attempts."
+
+
+def download_workout_and_summary(session, workout, profile_id, season_year):
+    """
+    Downloads the detailed workout CSV (if available) and creates a summary file.
+    """
+    detailed_result = download_workout(session, workout, profile_id, season_year)
+    summary_result = download_summary_workout(session, workout, profile_id, season_year)
+    return f"{detailed_result}\n{summary_result}"
+
 
 def main():
     """
@@ -134,6 +142,7 @@ def main():
     parser = argparse.ArgumentParser(description="Download Concept2 workout logs.")
     parser.add_argument("--limit", type=int, help="Limit the number of workouts to download.")
     parser.add_argument("--parallel-fetches", type=int, default=10, help="Number of parallel downloads.")
+    parser.add_argument("--season-year", type=int, default=2024, help="The season year to download workouts from.")
     args = parser.parse_args()
 
     if not os.path.exists(WORKOUTS_DIR):
@@ -158,7 +167,8 @@ def main():
                 return
             print("Login successful.")
 
-            all_workouts_url = f"{SEASON_URL}?per_page=all"
+            season_url = f"https://log.concept2.com/season/{args.season_year}"
+            all_workouts_url = f"{season_url}?per_page=all"
             print(f"Fetching all season data from {all_workouts_url}...")
             response = session.get(all_workouts_url)
             response.raise_for_status()
@@ -193,7 +203,7 @@ def main():
             print(f"Found {len(workouts_to_download)} workouts. Starting download with {args.parallel_fetches} parallel workers...")
 
             with ThreadPoolExecutor(max_workers=args.parallel_fetches) as executor:
-                futures = [executor.submit(download_workout, session, workout, profile_id) for workout in workouts_to_download]
+                futures = [executor.submit(download_workout_and_summary, session, workout, profile_id, args.season_year) for workout in workouts_to_download]
                 
                 for future in as_completed(futures):
                     print(future.result())
