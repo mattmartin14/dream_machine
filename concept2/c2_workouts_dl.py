@@ -55,20 +55,31 @@ def download_summary_workout(session, workout, profile_id, season_year):
 
         # Extract summary data from workout__stat divs
         stats = soup.find_all('div', class_='workout__stat')
-        meters = stats[0].find('span').text.strip() if len(stats) > 0 else 'N/A'
-        time = stats[1].find('span').text.strip() if len(stats) > 1 else 'N/A'
-        pace = stats[2].find('span').text.strip() if len(stats) > 2 else 'N/A'
-        calories = stats[3].find('span').text.strip() if len(stats) > 3 else 'N/A'
+        
+        meters_raw = stats[0].find('span').text.strip() if len(stats) > 0 else 'N/A'
+        meters = meters_raw.replace(',', '') if meters_raw != 'N/A' else ''
+        
+        time_raw = stats[1].find('span').text.strip() if len(stats) > 1 else 'N/A'
+        time = time_raw if time_raw != 'N/A' else ''
+        
+        pace_raw = stats[2].find('span').text.strip() if len(stats) > 2 else 'N/A'
+        pace = pace_raw if pace_raw != 'N/A' else ''
+        
+        calories_raw = stats[3].find('span').text.strip() if len(stats) > 3 else 'N/A'
+        calories = calories_raw if calories_raw != 'N/A' else ''
 
         # Extract additional details from the table
         avg_watts_tag = soup.find('th', string='Average Watts')
-        avg_watts = avg_watts_tag.find_next_sibling('td').text.strip() if avg_watts_tag else 'N/A'
+        avg_watts_raw = avg_watts_tag.find_next_sibling('td').text.strip() if avg_watts_tag else 'N/A'
+        avg_watts = avg_watts_raw if avg_watts_raw != 'N/A' else ''
         
         stroke_rate_tag = soup.find('th', string='Stroke Rate')
-        stroke_rate = stroke_rate_tag.find_next_sibling('td').text.strip() if stroke_rate_tag else 'N/A'
+        stroke_rate_raw = stroke_rate_tag.find_next_sibling('td').text.strip() if stroke_rate_tag else 'N/A'
+        stroke_rate = stroke_rate_raw if stroke_rate_raw != 'N/A' else ''
 
         drag_factor_tag = soup.find('th', string='Drag Factor')
-        drag_factor = drag_factor_tag.find_next_sibling('td').text.strip() if drag_factor_tag else 'N/A'
+        drag_factor_raw = drag_factor_tag.find_next_sibling('td').text.strip() if drag_factor_tag else 'N/A'
+        drag_factor = drag_factor_raw if drag_factor_raw != 'N/A' else ''
 
 
         # Create CSV
