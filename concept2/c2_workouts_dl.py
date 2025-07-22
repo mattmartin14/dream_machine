@@ -4,14 +4,17 @@ import re
 import getpass
 import argparse
 import time
+import csv
+import io
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # --- Configuration ---
+SEASON_YEAR = 2025
 LOGIN_URL = "https://log.concept2.com/login"
-SEASON_URL = "https://log.concept2.com/season/2026"
+SEASON_URL = f"https://log.concept2.com/season/{SEASON_YEAR}"
 BASE_URL = "https://log.concept2.com"
 # The script will save workouts to the user's home directory.
 WORKOUTS_DIR = os.path.expanduser("~/concept2/workouts")
@@ -41,6 +44,47 @@ def get_workout_details_from_row(row):
         "id": workout_id
     }
 
+def download_summary_workout(session, workout, profile_id):
+    """Downloads a summary of a workout when a detailed CSV is not available."""
+    filename = f"{workout['date']}_{workout['machine']}_summary_workout_{workout['id']}.csv"
+    workout_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}"
+    file_path = os.path.join(WORKOUTS_DIR, filename)
+
+    try:
+        response = session.get(workout_url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Extract summary data from workout__stat divs
+        stats = soup.find_all('div', class_='workout__stat')
+        meters = stats[0].find('span').text.strip() if len(stats) > 0 else 'N/A'
+        time = stats[1].find('span').text.strip() if len(stats) > 1 else 'N/A'
+        pace = stats[2].find('span').text.strip() if len(stats) > 2 else 'N/A'
+        calories = stats[3].find('span').text.strip() if len(stats) > 3 else 'N/A'
+
+        # Extract additional details from the table
+        avg_watts_tag = soup.find('th', string='Average Watts')
+        avg_watts = avg_watts_tag.find_next_sibling('td').text.strip() if avg_watts_tag else 'N/A'
+        
+        stroke_rate_tag = soup.find('th', string='Stroke Rate')
+        stroke_rate = stroke_rate_tag.find_next_sibling('td').text.strip() if stroke_rate_tag else 'N/A'
+
+        drag_factor_tag = soup.find('th', string='Drag Factor')
+        drag_factor = drag_factor_tag.find_next_sibling('td').text.strip() if drag_factor_tag else 'N/A'
+
+
+        # Create CSV
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['date', 'machine_type', 'year', 'meters', 'time', 'pace', 'calories', 'drag_factor', 'stroke_rate', 'average_watts'])
+            writer.writerow([workout['date'], workout['machine'], SEASON_YEAR, meters, time, pace, calories, drag_factor, stroke_rate, avg_watts])
+
+        return f"Successfully downloaded summary for {filename}"
+
+    except requests.exceptions.RequestException as e:
+        return f"Failed to download summary for {filename}. Error: {e}"
+
+
 def download_workout(session, workout, profile_id):
     """Downloads a single workout CSV with retry logic."""
     filename = f"{workout['date']}_{workout['machine']}_workout_{workout['id']}.csv"
@@ -51,15 +95,32 @@ def download_workout(session, workout, profile_id):
         try:
             csv_response = session.get(csv_download_url)
             csv_response.raise_for_status()
+
+            # Read the CSV content into memory
+            csv_content = csv_response.content.decode('utf-8')
+            reader = csv.reader(io.StringIO(csv_content))
+            rows = list(reader)
+
+            # Add new headers and data
+            headers = rows[0]
+            headers.extend(['season', 'date', 'machine_type'])
             
-            with open(file_path, "wb") as f:
-                f.write(csv_response.content)
+            for i in range(1, len(rows)):
+                rows[i].extend([SEASON_YEAR, workout['date'], workout['machine']])
+
+            # Write the modified CSV content back to the file
+            output = io.StringIO()
+            writer = csv.writer(output)
+            writer.writerows(rows)
+            
+            with open(file_path, "w", newline="") as f:
+                f.write(output.getvalue())
             
             return f"Successfully downloaded {filename}"
         except requests.exceptions.RequestException as e:
-            # No need to retry on a 404 Not Found error
-            if e.response and e.response.status_code == 404:
-                return f"Skipping {filename} (404 Not Found)."
+            # If a 404 error occurs, try to download the summary.
+            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
+                return download_summary_workout(session, workout, profile_id)
             
             print(f"Attempt {attempt + 1} failed for {filename}. Retrying in {RETRY_DELAY}s... Error: {e}")
             time.sleep(RETRY_DELAY)
@@ -143,6 +204,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
