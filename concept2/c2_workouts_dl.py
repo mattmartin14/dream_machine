@@ -12,7 +12,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # --- Configuration ---
-SEASON_YEAR = 2025
+SEASON_YEAR = 2024
 LOGIN_URL = "https://log.concept2.com/login"
 SEASON_URL = f"https://log.concept2.com/season/{SEASON_YEAR}"
 BASE_URL = "https://log.concept2.com"
@@ -87,7 +87,7 @@ def download_summary_workout(session, workout, profile_id):
 
 def download_workout(session, workout, profile_id):
     """Downloads a single workout CSV with retry logic."""
-    filename = f"{workout['date']}_{workout['machine']}_workout_{workout['id']}.csv"
+    filename = f"{workout['date']}_{workout['machine']}_detail_workout_{workout['id']}.csv"
     csv_download_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}/export/csv"
     file_path = os.path.join(WORKOUTS_DIR, filename)
 
@@ -141,8 +141,10 @@ def main():
         os.makedirs(WORKOUTS_DIR)
 
     with requests.Session() as session:
-        username = input("Enter your Concept2 username: ")
-        password = getpass.getpass("Enter your Concept2 password: ")
+        #username = input("Enter your Concept2 username: ")
+        #password = getpass.getpass("Enter your Concept2 password: ")
+        username = os.getenv("C2_LOG_USERNAME")
+        password = os.getenv("C2_LOG_PASSWORD")
 
         print("\nLogging in...")
         login_payload = {"username": username, "password": password}
