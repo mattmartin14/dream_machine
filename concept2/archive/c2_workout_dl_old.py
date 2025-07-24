@@ -42,41 +42,56 @@ def get_workout_details_from_row(row):
         "id": workout_id
     }
 
-def download_season_summary(session, season_year):
-    """Downloads the season summary CSV file and adds the season year as a column."""
-    summary_url = f"https://log.concept2.com/season/{season_year}/export"
-    filename = f"season_summary_{season_year}.csv"
+def download_summary_workout(session, workout, profile_id, season_year):
+    """Downloads a summary of a workout when a detailed CSV is not available."""
+    filename = f"{workout['date']}_{workout['machine']}_summary_workout_{workout['id']}.csv"
+    workout_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}"
     file_path = os.path.join(WORKOUTS_DIR, filename)
 
     try:
-        response = session.get(summary_url)
+        response = session.get(workout_url)
         response.raise_for_status()
+        soup = BeautifulSoup(response.content, "html.parser")
 
-        # Read the CSV content into memory
-        csv_content = response.content.decode('utf-8')
-        reader = csv.reader(io.StringIO(csv_content))
-        rows = list(reader)
-
-        # Add new header and data
-        if rows:
-            headers = rows[0]
-            headers.append('season')
-            for i in range(1, len(rows)):
-                rows[i].append(season_year)
-
-        # Write the modified CSV content back to a file
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerows(rows)
+        # Extract summary data from workout__stat divs
+        stats = soup.find_all('div', class_='workout__stat')
         
-        with open(file_path, "w", newline="") as f:
-            f.write(output.getvalue())
+        meters_raw = stats[0].find('span').text.strip() if len(stats) > 0 else 'N/A'
+        meters = meters_raw.replace(',', '') if meters_raw != 'N/A' else ''
+        
+        time_raw = stats[1].find('span').text.strip() if len(stats) > 1 else 'N/A'
+        time = time_raw if time_raw != 'N/A' else ''
+        
+        pace_raw = stats[2].find('span').text.strip() if len(stats) > 2 else 'N/A'
+        pace = pace_raw if pace_raw != 'N/A' else ''
+        
+        calories_raw = stats[3].find('span').text.strip() if len(stats) > 3 else 'N/A'
+        calories = calories_raw if calories_raw != 'N/A' else ''
 
-        return f"Successfully downloaded and modified season summary to {file_path}"
+        # Extract additional details from the table
+        avg_watts_tag = soup.find('th', string='Average Watts')
+        avg_watts_raw = avg_watts_tag.find_next_sibling('td').text.strip() if avg_watts_tag else 'N/A'
+        avg_watts = avg_watts_raw if avg_watts_raw != 'N/A' else ''
+        
+        stroke_rate_tag = soup.find('th', string='Stroke Rate')
+        stroke_rate_raw = stroke_rate_tag.find_next_sibling('td').text.strip() if stroke_rate_tag else 'N/A'
+        stroke_rate = stroke_rate_raw if stroke_rate_raw != 'N/A' else ''
+
+        drag_factor_tag = soup.find('th', string='Drag Factor')
+        drag_factor_raw = drag_factor_tag.find_next_sibling('td').text.strip() if drag_factor_tag else 'N/A'
+        drag_factor = drag_factor_raw if drag_factor_raw != 'N/A' else ''
+
+
+        # Create CSV
+        with open(file_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['date', 'machine_type', 'year', 'meters', 'time', 'pace', 'calories', 'drag_factor', 'stroke_rate', 'average_watts'])
+            writer.writerow([workout['date'], workout['machine'], season_year, meters, time, pace, calories, drag_factor, stroke_rate, avg_watts])
+
+        return f"Successfully downloaded summary for {filename}"
+
     except requests.exceptions.RequestException as e:
-        return f"Failed to download season summary. Error: {e}"
-    except csv.Error as e:
-        return f"Failed to process season summary CSV. Error: {e}"
+        return f"Failed to download summary for {filename}. Error: {e}"
 
 
 def download_workout(session, workout, profile_id, season_year):
@@ -122,6 +137,15 @@ def download_workout(session, workout, profile_id, season_year):
     return f"Failed to download {filename} after {MAX_RETRIES} attempts."
 
 
+def download_workout_and_summary(session, workout, profile_id, season_year):
+    """
+    Downloads the detailed workout CSV (if available) and creates a summary file.
+    """
+    detailed_result = download_workout(session, workout, profile_id, season_year)
+    summary_result = download_summary_workout(session, workout, profile_id, season_year)
+    return f"{detailed_result}\n{summary_result}"
+
+
 def main():
     """
     Main function to handle login, scraping, and downloading of workout CSVs.
@@ -153,10 +177,6 @@ def main():
                 print("Login failed. Please check your username and password.")
                 return
             print("Login successful.")
-
-            # Download the season summary
-            summary_result = download_season_summary(session, args.season_year)
-            print(summary_result)
 
             season_url = f"https://log.concept2.com/season/{args.season_year}"
             all_workouts_url = f"{season_url}?per_page=all"
@@ -194,7 +214,7 @@ def main():
             print(f"Found {len(workouts_to_download)} workouts. Starting download with {args.parallel_fetches} parallel workers...")
 
             with ThreadPoolExecutor(max_workers=args.parallel_fetches) as executor:
-                futures = [executor.submit(download_workout, session, workout, profile_id, args.season_year) for workout in workouts_to_download]
+                futures = [executor.submit(download_workout_and_summary, session, workout, profile_id, args.season_year) for workout in workouts_to_download]
                 
                 for future in as_completed(futures):
                     print(future.result())
