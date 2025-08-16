@@ -87,6 +87,75 @@ This will:
 4. Generate performance comparison charts
 5. Display detailed performance statistics
 
+## Key Technical Discovery
+
+This project revealed a **critical optimization principle** for Rust-Python UDFs:
+
+### The Problem We Discovered:
+The initial Rust implementation was **26x slower** than Python because it was recompiling regex patterns on every function call:
+
+```rust
+// ❌ WRONG - Recompiles on every call (extremely expensive)
+#[pyfunction]
+fn parse_text_complexity(text: &str) -> PyResult<f64> {
+    let email_regex = Regex::new(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b").unwrap();
+    // ... 5 more regex compilations per call
+}
+```
+
+### The Solution:
+Using static `LazyLock` variables to compile patterns once at module initialization:
+
+```rust
+// ✅ CORRECT - Compile once, use many times
+use std::sync::LazyLock;
+
+static EMAIL_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b").unwrap()
+});
+
+#[pyfunction]
+fn parse_text_complexity(text: &str) -> PyResult<f64> {
+    let email_count = EMAIL_REGEX.find_iter(text).count() as f64;
+    // ... use pre-compiled patterns
+}
+```
+
+### Impact:
+- **Before fix**: Rust 26x slower than Python (1.28s vs 0.048s for 1000 iterations)
+- **After fix**: Rust 4.9x faster than Python (1.48s vs 7.26s on real dataset)
+- **Performance swing**: ~130x improvement from a single optimization!
+
+This demonstrates that **initialization overhead** can completely dominate performance in Python-Rust bindings, making proper resource management critical for achieving expected performance benefits.
+
+## Benchmark Results
+
+The benchmark generated comprehensive performance analysis charts showing the dramatic difference between Python and Rust UDF performance:
+
+![Performance Comparison](results/performance_comparison.png)
+
+### Chart Analysis:
+
+**Top Left - Execution Time by Sample Size:**
+- Shows how both UDFs scale with dataset size
+- Rust maintains consistent low execution times
+- Python shows higher baseline execution times
+
+**Top Right - Processing Throughput:**
+- Demonstrates Rust's superior throughput (rows/second)
+- Rust processes 16,548 rows/sec vs Python's 3,475 rows/sec
+- Throughput advantage increases with dataset size
+
+**Bottom Left - Rust Overhead Factor:**
+- Shows Rust is consistently 0.2x the time of Python (5x faster)
+- Overhead factor remains stable across different dataset sizes
+- Demonstrates successful optimization over PyO3 boundary costs
+
+**Bottom Right - Performance Insights:**
+- Technical analysis and recommendations
+- Key findings about regex optimization
+- Practical guidance for UDF selection
+
 ## Expected Results
 
 After fixing the critical regex compilation issue, the benchmark shows:
@@ -204,6 +273,40 @@ Performance Improvement:
 3. **Parallel Processing**: Multi-threaded Rust implementations
 4. **Memory Profiling**: Detailed memory usage analysis
 5. **Production Testing**: Real-world dataset benchmarks
+
+## Diagnostic Process
+
+The project included a diagnostic tool (`src/diagnostic.py`) that helped identify the performance issue:
+
+### Before Optimization (Broken Rust):
+```
+Testing individual function performance...
+Testing Python function:
+  Average: 0.0486s (1000 iterations)
+
+Testing Rust function:
+  Average: 1.2849s (1000 iterations)
+  Python is 26.45x faster than Rust (unexpected!)
+
+Analyzing Rust Overhead:
+  ⚠️ Rust has 13559.0% overhead
+```
+
+### After Optimization (Fixed Rust):
+```
+Testing individual function performance...
+Testing Python function:
+  Average: 0.0476s (1000 iterations)
+
+Testing Rust function:
+  Average: 0.0121s (1000 iterations)
+  Rust is 3.93x faster than Python ✓
+
+Analyzing Rust Overhead:
+  ✓ Rust is 6.50x faster (on larger text)
+```
+
+This diagnostic approach was crucial for identifying that the performance issue wasn't inherent to PyO3 or the algorithm, but specifically due to repeated regex compilation.
 
 ## Conclusion
 
