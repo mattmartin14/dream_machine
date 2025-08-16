@@ -10,6 +10,9 @@ import random
 import string
 from typing import List
 import os
+import string
+from typing import List
+import os
 
 def generate_complex_text() -> str:
     """Generate complex text with various patterns for realistic parsing scenarios."""
@@ -191,7 +194,8 @@ def create_database_and_table(db_path: str, num_rows: int = 100_000_000):
     conn.close()
 
 if __name__ == "__main__":
-    db_path = "/Users/matthewmartin/dream_machine/substack/articles/2025.08.16 - level_up_your_prompts/data/test_database.duckdb"
+    from project_paths import get_db_path
+    db_path = get_db_path()
     
     # For development/testing, start with fewer rows and increase as needed
     # Change this to 100_000_000 for the full test

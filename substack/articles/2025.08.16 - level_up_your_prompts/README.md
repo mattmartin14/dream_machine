@@ -45,28 +45,63 @@ Output: Complexity score based on pattern density, character diversity, etc.
 
 ## Setup Instructions
 
-### 1. Install Python Dependencies
+### Prerequisites
+- Python 3.9+ 
+- Rust (latest stable version)
+- Git
+
+### 1. Clone and Setup Project
+```bash
+# Clone to your home directory structure
+cd ~/
+git clone <repository-url> dream_machine/substack/articles/2025.08.16\ -\ level_up_your_prompts
+cd dream_machine/substack/articles/2025.08.16\ -\ level_up_your_prompts
+```
+
+**Note**: The project uses `$HOME/dream_machine/substack/articles/2025.08.16 - level_up_your_prompts` as the expected directory structure. If you need to use a different location, you can modify `src/project_paths.py` to update the path configuration.
+
+### 2. Install Python Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Install Rust (if not already installed)
+### 3. Install Rust (if not already installed)
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source ~/.cargo/env
 ```
 
-### 3. Install Maturin (for Rust-Python bindings)
+### 4. Install Maturin (for Rust-Python bindings)
 ```bash
 pip install maturin
 ```
 
-### 4. Build the Rust UDF
+### 5. Build the Rust UDF
 ```bash
 cd rust_udf
 maturin develop --release
 cd ..
 ```
+
+## Path Configuration
+
+The project uses environment-based paths for cross-platform compatibility. All paths are configured through `src/project_paths.py`:
+
+```python
+def get_project_root():
+    """Returns the project root directory using HOME environment variable"""
+    return os.path.join(os.environ['HOME'], 'dream_machine', 'substack', 'articles', '2025.08.16 - level_up_your_prompts')
+
+def get_db_path():
+    """Returns the database file path"""
+    return os.path.join(get_project_root(), 'data', 'test_database.duckdb')
+
+def get_chart_path():
+    """Returns the results chart path"""
+    return os.path.join(get_project_root(), 'results', 'performance_comparison.png')
+```
+
+**Custom Installation Locations**: If you need to install the project in a different location, edit the `get_project_root()` function in `src/project_paths.py` to point to your desired directory structure.
 
 ## Running the Benchmark
 

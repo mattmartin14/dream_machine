@@ -36,7 +36,8 @@ def setup_python_environment():
 
 def build_rust_udf():
     """Build the Rust UDF using maturin."""
-    rust_dir = "/Users/matthewmartin/dream_machine/substack/articles/2025.08.16 - level_up_your_prompts/rust_udf"
+    from project_paths import get_rust_udf_path
+    rust_dir = get_rust_udf_path()
     
     print("Building Rust UDF...")
     
@@ -254,7 +255,8 @@ def create_performance_chart(results: Dict[str, List[float]], sample_size: int):
     plt.tight_layout()
     
     # Save chart
-    chart_path = "/Users/matthewmartin/dream_machine/substack/articles/2025.08.16 - level_up_your_prompts/results/performance_comparison.png"
+    from project_paths import get_chart_path
+    chart_path = get_chart_path()
     plt.savefig(chart_path, dpi=300, bbox_inches='tight')
     print(f"✓ Chart saved to: {chart_path}")
     
@@ -332,7 +334,8 @@ def main():
     test_rust_import()
     
     # Database path
-    db_path = "/Users/matthewmartin/dream_machine/substack/articles/2025.08.16 - level_up_your_prompts/data/test_database.duckdb"
+    from project_paths import get_db_path
+    db_path = get_db_path()
     
     if not os.path.exists(db_path):
         print(f"❌ Database not found at {db_path}")
