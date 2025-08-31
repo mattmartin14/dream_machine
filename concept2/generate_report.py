@@ -77,7 +77,6 @@ def create_pace_chart(cn):
         order by workout_dt
     """
     
-    # Get the data
     df_pace = cn.sql(sql_pace).df()
     
     if df_pace.empty:
@@ -87,9 +86,41 @@ def create_pace_chart(cn):
     # Convert avg_split to seconds for plotting
     df_pace['pace_seconds'] = pd.to_timedelta(df_pace['avg_split'].astype(str)).dt.total_seconds()
     
+    # Add color coding based on distance ranges
+    def get_color_for_distance(distance):
+        if distance < 5000:
+            return 'blue'
+        elif 5000 <= distance <= 5999:
+            return 'green'
+        elif 6000 <= distance <= 6999:
+            return 'orange'
+        elif 7000 <= distance <= 7999:
+            return 'red'
+        else:  # >= 8000
+            return 'purple'
+    
+    df_pace['color'] = df_pace['total_meters'].apply(get_color_for_distance)
+    
     # Create the plot
     fig, ax = plt.subplots(figsize=(12, 8))
-    ax.plot(df_pace['workout_dt'], df_pace['pace_seconds'], marker='o', linewidth=2, markersize=4)
+    
+    # Plot points with different colors for each distance range
+    distance_ranges = [
+        ('< 5000m', 'blue'),
+        ('5000-5999m', 'green'), 
+        ('6000-6999m', 'orange'),
+        ('7000-7999m', 'red'),
+        ('≥ 8000m', 'purple')
+    ]
+    
+    for label, color in distance_ranges:
+        mask = df_pace['color'] == color
+        if mask.any():
+            ax.plot(df_pace.loc[mask, 'workout_dt'], df_pace.loc[mask, 'pace_seconds'], 
+                    marker='o', linewidth=0, markersize=6, color=color, label=label, alpha=0.7)
+    
+    # Add connecting line
+    ax.plot(df_pace['workout_dt'], df_pace['pace_seconds'], linewidth=1, color='gray', alpha=0.5, zorder=0)
     
     # Format y-axis to show pace as MM:SS
     def format_pace(seconds, pos):
@@ -105,30 +136,37 @@ def create_pace_chart(cn):
     plt.xticks(rotation=45)
     
     # Labels and title
-    plt.xlabel('Workout Date')
-    plt.ylabel('Average Pace (MM:SS)')
-    plt.title('Rowing Pace Over Time')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
+    ax.set_xlabel('Workout Date')
+    ax.set_ylabel('Average Pace (MM:SS)')
+    ax.set_title('Rowing Pace Over Time (Color-coded by Distance)')
+    ax.grid(True, alpha=0.3)
     
     # Add trend line
     if len(df_pace) > 1:
-        # Convert dates to numeric for trend calculation
         x_numeric = mdates.date2num(df_pace['workout_dt'])
         slope, intercept, r_value, p_value, std_err = stats.linregress(x_numeric, df_pace['pace_seconds'])
         trend_line = slope * x_numeric + intercept
-        ax.plot(df_pace['workout_dt'], trend_line, '--', color='red', alpha=0.7, label=f'Trend (R²={r_value**2:.3f})')
-        plt.legend()
+        ax.plot(df_pace['workout_dt'], trend_line, '--', color='black', alpha=0.7, linewidth=2, label=f'Trend (R²={r_value**2:.3f})')
     
-    # Add stats text box
-    stats_text = f"""Total workouts: {len(df_pace)}
-Date range: {df_pace['workout_dt'].min()} to {df_pace['workout_dt'].max()}
-Best pace: {format_pace(df_pace['pace_seconds'].min(), 0)}
-Average pace: {format_pace(df_pace['pace_seconds'].mean(), 0)}"""
+    # Add legend
+    ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     
-    ax.text(0.02, 0.98, stats_text, transform=ax.transAxes, 
-            verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    # Add average pace annotations for each distance range
+    pace_stats_text = "Average Pace by Distance:\n"
+    for label, color in distance_ranges:
+        mask = df_pace['color'] == color
+        if mask.any():
+            avg_pace_seconds = df_pace.loc[mask, 'pace_seconds'].mean()
+            avg_pace_formatted = format_pace(avg_pace_seconds, 0)
+            count = mask.sum()
+            pace_stats_text += f"  {label}: {avg_pace_formatted} ({count} workouts)\n"
     
+    # Add the pace stats text box below the legend
+    ax.text(1.05, 0.4, pace_stats_text.strip(), transform=ax.transAxes,
+            verticalalignment='top', fontsize=9,
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='lightblue', alpha=0.8))
+    
+    plt.tight_layout()
     return fig
 
 def create_monthly_meters_chart(cn):
@@ -251,12 +289,15 @@ def create_monthly_meters_chart(cn):
     
     return fig
 
-def generate_pdf_report(output_filename="concept2_workout_report.pdf", season_year=2026):
+def generate_pdf_report(output_filename="concept2_workout_report.pdf", season_year=2026, fetch_data=True):
     """Generate the complete PDF report"""
-    # First, download/update the workout data
-    download_success = run_data_download(season_year)
-    if not download_success:
-        print("Warning: Data download failed, proceeding with existing data...")
+    # Optionally download/update the workout data
+    if fetch_data:
+        download_success = run_data_download(season_year)
+        if not download_success:
+            print("Warning: Data download failed, proceeding with existing data...")
+    else:
+        print("Skipping data download (--no-logbook-fetch specified)")
     
     print("Setting up database connection...")
     cn = setup_database()
@@ -279,8 +320,11 @@ def generate_pdf_report(output_filename="concept2_workout_report.pdf", season_ye
         print("Creating pace over time chart...")
         pace_fig = create_pace_chart(cn)
         if pace_fig:
+            print("Saving pace chart to PDF...")
             pdf.savefig(pace_fig, bbox_inches='tight')
             plt.close(pace_fig)
+        else:
+            print("ERROR: Could not create pace chart!")
         
         # Generate and save monthly meters chart
         print("Creating monthly meters chart...")
@@ -298,11 +342,13 @@ def main():
                        help='Output PDF filename (default: concept2_workout_report.pdf)')
     parser.add_argument('-y', '--season-year', type=int, default=2026,
                        help='Season year to download data for (default: 2026)')
+    parser.add_argument('--no-logbook-fetch', action='store_true',
+                       help='Skip downloading workout data from Concept2 logbook')
     
     args = parser.parse_args()
     
     try:
-        generate_pdf_report(args.output, args.season_year)
+        generate_pdf_report(args.output, args.season_year, fetch_data=not args.no_logbook_fetch)
     except Exception as e:
         print(f"Error generating report: {e}")
         return 1
