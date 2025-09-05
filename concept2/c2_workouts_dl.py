@@ -80,10 +80,14 @@ def download_season_summary(session, season_year):
 
 
 def download_workout(session, workout, profile_id, season_year):
-    """Downloads a single workout CSV with retry logic."""
+    """Downloads a single workout CSV with retry logic. Only downloads if file doesn't exist."""
     filename = f"{workout['date']}_{workout['machine']}_detail_workout_{workout['id']}.csv"
     csv_download_url = f"{BASE_URL}/profile/{profile_id}/log/{workout['id']}/export/csv"
     file_path = os.path.join(WORKOUTS_DIR, filename)
+
+    # Check if file already exists
+    if os.path.exists(file_path):
+        return {"status": "skipped", "message": f"Skipped {filename} (already exists)"}
 
     for attempt in range(MAX_RETRIES):
         try:
@@ -110,16 +114,16 @@ def download_workout(session, workout, profile_id, season_year):
             with open(file_path, "w", newline="") as f:
                 f.write(output.getvalue())
             
-            return f"Successfully downloaded {filename}"
+            return {"status": "downloaded", "message": f"Successfully downloaded {filename}"}
         except requests.exceptions.RequestException as e:
             # If a 404 error occurs, it means no detailed CSV is available.
             if hasattr(e, 'response') and e.response is not None and e.response.status_code == 404:
-                return f"No detailed CSV available for workout {workout['id']}."
+                return {"status": "no_data", "message": f"No detailed CSV available for workout {workout['id']}."}
             
             print(f"Attempt {attempt + 1} failed for {filename}. Retrying in {RETRY_DELAY}s... Error: {e}")
             time.sleep(RETRY_DELAY)
     
-    return f"Failed to download {filename} after {MAX_RETRIES} attempts."
+    return {"status": "failed", "message": f"Failed to download {filename} after {MAX_RETRIES} attempts."}
 
 
 def main():
@@ -193,12 +197,36 @@ def main():
 
             print(f"Found {len(workouts_to_download)} workouts. Starting download with {args.parallel_fetches} parallel workers...")
 
+            # Track download statistics
+            new_downloads = 0
+            skipped_files = 0
+            failed_downloads = 0
+            no_data_count = 0
+
             with ThreadPoolExecutor(max_workers=args.parallel_fetches) as executor:
                 futures = [executor.submit(download_workout, session, workout, profile_id, args.season_year) for workout in workouts_to_download]
                 
                 for future in as_completed(futures):
-                    print(future.result())
+                    result = future.result()
+                    print(result["message"])
+                    
+                    # Count the results
+                    if result["status"] == "downloaded":
+                        new_downloads += 1
+                    elif result["status"] == "skipped":
+                        skipped_files += 1
+                    elif result["status"] == "failed":
+                        failed_downloads += 1
+                    elif result["status"] == "no_data":
+                        no_data_count += 1
 
+            # Print summary statistics
+            print(f"\n--- Download Summary ---")
+            print(f"Total workouts found: {len(workouts_to_download)}")
+            print(f"New detail files downloaded: {new_downloads}")
+            print(f"Files skipped (already exist): {skipped_files}")
+            print(f"Workouts with no detail data: {no_data_count}")
+            print(f"Failed downloads: {failed_downloads}")
             print(f"\nDownload process complete. All files are saved in '{WORKOUTS_DIR}'.")
 
         except requests.exceptions.RequestException as e:
