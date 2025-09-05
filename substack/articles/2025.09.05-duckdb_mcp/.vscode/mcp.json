@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "localduckdb": {
+      "command": "uv",
+      "args": [
+        "run",
+        "mcp-server-motherduck",
+        "--db-path",
+        "./c2_workouts.db"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+uvx mcp-server-motherduck --transport stream --db-path ./c2_data.db 
