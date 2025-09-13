@@ -3,7 +3,7 @@ requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "unified-duckpolars"
+name = "matts_etl_suite"
 version = "0.1.0"
 description = "Unified meta-wheel that installs duckdb + polars on Apple Silicon"
 authors = [ { name = "Your Name", email = "you@example.com" } ]

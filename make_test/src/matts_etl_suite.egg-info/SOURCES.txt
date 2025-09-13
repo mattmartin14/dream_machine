@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/matts_etl_suite.egg-info/PKG-INFO
+src/matts_etl_suite.egg-info/SOURCES.txt
+src/matts_etl_suite.egg-info/dependency_links.txt
+src/matts_etl_suite.egg-info/requires.txt
+src/matts_etl_suite.egg-info/top_level.txt
+src/unified_duckpolars/__init__.py
