@@ -1,0 +1,160 @@
+# unified-duckpolars
+
+A lightweight meta-package (and wheel) that installs both `duckdb` and `polars` together on macOS (Apple Silicon / arm64). This does **not** vend or merge the compiled artifacts of those libraries into a single binary; instead it provides a convenient, version-pinned dependency bundle you can distribute internally.
+
+## Why this approach?
+Building a *single physical wheel* that embeds two other compiled extension wheels is non‑trivial: you'd need to vendor sources, unify build systems, and possibly rewrite or adjust rpaths. For many workflows, a meta-package is sufficient: one wheel that, when installed, resolves both dependencies with compatible versions.
+
+## Features
+- Single wheel to depend on in downstream projects.
+- Adjustable version pins in `pyproject.toml`.
+- Simple `Makefile` targets for build & clean.
+
+## Requirements
+- Python 3.9+
+- macOS arm64 (Apple Silicon) – though the meta-wheel itself is pure Python and can technically install elsewhere; dependencies must provide wheels for the target platform.
+
+## Quick Start
+Build the wheel:
+```bash
+make wheel
+```
+
+List built wheel(s):
+```bash
+ls dist/
+```
+
+Install the resulting wheel into a fresh environment:
+```bash
+python -m venv .testenv
+source .testenv/bin/activate
+pip install --upgrade pip
+pip install dist/unified_duckpolars-0.1.0-py3-none-any.whl
+```
+
+Then in Python:
+```python
+import unified_duckpolars as udp
+import duckdb, polars as pl
+print("unified version:", udp.__version__)
+print("duckdb:", duckdb.__version__, "polars:", pl.__version__)
+print(pl.DataFrame({"x":[1,2,3]}).select(pl.col("x").sum()))
+```
+
+### One-Liner Smoke Test
+```bash
+python -c "import duckdb,polars as pl;print('duckdb',duckdb.__version__,'polars',pl.__version__)"
+```
+
+## Development Workflow
+```bash
+# create / refresh venv + build tooling
+make venv
+
+# editable install for iterative dev
+make install
+
+# build wheel artifact
+make wheel
+
+# show build meta info
+make info
+
+# clean build outputs
+make clean
+```
+
+## Version Pinning Strategy
+Current dependencies are loose lower-bounds. For stricter reproducibility:
+1. Decide tested versions (e.g. `duckdb==1.0.0`, `polars==1.6.0`).
+2. Update `[project].dependencies`:
+	```toml
+	dependencies = [
+	  "duckdb==1.0.0",
+	  "polars==1.6.0",
+	]
+	```
+3. Rebuild: `make wheel`.
+
+Optionally maintain a `constraints.txt` and instruct users to install with:
+```bash
+pip install unified-duckpolars-0.1.0-py3-none-any.whl -c constraints.txt
+```
+
+## Optional Extras Example
+Add to `pyproject.toml`:
+```toml
+[project.optional-dependencies]
+arrow = ["pyarrow>=17.0.0"]
+full = ["pyarrow>=17.0.0", "pandas>=2.2.0"]
+```
+Usage:
+```bash
+pip install unified-duckpolars[full]
+```
+
+## Publishing (Manual)
+1. Install tools (inside a clean environment):
+	```bash
+	pip install build twine
+	```
+2. Build: `make wheel`
+3. (Optional) Source dist listing: `ls dist/`
+4. Upload to TestPyPI:
+	```bash
+	twine upload --repository testpypi dist/*
+	```
+5. Install from TestPyPI to verify:
+	```bash
+	pip install -i https://test.pypi.org/simple unified-duckpolars
+	```
+6. Upload to PyPI when satisfied:
+	```bash
+	twine upload dist/*
+	```
+
+## CI (Future Idea)
+Use GitHub Actions with a workflow that:
+1. Sets up Python matrix (arm64 runners if native testing required).
+2. Runs `make wheel`.
+3. Optionally installs the produced wheel in a fresh job and executes smoke tests.
+4. Publishes on a tagged release.
+
+## Troubleshooting
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| `make: *** No rule to make target 'wheel'` | Wrong working directory or corrupted Makefile | Run `ls` to confirm you're at project root; verify `Makefile` exists |
+| `No matching distribution found` | Version pin too new for platform wheels | Relax or lower version; check `pip install duckdb==...` manually |
+| Build warnings about license | Deprecated license table/classifier | Already fixed by SPDX `license = "MIT"` |
+| Need universal2 support | Underlying wheels are per-arch | Use Python universal2 interpreter; pip resolves arch automatically |
+
+
+## Adjusting Dependency Versions
+Edit `pyproject.toml` under `[project].dependencies`. Rebuild with `make wheel`.
+
+## Creating a True Bundled Wheel (Advanced)
+If you *must* have a single artifact containing the compiled code for both projects:
+1. Vendor each project's source into a monorepo structure.
+2. Create a unified `pyproject.toml` / build backend (e.g., setuptools, maturin, or scikit-build-core if mixing C++/Rust).
+3. Ensure extension module names do not collide; keep import paths intact.
+4. Use `delocate` (macOS) or `auditwheel` (Linux) to repair external shared libs.
+5. Sign/notarize on macOS if distributing internally.
+
+This is a larger effort and out of scope for this quick meta-package scaffolding.
+
+## Make Targets
+- `make venv` – create virtual environment + install build tooling.
+- `make install` – editable install into venv.
+- `make wheel` – build the wheel into `dist/`.
+- `make clean` – remove build artifacts.
+- `make distclean` – clean + remove virtualenv.
+- `make info` – show build info.
+
+## License
+MIT
+
+## Next Steps / Ideas
+- Pin exact versions with a constraints file.
+- Add CI workflow to publish to an internal index or PyPI.
+- Provide optional extras (e.g., `pandas`, `pyarrow`).

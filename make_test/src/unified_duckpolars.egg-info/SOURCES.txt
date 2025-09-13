@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/unified_duckpolars/__init__.py
+src/unified_duckpolars.egg-info/PKG-INFO
+src/unified_duckpolars.egg-info/SOURCES.txt
+src/unified_duckpolars.egg-info/dependency_links.txt
+src/unified_duckpolars.egg-info/requires.txt
+src/unified_duckpolars.egg-info/top_level.txt

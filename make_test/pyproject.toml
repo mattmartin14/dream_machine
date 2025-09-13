@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unified-duckpolars"
+version = "0.1.0"
+description = "Unified meta-wheel that installs duckdb + polars on Apple Silicon"
+authors = [ { name = "Your Name", email = "you@example.com" } ]
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+keywords = ["duckdb", "polars", "dataframe", "analytics"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: MacOS :: MacOS X",
+]
+# Versions pinned (or semi-pinned) for compatibility on Apple Silicon; adjust as needed
+# You can loosen constraints or add environment markers.
+dependencies = [
+  "duckdb>=1.0.0",  # Apple Silicon wheels provided upstream
+  "polars>=1.5.0",  # Has macOS arm64 wheels
+]
+
+[project.urls]
+Homepage = "https://example.com/unified-duckpolars"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}

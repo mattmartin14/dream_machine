@@ -1,0 +1,35 @@
+# Simple Makefile to build a unified meta-wheel that depends on duckdb + polars
+
+PYTHON ?= python3
+VENV_DIR := .venv
+ACTIVATE := $(VENV_DIR)/bin/activate
+PKG_NAME := unified-duckpolars
+WHEEL_DIR := dist
+
+.PHONY: all wheel clean venv install info distclean
+
+all: wheel
+
+venv: $(VENV_DIR)/bin/python
+$(VENV_DIR)/bin/python:
+	$(PYTHON) -m venv $(VENV_DIR)
+	. $(ACTIVATE) && pip install --upgrade pip build
+
+install: venv
+	. $(ACTIVATE) && pip install -e .
+
+wheel: venv clean
+	. $(ACTIVATE) && python -m build --wheel
+	@echo "Built wheels in $(WHEEL_DIR)"
+
+info:
+	@echo "Python: $(PYTHON)"
+	@echo "Virtualenv: $(VENV_DIR)"
+	@echo "Package: $(PKG_NAME)"
+	@echo "Wheels: $(shell ls -1 $(WHEEL_DIR)/*.whl 2>/dev/null || echo 'none yet')"
+
+clean:
+	rm -rf $(WHEEL_DIR) build *.egg-info
+
+distclean: clean
+	rm -rf $(VENV_DIR)
