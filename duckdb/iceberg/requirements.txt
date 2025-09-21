@@ -1,0 +1,5 @@
+duckdb>=1.0.0
+google-auth>=2.32.0
+python-dotenv>=1.0.1
+requests>=2.32.3
+pytest>=8.2.0
