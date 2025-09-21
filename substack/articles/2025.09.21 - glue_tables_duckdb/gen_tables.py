@@ -17,34 +17,44 @@ import os
 
 def setup_aws_credentials():
     """Get AWS credentials from boto3 session for use with DuckDB and PyIceberg."""
+    # Use a shared session to avoid multiple MFA prompts
     session = boto3.Session()
+    
+    # Force credential resolution once at the beginning
     credentials = session.get_credentials()
     
     if not credentials:
         raise Exception("No AWS credentials found. Make sure you're logged in via AWS CLI/SSO.")
     
+    # Get frozen credentials to avoid refresh issues
+    frozen_creds = credentials.get_frozen_credentials()
+    
+    # Set environment variables that all AWS clients (including PyIceberg internal ones) will use
+    os.environ['AWS_ACCESS_KEY_ID'] = frozen_creds.access_key
+    os.environ['AWS_SECRET_ACCESS_KEY'] = frozen_creds.secret_key
+    if frozen_creds.token:
+        os.environ['AWS_SESSION_TOKEN'] = frozen_creds.token
+    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    
     return session, credentials
 
 
-def setup_pyiceberg_catalog(credentials):
-    """Create PyIceberg Glue catalog with explicit AWS credentials."""
+def setup_pyiceberg_catalog():
+    """Create PyIceberg Glue catalog using environment credentials."""
     catalog = load_catalog(
         "glue",
         **{
             "type": "glue",
             "glue.region": "us-east-1",
             "glue.account-id": os.getenv('aws_account_nbr'),
-            "s3.access-key-id": credentials.access_key,
-            "s3.secret-access-key": credentials.secret_key,
-            "s3.session-token": credentials.token if credentials.token else "",
             "s3.region": "us-east-1"
         }
     )
     return catalog
 
 
-def setup_duckdb_connection(credentials):
-    """Create DuckDB connection and configure S3 access."""
+def setup_duckdb_connection():
+    """Create DuckDB connection and configure S3 access using credential chain."""
     cn = duckdb.connect()
     
     # Install and load AWS extension
@@ -53,14 +63,11 @@ def setup_duckdb_connection(credentials):
     # Drop existing secret if it exists
     cn.execute("DROP SECRET IF EXISTS s3_creds")
     
-    # Create S3 secret with session token
-    cn.execute(f"""
+    # Create S3 secret using credential chain (will use environment variables)
+    cn.execute("""
         CREATE SECRET s3_creds (
             TYPE S3,
-            PROVIDER CONFIG,
-            KEY_ID '{credentials.access_key}',
-            SECRET '{credentials.secret_key}',
-            SESSION_TOKEN '{credentials.token}',
+            PROVIDER CREDENTIAL_CHAIN,
             REGION 'us-east-1'
         )
     """)
@@ -99,7 +106,7 @@ def export_to_s3(cn, bucket=None):
 
 
 def create_iceberg_table(catalog, cn):
-    
+    """Create and populate Iceberg table."""
     # Get data as Arrow table
     duck_df = cn.execute("SELECT * FROM v_data_gen")
     arrow_table = duck_df.arrow().read_all()
@@ -121,8 +128,6 @@ def create_glue_tables(glue_client, bucket=None):
     """Create Glue catalog tables for Parquet and CSV data."""
     if bucket is None:
         bucket = os.getenv('aws_bucket')
-    
-    print("Creating Glue catalog tables...")
     
     # Define common column schema
     columns = [
@@ -199,17 +204,17 @@ def setup_notebook_environment():
     Returns configured DuckDB connection, PyIceberg catalog, and Glue client.
     """
     try:
-        # Setup AWS credentials
+        # Setup AWS credentials once (sets environment variables)
         session, credentials = setup_aws_credentials()
         
-        # Setup PyIceberg catalog
-        catalog = setup_pyiceberg_catalog(credentials)
+        # Setup PyIceberg catalog (uses environment variables)
+        catalog = setup_pyiceberg_catalog()
         
-        # Setup DuckDB connection
-        cn = setup_duckdb_connection(credentials)
+        # Setup DuckDB connection (uses credential chain from environment)
+        cn = setup_duckdb_connection()
         
-        # Setup Glue client
-        glue_client = boto3.client('glue', region_name='us-east-1')
+        # Setup Glue client using the same session
+        glue_client = session.client('glue', region_name='us-east-1')
         
         return cn, catalog, glue_client
     
