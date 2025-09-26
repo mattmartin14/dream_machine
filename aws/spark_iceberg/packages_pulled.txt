@@ -1,0 +1,24 @@
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-b356da8c-3d95-453b-a789-d21d831ef6c8;1.0
+        confs: [default]
+        found org.apache.iceberg#iceberg-spark-runtime-3.5_2.12;1.4.1 in central
+        found software.amazon.awssdk#bundle;2.20.160 in central
+        found software.amazon.eventstream#eventstream;1.0.1 in central
+        found software.amazon.awssdk#url-connection-client;2.20.160 in central
+        found software.amazon.awssdk#utils;2.20.160 in central
+        found org.reactivestreams#reactive-streams;1.0.4 in central
+        found software.amazon.awssdk#annotations;2.20.160 in central
+        found org.slf4j#slf4j-api;1.7.30 in central
+        found software.amazon.awssdk#http-client-spi;2.20.160 in central
+        found software.amazon.awssdk#metrics-spi;2.20.160 in central
+:: resolution report :: resolve 153ms :: artifacts dl 7ms
+        :: modules in use:
+        org.apache.iceberg#iceberg-spark-runtime-3.5_2.12;1.4.1 from central in [default]
+        org.reactivestreams#reactive-streams;1.0.4 from central in [default]
+        org.slf4j#slf4j-api;1.7.30 from central in [default]
+        software.amazon.awssdk#annotations;2.20.160 from central in [default]
+        software.amazon.awssdk#bundle;2.20.160 from central in [default]
+        software.amazon.awssdk#http-client-spi;2.20.160 from central in [default]
+        software.amazon.awssdk#metrics-spi;2.20.160 from central in [default]
+        software.amazon.awssdk#url-connection-client;2.20.160 from central in [default]
+        software.amazon.awssdk#utils;2.20.160 from central in [default]
+        software.amazon.eventstream#eventstream;1.0.1 from central in [default]
