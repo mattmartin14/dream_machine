@@ -3,12 +3,13 @@ import os
 import time
 from pyspark.sql import SparkSession
 
-from setup_env import set_aws_creds
+#from setup_env import set_aws_creds
+from setup_env import setup_aws_environment
 
 aws_acct_id = os.getenv('AWS_ACCT_ID')
 aws_region = 'us-east-1'
 
-set_aws_creds()
+aws_session = setup_aws_environment()
 
 catalog_name = "iceberg_catalog"
 
