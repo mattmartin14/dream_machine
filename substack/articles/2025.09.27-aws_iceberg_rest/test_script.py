@@ -9,8 +9,15 @@ aws_session = setup_aws_environment()
 
 def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> SparkSession:
 
+
+    packages = [
+        'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1',
+        'software.amazon.awssdk:bundle:2.20.160',
+        'software.amazon.awssdk:url-connection-client:2.20.160'
+    ]
+
     spark = (SparkSession.builder.appName('osspark') 
-        .config('spark.jars.packages', 'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1,software.amazon.awssdk:bundle:2.20.160,software.amazon.awssdk:url-connection-client:2.20.160') 
+        .config('spark.jars.packages', ','.join(packages)) 
         .config('spark.sql.extensions', 'org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions') 
         .config('spark.sql.defaultCatalog', catalog_name) 
         .config(f'spark.sql.catalog.{catalog_name}', 'org.apache.iceberg.spark.SparkCatalog') 
@@ -110,6 +117,10 @@ def main():
 
     #final output
     spark.sql("select * from iceberg_catalog.icebox1.test1").show()
+
+    # clean up
+    sql_file = 'sql/nuke_tables.sql'
+    process_script(spark, sql_file, formats=None)
 
     spark.stop()
 
