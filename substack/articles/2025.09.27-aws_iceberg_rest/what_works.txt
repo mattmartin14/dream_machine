@@ -1,0 +1,14 @@
+
+what works
+- simple update (no joins)
+- simple delete (no joins)
+- basic insert
+- insert/select/left join where null
+- merge
+- complex merge with multiple predicates including deletes
+
+what doesn't work
+- ctas: aws docs indicate "Stage create" isn't supported
+-- workaround: pre-create the skeleton table, then just do an overwrite
+- update with joins (workaround use merge)
+- delete with joins (workaround use merge)

@@ -1,11 +1,9 @@
 import os
 import sys
 from pyspark.sql import SparkSession
+import boto3
 
 from setup_env import setup_aws_environment
-
-
-aws_session = setup_aws_environment()
 
 def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> SparkSession:
 
@@ -13,7 +11,8 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
     packages = [
         'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1',
         'software.amazon.awssdk:bundle:2.20.160',
-        'software.amazon.awssdk:url-connection-client:2.20.160'
+        'software.amazon.awssdk:url-connection-client:2.20.160',
+        'org.apache.hadoop:hadoop-aws:3.3.4'
     ]
 
     spark = (SparkSession.builder.appName('osspark') 
@@ -28,9 +27,11 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
         .config(f'spark.sql.catalog.{catalog_name}.rest.signing-name','glue') 
         .config(f'spark.sql.catalog.{catalog_name}.rest.signing-region', aws_region) \
         .config(f'spark.sql.catalog.{catalog_name}.io-impl','org.apache.iceberg.aws.s3.S3FileIO') 
-        .config(f'spark.hadoop.fs.s3a.aws.credentials.provider','org.apache.hadoop.fs.s3a.SimpleAWSCredentialProvider') 
+        #.config(f'spark.hadoop.fs.s3a.aws.credentials.provider','org.apache.hadoop.fs.s3a.SimpleAWSCredentialProvider') 
+        .config(f'spark.hadoop.fs.s3a.aws.credentials.provider','com.amazonaws.auth.DefaultAWSCredentialsProviderChain') 
         .config(f'spark.sql.catalog.{catalog_name}.rest-metrics-reporting-enabled','false') 
-        .config('spark.driver.extraJavaOptions', '-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN')
+        .config('spark.hadoop.fs.s3a.impl', 'org.apache.hadoop.fs.s3a.S3AFileSystem')
+        .config('spark.hadoop.fs.s3a.path.style.access', 'true')
         .getOrCreate()
     )
 
@@ -50,7 +51,24 @@ def process_script(spark: SparkSession, file_path: str, formats: dict=None) -> N
                 print(f"Executing SQL: {rendered_sql}")
                 spark.sql(rendered_sql)
 
+def nuke_bucket_prefix(session: boto3.Session, bucket: str, prefix: str) -> None:
+    s3 = session.client('s3')
+    prefix = 'icehouse/'
+    paginator = s3.get_paginator('list_objects_v2')
+    pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
+    delete_us = dict(Objects=[])
+    for item in pages.search('Contents'):
+        if item:
+            delete_us['Objects'].append(dict(Key=item['Key']))
+            if len(delete_us['Objects']) >= 1000:
+                s3.delete_objects(Bucket=bucket, Delete=delete_us)
+                delete_us = dict(Objects=[])
+    if len(delete_us['Objects']):
+        s3.delete_objects(Bucket=bucket, Delete=delete_us)
+
 def main():
+
+    aws_session = setup_aws_environment()
 
     catalog_name = "iceberg_catalog"
     aws_acct_id = os.getenv('AWS_ACCT_ID')
@@ -58,10 +76,13 @@ def main():
     aws_region = 'us-east-1'
 
     spark = set_spark_session(catalog_name, aws_acct_id, aws_region)
-    
+
     # nuke tables
     sql_file = 'sql/nuke_tables.sql'
     process_script(spark, sql_file, formats=None)
+
+    # nuke s3 warehouse
+    nuke_bucket_prefix(aws_session, bucket, "icehouse/")
 
     # create tables
     sql_file = 'sql/create_tables.sql'
@@ -108,19 +129,35 @@ def main():
         print(f"Error attempting delete script: {sql_file}: {e}")
 
 
-    # ctas...doesn't work
+    # ctas...doesn't work; according to aws docs, "stage-create" is not supported on its iceberg rest endpoint
     try:
         sql_file = 'sql/test_ctas.sql'
         process_script(spark, sql_file, formats={'BUCKET': bucket})
     except Exception as e:
         print(f"Error attempting ctas script: {sql_file}: {str(e)[:200]}")
 
+    # to mimick a ctas, we have to create the skeleton table, then just overwrite it
+    try:
+        df = spark.read.parquet(f's3a://{bucket}/duckdb/data_gen_parquet/*')
+        #spark.sql("select * from {df} limit 5", df=df).show()
+        spark.sql(f"""
+            create table if not exists iceberg_catalog.icebox1.ctas 
+                (row_id int, txn_key string, rpt_dt date, some_val float) 
+            using iceberg
+            location 's3://{bucket}/icehouse/ctas'
+        """)
+        df.write.format("iceberg").mode("overwrite").saveAsTable("iceberg_catalog.icebox1.ctas")
+        print("CTAS via dataframe worked")
+    except Exception as e:
+        print(f"Error attempting ctas via dataframe: {str(e)[:200]}")
+
     #final output
     spark.sql("select * from iceberg_catalog.icebox1.test1").show()
 
     # clean up
     sql_file = 'sql/nuke_tables.sql'
-    process_script(spark, sql_file, formats=None)
+    #process_script(spark, sql_file, formats=None)
+    #nuke_bucket_prefix(aws_session, bucket, "icehouse/")
 
     spark.stop()
 
