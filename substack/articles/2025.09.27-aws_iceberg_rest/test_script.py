@@ -162,8 +162,8 @@ def main():
 
     # clean up
     sql_file = 'sql/nuke_tables.sql'
-    #process_script(spark, sql_file, formats=None)
-    #nuke_bucket_prefix(aws_session, bucket, prefix)
+    process_script(spark, sql_file, formats=None)
+    nuke_bucket_prefix(aws_session, bucket, prefix)
 
     spark.stop()
 
