@@ -8,10 +8,18 @@ from setup_env import setup_aws_environment
 def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> SparkSession:
 
 
+    #outdated runtimes
+    # packages = [
+    #     'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1',
+    #     'software.amazon.awssdk:bundle:2.20.160',
+    #     'software.amazon.awssdk:url-connection-client:2.20.160',
+    #     'org.apache.hadoop:hadoop-aws:3.3.4'
+    # ]
+
     packages = [
-        'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1',
-        'software.amazon.awssdk:bundle:2.20.160',
-        'software.amazon.awssdk:url-connection-client:2.20.160',
+        'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2',
+        'software.amazon.awssdk:bundle:2.34.0',
+        'software.amazon.awssdk:url-connection-client:2.34.0',
         'org.apache.hadoop:hadoop-aws:3.3.4'
     ]
 
@@ -156,8 +164,8 @@ def main():
 
     # clean up
     sql_file = 'sql/nuke_tables.sql'
-    #process_script(spark, sql_file, formats=None)
-    #nuke_bucket_prefix(aws_session, bucket, "icehouse/")
+    process_script(spark, sql_file, formats=None)
+    nuke_bucket_prefix(aws_session, bucket, "icehouse/")
 
     spark.stop()
 
