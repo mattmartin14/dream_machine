@@ -51,7 +51,6 @@ def process_script(spark: SparkSession, file_path: str, formats: dict=None) -> N
 
 def nuke_bucket_prefix(session: boto3.Session, bucket: str, prefix: str) -> None:
     s3 = session.client('s3')
-    prefix = 'icehouse/'
     paginator = s3.get_paginator('list_objects_v2')
     pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
     delete_us = dict(Objects=[])
@@ -72,20 +71,24 @@ def main():
     aws_acct_id = os.getenv('AWS_ACCT_ID')
     bucket = os.getenv("aws_bucket")
     aws_region = 'us-east-1'
+    prefix = 'icehouse/'
 
     spark = set_spark_session(catalog_name, aws_acct_id, aws_region)
 
     ## The Configs:
-    print(f"PySpark version: {spark.version}")
+    print('--ENVIRONMENT CONFIGURATIONS--')
+    print(f"Python version: {sys.version}")
+    print(f"Spark version: {spark.version}")
     print(f"Scala version: {spark.sparkContext._jvm.scala.util.Properties.versionString()}")
     print(f"Java version: {spark.sparkContext._jvm.System.getProperty('java.version')}")
+    print('--ENVIRONMENT CONFIGURATIONS--')
 
     # nuke tables
     sql_file = 'sql/nuke_tables.sql'
     process_script(spark, sql_file, formats=None)
 
     # nuke s3 warehouse
-    nuke_bucket_prefix(aws_session, bucket, "icehouse/")
+    nuke_bucket_prefix(aws_session, bucket, prefix)
 
     # create tables
     sql_file = 'sql/create_tables.sql'
@@ -144,12 +147,12 @@ def main():
         df = spark.read.parquet(f's3a://{bucket}/duckdb/data_gen_parquet/*')
         #spark.sql("select * from {df} limit 5", df=df).show()
         spark.sql(f"""
-            create table if not exists iceberg_catalog.icebox1.ctas 
+            create table if not exists iceberg_catalog.icebox1.ctas_workaround
                 (row_id int, txn_key string, rpt_dt date, some_val float) 
             using iceberg
             location 's3://{bucket}/icehouse/ctas'
         """)
-        df.write.format("iceberg").mode("overwrite").saveAsTable("iceberg_catalog.icebox1.ctas")
+        df.write.format("iceberg").mode("overwrite").saveAsTable("iceberg_catalog.icebox1.ctas_workaround")
         print("CTAS via dataframe worked")
     except Exception as e:
         print(f"Error attempting ctas via dataframe: {str(e)[:200]}")
@@ -159,8 +162,8 @@ def main():
 
     # clean up
     sql_file = 'sql/nuke_tables.sql'
-    process_script(spark, sql_file, formats=None)
-    nuke_bucket_prefix(aws_session, bucket, "icehouse/")
+    #process_script(spark, sql_file, formats=None)
+    #nuke_bucket_prefix(aws_session, bucket, prefix)
 
     spark.stop()
 
