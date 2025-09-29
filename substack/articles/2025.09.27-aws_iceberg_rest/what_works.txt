@@ -8,7 +8,8 @@ what works
 - complex merge with multiple predicates including deletes
 
 what doesn't work
-- ctas: aws docs indicate "Stage create" isn't supported
+- ctas: aws docs indicate "Stage create" isn't supported: https://docs.aws.amazon.com/glue/latest/dg/iceberg-rest-apis.html
+    -- see section "CreateTable" and limitations
 -- workaround: pre-create the skeleton table, then just do an overwrite
 - update with joins (workaround use merge)
 - delete with joins (workaround use merge)

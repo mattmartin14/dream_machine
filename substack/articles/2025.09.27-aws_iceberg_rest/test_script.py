@@ -7,15 +7,6 @@ from setup_env import setup_aws_environment
 
 def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> SparkSession:
 
-
-    #outdated runtimes
-    # packages = [
-    #     'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.1',
-    #     'software.amazon.awssdk:bundle:2.20.160',
-    #     'software.amazon.awssdk:url-connection-client:2.20.160',
-    #     'org.apache.hadoop:hadoop-aws:3.3.4'
-    # ]
-
     packages = [
         'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2',
         'software.amazon.awssdk:bundle:2.34.0',
@@ -33,9 +24,8 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
         .config(f'spark.sql.catalog.{catalog_name}.warehouse',aws_acct_id) 
         .config(f'spark.sql.catalog.{catalog_name}.rest.sigv4-enabled','true') 
         .config(f'spark.sql.catalog.{catalog_name}.rest.signing-name','glue') 
-        .config(f'spark.sql.catalog.{catalog_name}.rest.signing-region', aws_region) \
+        .config(f'spark.sql.catalog.{catalog_name}.rest.signing-region', aws_region) 
         .config(f'spark.sql.catalog.{catalog_name}.io-impl','org.apache.iceberg.aws.s3.S3FileIO') 
-        #.config(f'spark.hadoop.fs.s3a.aws.credentials.provider','org.apache.hadoop.fs.s3a.SimpleAWSCredentialProvider') 
         .config(f'spark.hadoop.fs.s3a.aws.credentials.provider','com.amazonaws.auth.DefaultAWSCredentialsProviderChain') 
         .config(f'spark.sql.catalog.{catalog_name}.rest-metrics-reporting-enabled','false') 
         .config('spark.hadoop.fs.s3a.impl', 'org.apache.hadoop.fs.s3a.S3AFileSystem')
@@ -84,6 +74,11 @@ def main():
     aws_region = 'us-east-1'
 
     spark = set_spark_session(catalog_name, aws_acct_id, aws_region)
+
+    ## The Configs:
+    print(f"PySpark version: {spark.version}")
+    print(f"Scala version: {spark.sparkContext._jvm.scala.util.Properties.versionString()}")
+    print(f"Java version: {spark.sparkContext._jvm.System.getProperty('java.version')}")
 
     # nuke tables
     sql_file = 'sql/nuke_tables.sql'
