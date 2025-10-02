@@ -8,16 +8,11 @@ and creates the appropriate DuckDB view for unified querying.
 """
 import boto3
 import duckdb
-import os
-#from pyiceberg.catalog import load_catalog
 
-def attach_catalog(cn, catalog_name):
-    """Attach the Iceberg catalog to the DuckDB connection."""
-    cn.execute(f"""
-        create schema if not exists {catalog_name};
-    """)
+def attach_catalog(cn: duckdb.DuckDBPyConnection, catalog_name: str):
+    cn.execute(f"create schema if not exists {catalog_name}")
 
-def register_table(cn, catalog_name, glue_db_name, glue_table_name):
+def register_table(cn: duckdb.DuckDBPyConnection, catalog_name: str, glue_db_name: str, glue_table_name: str):
 
     view_name = f"{catalog_name}.{glue_table_name}"
 
@@ -26,7 +21,7 @@ def register_table(cn, catalog_name, glue_db_name, glue_table_name):
     response = glue_client.get_table(DatabaseName=glue_db_name, Name=glue_table_name)
     table_metadata = response['Table']
     
-    # Check if it's an Iceberg table
+    # what is the table type?
     table_type = table_metadata.get('Parameters', {}).get('table_type', '').upper()
     
     if table_type == 'ICEBERG':
@@ -40,14 +35,10 @@ def register_table(cn, catalog_name, glue_db_name, glue_table_name):
         serde_lib = storage_desc['SerdeInfo']['SerializationLibrary']
         
         if 'parquet' in serde_lib.lower():
-            # Parquet table
-            #print(f"📄 Detected Parquet table: {db_name}.{table_name}")
             parquet_path = location if location.endswith('.parquet') else f"{location}/*.parquet"
             cn.execute(f"CREATE OR REPLACE VIEW {view_name} AS SELECT * FROM read_parquet('{parquet_path}')")
             
         elif 'lazy' in serde_lib.lower() or 'csv' in serde_lib.lower():
-            # CSV table
-            #print(f"📝 Detected CSV table: {db_name}.{table_name}")
             serde_params = storage_desc['SerdeInfo'].get('Parameters', {})
             delimiter = serde_params.get('field.delim', ',')
             skip_header = serde_params.get('skip.header.line.count', '0')
