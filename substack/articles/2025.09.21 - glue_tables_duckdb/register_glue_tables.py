@@ -6,24 +6,32 @@ This module provides functionality to create DuckDB views from AWS Glue tables
 of any type (Iceberg, Parquet, CSV). It automatically detects the table type
 and creates the appropriate DuckDB view for unified querying.
 """
+import boto3
+import duckdb
+import os
+#from pyiceberg.catalog import load_catalog
 
-def register_table(db_name, table_name, cn):
-    
-    view_name = f"{table_name}"
-    
+def attach_catalog(cn, catalog_name):
+    """Attach the Iceberg catalog to the DuckDB connection."""
+    cn.execute(f"""
+        create schema if not exists {catalog_name};
+    """)
+
+def register_table(cn, catalog_name, glue_db_name, glue_table_name):
+
+    view_name = f"{catalog_name}.{glue_table_name}"
+
     # Get table metadata from Glue
-    response = glue_client.get_table(DatabaseName=db_name, Name=table_name)
+    glue_client = boto3.client('glue', region_name='us-east-1')
+    response = glue_client.get_table(DatabaseName=glue_db_name, Name=glue_table_name)
     table_metadata = response['Table']
     
     # Check if it's an Iceberg table
     table_type = table_metadata.get('Parameters', {}).get('table_type', '').upper()
     
     if table_type == 'ICEBERG':
-        # Handle Iceberg table
-        #print(f"📊 Detected Iceberg table: {db_name}.{table_name}")
-        ice_table = catalog.load_table(f"{db_name}.{table_name}")
-        cn.register(table_name, ice_table.scan().to_arrow())
-        cn.execute(f"CREATE OR REPLACE VIEW {view_name} AS SELECT * FROM {table_name}")
+        iceberg_metadata_path = table_metadata['Parameters']['metadata_location']
+        cn.execute(f"CREATE OR REPLACE VIEW {view_name} AS SELECT * FROM iceberg_scan('{iceberg_metadata_path}')")
         
     else:
         # Handle regular Glue tables (Parquet/CSV)
@@ -53,4 +61,3 @@ def register_table(db_name, table_name, cn):
         else:
             raise ValueError(f"Unsupported table format. SerDe: {serde_lib}")
     
-    return view_name

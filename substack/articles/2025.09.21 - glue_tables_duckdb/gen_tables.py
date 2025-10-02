@@ -14,41 +14,6 @@ import duckdb
 from pyiceberg.catalog import load_catalog
 import os
 
-# def setup_pyiceberg_catalog():
-#     """Create PyIceberg Glue catalog using environment credentials."""
-#     catalog = load_catalog(
-#         "glue",
-#         **{
-#             "type": "glue",
-#             "glue.region": "us-east-1",
-#             "glue.account-id": os.getenv('aws_account_nbr'),
-#             "s3.region": "us-east-1"
-#         }
-#     )
-#     return catalog
-
-
-# def setup_duckdb_connection():
-#     """Create DuckDB connection and configure S3 access using credential chain."""
-#     cn = duckdb.connect()
-    
-#     # Install and load AWS extension
-#     cn.execute("INSTALL AWS; LOAD AWS")
-    
-#     # Drop existing secret if it exists
-#     cn.execute("DROP SECRET IF EXISTS s3_creds")
-    
-#     # Create S3 secret using credential chain (will use environment variables)
-#     cn.execute("""
-#         CREATE SECRET s3_creds (
-#             TYPE S3,
-#             PROVIDER CREDENTIAL_CHAIN,
-#             REGION 'us-east-1'
-#         )
-#     """)
-    
-#     return cn
-
 def generate_test_data(num_rows=100):
 
     cn = duckdb.connect()

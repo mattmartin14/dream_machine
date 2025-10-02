@@ -1,7 +1,7 @@
 import duckdb
 import os
 
-def config_duckdb() -> duckdb.DuckDBPyConnection:
+def config_duckdb_conn() -> duckdb.DuckDBPyConnection:
     """Configure and return a DuckDB connection with necessary extensions."""
     cn = duckdb.connect()
     
@@ -17,12 +17,12 @@ def config_duckdb() -> duckdb.DuckDBPyConnection:
         )
     """)
 
-    #attach iceberg catalog
-    cn.execute(f"""
-    attach '{os.environ("AWS_ACCT_ID")}' as iceberg_catalog (
-        type iceberg,
-        endpoint_type glue
-        )
-    """)
+    # #attach iceberg catalog
+    # cn.execute(f"""
+    # attach '{os.getenv("AWS_ACCT_ID")}' as iceberg_catalog (
+    #     type iceberg,
+    #     endpoint_type glue
+    #     )
+    # """)
     
     return cn

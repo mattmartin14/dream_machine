@@ -1,1 +1,0 @@
-fix the register glue table py file
