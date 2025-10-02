@@ -1,0 +1,12 @@
+[project]
+name = "2025-09-21-glue-tables-duckdb"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.40.43",
+    "duckdb==1.4",
+    "pyarrow>=21.0.0",
+    "pyiceberg>=0.10.0",
+]

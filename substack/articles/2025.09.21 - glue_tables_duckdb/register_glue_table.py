@@ -7,31 +7,9 @@ of any type (Iceberg, Parquet, CSV). It automatically detects the table type
 and creates the appropriate DuckDB view for unified querying.
 """
 
-def create_duckdb_view_from_glue_table(db_name, table_name, glue_client, catalog, cn):
-    """
-    Create a DuckDB view for any AWS Glue table (Iceberg, Parquet, or CSV).
+def register_table(db_name, table_name, cn):
     
-    This function automatically detects the table type from Glue metadata and creates 
-    the appropriate DuckDB view:
-    - Iceberg tables: Uses PyIceberg to load and register with DuckDB
-    - Parquet tables: Uses DuckDB's read_parquet() function
-    - CSV tables: Uses DuckDB's read_csv() function with proper delimiters
-    
-    Args:
-        db_name (str): Glue database name
-        table_name (str): Glue table name  
-        glue_client: boto3 Glue client instance
-        catalog: PyIceberg catalog instance
-        cn: DuckDB connection instance
-    
-    Returns:
-        str: Name of the created view (v_{table_name})
-        
-    Raises:
-        ValueError: If table format is not supported
-        Exception: If table creation fails
-    """
-    view_name = f"v_{table_name}"
+    view_name = f"{table_name}"
     
     # Get table metadata from Glue
     response = glue_client.get_table(DatabaseName=db_name, Name=table_name)
