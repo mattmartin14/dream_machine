@@ -41,7 +41,7 @@ def main():
     )
 
     print(df.head(5))
-    df.write_parquet("output.parquet")
+   # df.write_parquet("output.parquet")
 
     result = (
         df.group_by("order_date")
