@@ -257,14 +257,14 @@ def setup_aws_environment():
     return get_session()
 
 
-if __name__ == "__main__":
-    try:
-        session = get_session()
-        sts = session.client("sts")
-        identity = sts.get_caller_identity()
-        print("Successfully authenticated!")
-        print("Caller identity:", identity)
-    except Exception as e:
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
+# if __name__ == "__main__":
+#     try:
+#         session = get_session()
+#         sts = session.client("sts")
+#         identity = sts.get_caller_identity()
+#         print("Successfully authenticated!")
+#         print("Caller identity:", identity)
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         import traceback
+#         traceback.print_exc()
