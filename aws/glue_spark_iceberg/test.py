@@ -2,6 +2,7 @@ import os
 import sys
 from pyspark.sql import SparkSession
 import boto3
+import subprocess
 
 #from setup_env import setup_aws_environment
 
@@ -73,9 +74,27 @@ def nuke_bucket_prefix(session: boto3.Session, bucket: str, prefix: str) -> None
     if len(delete_us['Objects']):
         s3.delete_objects(Bucket=bucket, Delete=delete_us)
 
-def main():
+def create_glue_database(db_name: str, aws_region: str) -> None:
+    glue = boto3.client('glue', region_name=aws_region)
+    try:
+        glue.create_database(DatabaseInput={'Name': db_name})
+        print(f"Created Glue database: {db_name}")
+    except glue.exceptions.AlreadyExistsException:
+        print(f"Glue database already exists: {db_name}")
+    except Exception as e:
+        print(f"Error creating Glue database {db_name}: {e}")
 
-    #aws_session = setup_aws_environment()
+def drop_glue_database(db_name: str, aws_region: str) -> None:
+    glue = boto3.client('glue', region_name=aws_region)
+    try:
+        glue.delete_database(Name=db_name)
+        print(f"Dropped Glue database: {db_name}")
+    except glue.exceptions.EntityNotFoundException:
+        print(f"Glue database not found for deletion: {db_name}")
+    except Exception as e:
+        print(f"Error deleting Glue database {db_name}: {e}")
+
+def main():
 
     catalog_name = "iceberg_catalog"
     aws_acct_id = os.getenv('AWS_ACCT_ID')
@@ -94,6 +113,15 @@ def main():
     print('--ENVIRONMENT CONFIGURATIONS--')
 
     spark.sql("select 1 as x").show()
+
+    drop_glue_database('icebox5', aws_region)
+    create_glue_database('icebox5', aws_region)
+
+    spark.sql(f"""
+       create or replace table {catalog_name}.icebox5.test1 (id int, val string)
+       using iceberg
+       location 's3://{bucket}/icehouse/test1'  
+    """)
 
     return
 
@@ -182,4 +210,5 @@ def main():
     spark.stop()
 
 if __name__ == "__main__":
+    #subprocess.run(['aws_auth', 'exec', '--', 'env'])  # Ensure aws_auth is executed to set environment variables
     main()
