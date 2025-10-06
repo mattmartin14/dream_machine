@@ -2,11 +2,8 @@ import os
 import sys
 from pyspark.sql import SparkSession
 import boto3
-import subprocess
 
-#from setup_env import setup_aws_environment
-
-def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> SparkSession:
+def set_spark_session(catalog_name: str, prefix: str, aws_region: str) -> SparkSession:
 
     packages = [
         'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2',
@@ -28,19 +25,15 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
         .config('spark.sql.extensions', 'org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions')
         .config(f'spark.sql.catalog.{catalog_name}.catalog-impl', 'org.apache.iceberg.aws.glue.GlueCatalog')
         .config(f'spark.sql.catalog.{catalog_name}', 'org.apache.iceberg.spark.SparkCatalog')
-        .config(f'spark.sql.catalog.{catalog_name}.warehouse', f's3://{os.getenv("aws_bucket")}/icehouse1')
+        .config(f'spark.sql.catalog.{catalog_name}.warehouse', f's3://{os.getenv("aws_bucket")}/{prefix}')
         .config(f'spark.sql.catalog.{catalog_name}.io-impl', 'org.apache.iceberg.aws.s3.S3FileIO')
         .config(f'spark.sql.catalog.{catalog_name}.glue.region', aws_region)
-
-        .config('spark.driver.bindAddress', bind_addr)   # what the driver binds to
-        .config('spark.driver.host', driver_host)        # what the driver advertises to executors
+        .config('spark.driver.bindAddress', bind_addr)
+        .config('spark.driver.host', driver_host)        
         .config('spark.network.timeout', '120s')
         .config('spark.executor.heartbeatInterval', '30s')
         .config('spark.driver.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
         .config('spark.executor.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
-
-        # # Optional: let OS choose free ports (defaults already do this, but harmless)
-        # .config('spark.blockManager.port', '0')
         .getOrCreate()
     )
 
@@ -102,7 +95,7 @@ def main():
     aws_region = 'us-east-1'
     prefix = 'icehouse'
 
-    spark = set_spark_session(catalog_name, aws_acct_id, aws_region)
+    spark = set_spark_session(catalog_name, prefix, aws_region)
 
     ## The Configs:
     print('--ENVIRONMENT CONFIGURATIONS--')
@@ -181,6 +174,7 @@ def main():
     sql_file = 'sql/nuke_tables.sql'
     process_script(spark, sql_file, formats=params)
     nuke_bucket_prefix(bucket, prefix)
+    drop_glue_database(db_name, aws_region)
 
     spark.stop()
 
