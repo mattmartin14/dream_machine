@@ -210,5 +210,5 @@ def main():
     spark.stop()
 
 if __name__ == "__main__":
-    #subprocess.run(['aws_auth', 'exec', '--', 'env'])  # Ensure aws_auth is executed to set environment variables
+    subprocess.run(['aws_auth', 'exec', '--', 'env'])  # Ensure aws_auth is executed to set environment variables
     main()
