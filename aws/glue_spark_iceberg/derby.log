@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Sun Oct 05 06:41:09 EDT 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0199-b3f6-0819-00000a53d290 
+Mon Oct 06 07:34:59 EDT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0199-b94d-ad74-000008b623f0 
 on database directory /Users/matthewmartin/dream_machine/aws/glue_spark_iceberg/metastore_db with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@42110406 
 Loaded from file:/Users/matthewmartin/dream_machine/aws/glue_spark_iceberg/.venv/lib/python3.11/site-packages/pyspark/jars/derby-10.14.2.0.jar
 java.vendor=Eclipse Adoptium

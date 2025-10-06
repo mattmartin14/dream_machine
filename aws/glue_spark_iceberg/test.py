@@ -26,12 +26,12 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
         .master(master)
         .config('spark.jars.packages', ','.join(packages))
         .config('spark.sql.extensions', 'org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions')
+        .config(f'spark.sql.catalog.{catalog_name}.catalog-impl', 'org.apache.iceberg.aws.glue.GlueCatalog')
         .config(f'spark.sql.catalog.{catalog_name}', 'org.apache.iceberg.spark.SparkCatalog')
         .config(f'spark.sql.catalog.{catalog_name}.warehouse', f's3://{os.getenv("aws_bucket")}/icehouse1')
         .config(f'spark.sql.catalog.{catalog_name}.io-impl', 'org.apache.iceberg.aws.s3.S3FileIO')
         .config(f'spark.sql.catalog.{catalog_name}.glue.region', aws_region)
 
-        # Networking fixes for local macOS
         .config('spark.driver.bindAddress', bind_addr)   # what the driver binds to
         .config('spark.driver.host', driver_host)        # what the driver advertises to executors
         .config('spark.network.timeout', '120s')
@@ -39,8 +39,8 @@ def set_spark_session(catalog_name: str, aws_acct_id: str, aws_region: str) -> S
         .config('spark.driver.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
         .config('spark.executor.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
 
-        # Optional: let OS choose free ports (defaults already do this, but harmless)
-        .config('spark.blockManager.port', '0')
+        # # Optional: let OS choose free ports (defaults already do this, but harmless)
+        # .config('spark.blockManager.port', '0')
         .getOrCreate()
     )
 
@@ -60,8 +60,8 @@ def process_script(spark: SparkSession, file_path: str, formats: dict=None) -> N
                 print(f"Executing SQL: {rendered_sql}")
                 spark.sql(rendered_sql)
 
-def nuke_bucket_prefix(session: boto3.Session, bucket: str, prefix: str) -> None:
-    s3 = session.client('s3')
+def nuke_bucket_prefix(bucket: str, prefix: str) -> None:
+    s3 = boto3.client('s3')
     paginator = s3.get_paginator('list_objects_v2')
     pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
     delete_us = dict(Objects=[])
@@ -100,7 +100,7 @@ def main():
     aws_acct_id = os.getenv('AWS_ACCT_ID')
     bucket = os.getenv("aws_bucket")
     aws_region = 'us-east-1'
-    prefix = 'icehouse/'
+    prefix = 'icehouse'
 
     spark = set_spark_session(catalog_name, aws_acct_id, aws_region)
 
@@ -114,32 +114,29 @@ def main():
 
     spark.sql("select 1 as x").show()
 
-    drop_glue_database('icebox5', aws_region)
-    create_glue_database('icebox5', aws_region)
+    db_name = "icebox5"
 
-    spark.sql(f"""
-       create or replace table {catalog_name}.icebox5.test1 (id int, val string)
-       using iceberg
-       location 's3://{bucket}/icehouse/test1'  
-    """)
+    drop_glue_database(db_name, aws_region)
+    create_glue_database(db_name, aws_region)
 
-    return
+    params = {'BUCKET': bucket, 'DB_NAME': db_name, 'WAREHOUSE': f's3://{bucket}/{prefix}'}
+
 
     # nuke tables
     sql_file = 'sql/nuke_tables.sql'
-    process_script(spark, sql_file, formats=None)
+    process_script(spark, sql_file, formats=params)
 
     # nuke s3 warehouse
-    nuke_bucket_prefix(aws_session, bucket, prefix)
+    nuke_bucket_prefix(bucket, prefix)
 
     # create tables
     sql_file = 'sql/create_tables.sql'
-    process_script(spark, sql_file, formats={'BUCKET': bucket})
+    process_script(spark, sql_file, formats=params)
 
     # merge into
     try:
         sql_file = 'sql/test_merge.sql'
-        process_script(spark, sql_file, formats=None)
+        process_script(spark, sql_file, formats=params)
         print("Merge worked")
     except Exception as e:
         print(f"Error attempting merge script: {sql_file}: {e}")
@@ -147,7 +144,7 @@ def main():
     # insert left join
     try:
         sql_file = 'sql/test_insert_left_join.sql'
-        process_script(spark, sql_file, formats=None)
+        process_script(spark, sql_file, formats=params)
         print("Insert left join worked")
     except Exception as e:
         print(f"Error attempting insert left join script: {sql_file}: {e}")
@@ -155,60 +152,37 @@ def main():
     # update
     try:
         sql_file = 'sql/test_update.sql'
-        process_script(spark, sql_file, formats=None)
+        process_script(spark, sql_file, formats=params)
         print("Update worked")
     except Exception as e:
         print(f"Error attempting update script: {sql_file}: {e}")
 
-    # update join (doesn't work...just use merge)
-    try:
-        sql_file = 'sql/test_update_join.sql'
-        process_script(spark, sql_file, formats=None)
-        print("Update join worked")
-    except Exception as e:
-        print(f"Error attempting update join script: {sql_file}: {e}")
-
     # delete
     try:
         sql_file = 'sql/test_delete.sql'
-        process_script(spark, sql_file, formats=None)
+        process_script(spark, sql_file, formats=params)
         print("Delete worked")
     except Exception as e:
         print(f"Error attempting delete script: {sql_file}: {e}")
 
 
-    # ctas...doesn't work; according to aws docs, "stage-create" is not supported on its iceberg rest endpoint
     try:
         sql_file = 'sql/test_ctas.sql'
-        process_script(spark, sql_file, formats={'BUCKET': bucket})
+        process_script(spark, sql_file, formats=params)
     except Exception as e:
         print(f"Error attempting ctas script: {sql_file}: {str(e)[:200]}")
 
-    # to mimick a ctas, we have to create the skeleton table, then just overwrite it
-    try:
-        df = spark.read.parquet(f's3a://{bucket}/duckdb/data_gen_parquet/*')
-        #spark.sql("select * from {df} limit 5", df=df).show()
-        spark.sql(f"""
-            create table if not exists iceberg_catalog.icebox1.ctas_workaround
-                (row_id int, txn_key string, rpt_dt date, some_val float) 
-            using iceberg
-            location 's3://{bucket}/icehouse/ctas'
-        """)
-        df.write.format("iceberg").mode("overwrite").saveAsTable("iceberg_catalog.icebox1.ctas_workaround")
-        print("CTAS via dataframe worked")
-    except Exception as e:
-        print(f"Error attempting ctas via dataframe: {str(e)[:200]}")
+    
 
     #final output
-    spark.sql("select * from iceberg_catalog.icebox1.test1").show()
+    spark.sql(f"select * from iceberg_catalog.{db_name}.test1").show()
 
     # clean up
     sql_file = 'sql/nuke_tables.sql'
-    process_script(spark, sql_file, formats=None)
-    nuke_bucket_prefix(aws_session, bucket, prefix)
+    process_script(spark, sql_file, formats=params)
+    nuke_bucket_prefix(bucket, prefix)
 
     spark.stop()
 
 if __name__ == "__main__":
-    subprocess.run(['aws_auth', 'exec', '--', 'env'])  # Ensure aws_auth is executed to set environment variables
     main()
