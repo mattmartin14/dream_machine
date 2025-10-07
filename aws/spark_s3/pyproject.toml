@@ -1,0 +1,11 @@
+[project]
+name = "spark-s3"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.40.46",
+    "duckdb>=1.4.1",
+    "pyspark==3.5.4",
+]
