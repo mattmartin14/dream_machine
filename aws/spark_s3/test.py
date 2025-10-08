@@ -13,7 +13,7 @@ def set_spark_session(aws_region: str | None = None) -> SparkSession:
     bind_addr = os.getenv("SPARK_BIND_ADDRESS", "127.0.0.1")
     driver_host = os.getenv("SPARK_DRIVER_HOST", bind_addr)
 
-    builder = (
+    spark = (
         SparkSession.builder
         .appName('spark-s3a-read')
         .master(master)
@@ -28,15 +28,12 @@ def set_spark_session(aws_region: str | None = None) -> SparkSession:
         .config('spark.driver.host', driver_host)
         .config('spark.network.timeout', '120s')
         .config('spark.executor.heartbeatInterval', '30s')
+        .config('spark.hadoop.fs.s3a.endpoint', f's3.{aws_region}.amazonaws.com')
         .config('spark.driver.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
         .config('spark.executor.extraJavaOptions', '-Djava.net.preferIPv4Stack=true')
+        .getOrCreate()
     )
-
-    # Optional: set region-specific endpoint when provided
-    if aws_region:
-        builder = builder.config('spark.hadoop.fs.s3a.endpoint', f's3.{aws_region}.amazonaws.com')
-
-    spark = builder.getOrCreate()
+    
     return spark
 
 def gen_data():
