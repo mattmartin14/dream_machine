@@ -1,0 +1,13 @@
+[project]
+name = "2025-10-09-spark-config-madness"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.40.48",
+    "duckdb>=1.4.1",
+    "pyarrow>=21.0.0",
+    "pyiceberg>=0.10.0",
+    "pyspark==3.5.4",
+]
