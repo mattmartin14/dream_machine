@@ -39,7 +39,7 @@ def get_spark(aws_region: str | None = None) -> SparkSession:
 
 
 def main():
-    from run_stuff import test_harness, get_setup
+    from run_stuff import get_setup, s3_parquet_test_harness
 
     catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = get_setup()
 
@@ -48,9 +48,7 @@ def main():
 
     spark = get_spark(aws_region)
 
-    df = spark.read.parquet(f's3a://{bucket}/test2/orders.parquet')
-    df.createOrReplaceTempView("data")
-    spark.sql("select * from data limit 5").show()
+    s3_parquet_test_harness(spark, bucket)
 
     spark.stop()
 

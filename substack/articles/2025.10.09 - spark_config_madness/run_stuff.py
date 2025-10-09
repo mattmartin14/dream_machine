@@ -2,10 +2,16 @@ import os
 import helpers as ah
 from pyspark.sql import SparkSession
 
-def test_harness(_spark, catalog_name, glue_db_name, bucket, prefix):
+def s3_parquet_test_harness(_spark, bucket):
+
+    df = _spark.read.parquet(f's3a://{bucket}/test2/orders.parquet')
+    df.createOrReplaceTempView("data")
+    _spark.sql("select * from data limit 5").show()
+
+def iceberg_test_harness(_spark, catalog_name, glue_db_name, bucket, prefix):
 
     _spark.sql(f"drop table if exists {catalog_name}.{glue_db_name}.test_ice")
-    print('table dropped')
+
     _spark.sql(f"""
        create table {catalog_name}.{glue_db_name}.test_ice (
            id int,
@@ -32,18 +38,17 @@ def get_setup():
 
     return catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name
 
-def main(spark:SparkSession):
-
-    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = get_setup()
+def prework(bucket, prefix, glue_db_name, aws_region):
 
     ah.nuke_bucket_prefix(bucket, prefix)
-
     ah.drop_glue_database(glue_db_name, aws_region)
     ah.create_glue_database(glue_db_name, aws_region)
 
-    test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
-    spark.stop()
-    
+def postwork(bucket, prefix, glue_db_name, aws_region):
+
     ah.nuke_bucket_prefix(bucket, prefix)
     ah.drop_glue_database(glue_db_name, aws_region)
+
+    
+    
 

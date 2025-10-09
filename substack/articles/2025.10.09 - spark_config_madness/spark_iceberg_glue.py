@@ -46,13 +46,19 @@ def get_spark(catalog_name: str, bucket: str, prefix: str, aws_region: str) -> S
 
 
 def main():
-    from run_stuff import test_harness, get_setup
+    import run_stuff as rs
 
-    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = get_setup()
+    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = rs.get_setup()
+
+    rs.prework(bucket, prefix, glue_db_name, aws_region)
 
     spark = get_spark(catalog_name, prefix, bucket, aws_region)
+    rs.iceberg_test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
+    rs.s3_parquet_test_harness(spark, bucket)
 
-    test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
+    spark.stop()
+
+    rs.postwork(bucket, prefix, glue_db_name, aws_region)
 
 
 if __name__ == "__main__":

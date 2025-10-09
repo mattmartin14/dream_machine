@@ -24,7 +24,7 @@ def get_spark(catalog_name: str, bucket: str, prefix: str, aws_region: str) -> S
 
     spark = (
         SparkSession.builder
-        .appName('iceberg-glue-spark')
+        .appName('iceberg-glue-spark-s3')
         .master(master)
         .config('spark.jars.packages', ','.join(packages))
         .config('spark.sql.extensions', 'org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions')
@@ -53,25 +53,22 @@ def get_spark(catalog_name: str, bucket: str, prefix: str, aws_region: str) -> S
 
 
 def main():
-    from run_stuff import test_harness, get_setup
+    import run_stuff as rs
 
-    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = get_setup()
+    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = rs.get_setup()
 
     ah.gen_data_for_s3(bucket)
 
+    rs.prework(bucket, prefix, glue_db_name, aws_region)
+
     spark = get_spark(catalog_name, prefix, bucket, aws_region)
 
-    #test iceberg
-    test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
-
-
-    #test s3
-    print("testing s3")
-    df = spark.read.parquet(f's3a://{bucket}/test2/orders.parquet')
-    df.createOrReplaceTempView("data")
-    spark.sql("select * from data limit 5").show()
+    rs.iceberg_test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
+    rs.s3_parquet_test_harness(spark, bucket)
 
     spark.stop()
+
+    rs.postwork(bucket, prefix, glue_db_name, aws_region)
 
 
 
