@@ -53,7 +53,7 @@ def get_spark(catalog_name: str, bucket: str, prefix: str, aws_region: str) -> S
 
 
 def main():
-    import run_stuff as rs
+    import test_harness as rs
 
     catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = rs.get_setup()
 

@@ -1,0 +1,47 @@
+:: loading settings ::
+Ivy Default Cache
+added as a dependency
+:: resolving dependencies ::
+found org.apache
+found com.amazonaws
+found software.amazon
+found commons-
+found dev.failsafe
+found io.airlift
+:: resolution report ::
+:: retrieving ::
+artifacts copied
+modules in use:
+evicted modules:
+confs: \[default\]
+from central in \[default\]
+|\s*conf\s*|
+|\s*default\s*|
+^-*$
+
+# Additional WARN messages to suppress
+WARN NativeCodeLoader
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel
+SLF4J: Failed to load class
+SLF4J: Defaulting to no-operation
+SLF4J: See http://www.slf4j.org/codes.html
+WARN MetricsConfig: Cannot locate configuration
+
+# Additional Ivy messages
+The jars for the packages stored in:
+found org.slf4j
+found com.fasterxml.jackson
+found com.github.ben-manes
+found org.checkerframework
+found com.google.errorprone
+found org.roaringbitmap
+found org.reactivestreams
+found org.wildfly.openssl
+by \[
+
+# More specific patterns for eviction messages only
+org.slf4j#slf4j-api
+Setting default log level to "WARN"
+modules.*artifacts
+number.*search.*dwnlded.*evicted

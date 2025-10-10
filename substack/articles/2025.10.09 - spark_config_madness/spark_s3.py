@@ -39,16 +39,16 @@ def get_spark(aws_region: str | None = None) -> SparkSession:
 
 
 def main():
-    from run_stuff import get_setup, s3_parquet_test_harness
+    import test_harness as rs
 
-    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = get_setup()
+    catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = rs.get_setup()
 
     ah.gen_data_for_s3(bucket)
     print('data generated for s3 parquet test')
 
     spark = get_spark(aws_region)
 
-    s3_parquet_test_harness(spark, bucket)
+    rs.s3_parquet_test_harness(spark, bucket)
 
     spark.stop()
 

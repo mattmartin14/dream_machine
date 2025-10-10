@@ -30,14 +30,13 @@ def get_spark(catalog_name, aws_region, aws_acct_id):
 
 
 def main():
-    import run_stuff as rs
+    import test_harness as rs
    
     catalog_name, aws_region, aws_acct_id, bucket, prefix, glue_db_name = rs.get_setup()
 
     rs.prework(bucket, prefix, glue_db_name, aws_region)
 
     spark = get_spark(catalog_name, aws_region, aws_acct_id)
-
     rs.iceberg_test_harness(spark, catalog_name, glue_db_name, bucket, prefix)
     spark.stop()
 
