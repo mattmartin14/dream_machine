@@ -3,13 +3,7 @@ from pyspark.sql import SparkSession
 import helpers as ah
 
 def get_spark(catalog_name: str, bucket: str, prefix: str, aws_region: str) -> SparkSession:
-    # Stop any existing session to ensure clean state
-    existing_spark = SparkSession.getActiveSession()
-    if existing_spark:
-        existing_spark.stop()
-        SparkSession._instantiatedSession = None
-        SparkSession._activeSession = None
-
+    
     packages = [
         'org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2',
         'org.apache.iceberg:iceberg-aws:1.9.2',
