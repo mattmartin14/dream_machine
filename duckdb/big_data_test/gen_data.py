@@ -4,7 +4,7 @@ import time
 
 data_sql = """
     select t.row_id, uuid()::varchar as txn_key
-        , current_date as rpt_dt
+        ,(current_date - interval (floor(random() * 10)) day) as rpt_dt
         ,round(random() * 100,2) as sales_amt
         ,random() as sales_qty
         ,case when random() < 0.5 then 'A' else 'B' end as prod_cat
