@@ -74,6 +74,7 @@ def create_pace_chart(cn):
             and Type = 'RowErg'
             and "Pace" is not null
             and "Work Distance" >= 1000
+            and cast("Date" as date) >= date('2024-07-01')
         order by workout_dt
     """
     

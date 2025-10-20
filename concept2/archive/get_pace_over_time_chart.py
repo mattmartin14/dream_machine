@@ -12,6 +12,7 @@ def get_pace_over_time():
             and Type = 'RowErg'
             and "Pace" is not null
             and "Work Distance" >= 1000
+            and cast("Date" as date) >= '2024-05-01'
         order by workout_dt
     """
 
