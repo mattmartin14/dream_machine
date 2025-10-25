@@ -62,16 +62,16 @@ def setup_database():
     cn.sql("create or replace view v_summary_workouts as select * from read_csv_auto('~/concept2/workouts/*summary*.csv')")
     return cn
 
-def create_pace_chart(cn):
+def create_pace_chart(cn, equipment_type):
     """Create the rowing pace over time chart"""
-    sql_pace = """
+    sql_pace = f"""
         select "Log ID" as workout_id
             ,cast("Date" as date) as workout_dt
             ,"Work Distance" as total_meters
             ,cast('00:' || "Pace" as time) as avg_split
         from v_summary_workouts
         where 1=1
-            and Type = 'RowErg'
+            and lower(Type) = '{equipment_type}'
             and "Pace" is not null
             and "Work Distance" >= 1000
             and cast("Date" as date) >= date('2024-07-01')
@@ -139,7 +139,12 @@ def create_pace_chart(cn):
     # Labels and title
     ax.set_xlabel('Workout Date')
     ax.set_ylabel('Average Pace (MM:SS)')
-    ax.set_title('Rowing Pace Over Time (Color-coded by Distance)')
+
+    if equipment_type.lower() == 'rowerg':
+
+        ax.set_title('RowErg Pace Over Time (Color-coded by Distance)')
+    else:
+        ax.set_title('SkiErg Pace Over Time (Color-coded by Distance)')
     ax.grid(True, alpha=0.3)
     
     # Add trend line
@@ -319,11 +324,19 @@ def generate_pdf_report(output_filename="concept2_workout_report.pdf", season_ye
         
         # Generate and save pace chart
         print("Creating pace over time chart...")
-        pace_fig = create_pace_chart(cn)
+        pace_fig = create_pace_chart(cn, "rowerg")
         if pace_fig:
             print("Saving pace chart to PDF...")
             pdf.savefig(pace_fig, bbox_inches='tight')
             plt.close(pace_fig)
+        else:
+            print("ERROR: Could not create pace chart!")
+
+        pace_fig2 = create_pace_chart(cn, "skierg")
+        if pace_fig2:
+            print("Saving pace chart to PDF...")
+            pdf.savefig(pace_fig2, bbox_inches='tight')
+            plt.close(pace_fig2)
         else:
             print("ERROR: Could not create pace chart!")
         
