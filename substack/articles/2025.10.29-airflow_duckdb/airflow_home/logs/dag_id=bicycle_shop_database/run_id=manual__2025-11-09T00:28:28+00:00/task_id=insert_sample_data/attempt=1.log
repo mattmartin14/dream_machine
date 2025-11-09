@@ -1,0 +1,4 @@
+{"timestamp":"2025-11-09T00:28:34.015063Z","level":"info","event":"DAG bundles loaded: dags-folder","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2025-11-09T00:28:34.015390Z","level":"info","event":"Filling up the DagBag from /Users/matthewmartin/dream_machine/substack/articles/2025.10.29-airflow_duckdb/dags/bicycle_shop_dag.py","logger":"airflow.models.dagbag.DagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2025-11-09T00:28:34.064311Z","level":"info","event":"Sample data inserted successfully!","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:34.064316Z","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator","filename":"python.py","lineno":215}

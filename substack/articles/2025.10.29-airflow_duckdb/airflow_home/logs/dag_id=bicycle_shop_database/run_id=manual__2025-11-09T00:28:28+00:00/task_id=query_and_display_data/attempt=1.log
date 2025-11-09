@@ -1,0 +1,10 @@
+{"timestamp":"2025-11-09T00:28:35.064693Z","level":"info","event":"DAG bundles loaded: dags-folder","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2025-11-09T00:28:35.065019Z","level":"info","event":"Filling up the DagBag from /Users/matthewmartin/dream_machine/substack/articles/2025.10.29-airflow_duckdb/dags/bicycle_shop_dag.py","logger":"airflow.models.dagbag.DagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2025-11-09T00:28:35.098576Z","level":"info","event":"","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.098638Z","level":"info","event":"=== Order Summary ===","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.110490Z","level":"info","event":"(1, 'John Smith', datetime.date(2025, 11, 1), 4, Decimal('1299.99'), Decimal('1299.99'), 'Completed')","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.110573Z","level":"info","event":"(2, 'Sarah Johnson', datetime.date(2025, 11, 2), 3, Decimal('2499.98'), Decimal('2499.98'), 'Completed')","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.110599Z","level":"info","event":"(3, 'Mike Brown', datetime.date(2025, 11, 3), 5, Decimal('899.50'), Decimal('899.50'), 'Processing')","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.110620Z","level":"info","event":"(4, 'Emily Davis', datetime.date(2025, 11, 4), 5, Decimal('3199.97'), Decimal('3199.97'), 'Shipped')","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.110640Z","level":"info","event":"(5, 'Chris Wilson', datetime.date(2025, 11, 5), 5, Decimal('599.99'), Decimal('599.99'), 'Completed')","logger":"task.stdout"}
+{"timestamp":"2025-11-09T00:28:35.111223Z","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator","filename":"python.py","lineno":215}
