@@ -1,0 +1,10 @@
+[project]
+name = "2025-11-18-duckdb-1-tb"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "duckdb>=1.4.2",
+    "pyspark==4.0.1",
+]
