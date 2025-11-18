@@ -21,14 +21,15 @@ def create_ice_table():
        attach '{aws_acct_id}' as glue_catalog (
         TYPE 'iceberg',
         ENDPOINT 'glue.us-east-1.amazonaws.com/iceberg',
-        AUTHORIZATION_TYPE 'sigv4'
+        AUTHORIZATION_TYPE 'sigv4',
+        support_stage_create FALSE
        )       
               
     """)
 
 
     # doesn't support it yet
-    #sql = f"""create table glue_catalog.db1.iceyhot (id bigint,name string)"""
+    #sql = f"""create table glue_catalog.db1.iceyhot2 (id bigint,name string)"""
 
     #cn.execute(sql)
 
