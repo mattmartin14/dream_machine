@@ -1,0 +1,12 @@
+[project]
+name = "2025-11-19-s3-tables"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.40.76",
+    "duckdb>=1.4.2",
+    "pyarrow>=22.0.0",
+    "pyiceberg>=0.10.0",
+]
