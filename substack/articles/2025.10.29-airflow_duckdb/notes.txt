@@ -1,0 +1,7 @@
+need to do the following with the dag:
+
+task 1: create tables
+task 2: bulk load data in parallel; on the details, have it insert an order id that doesnt exist in the header and force an error
+task 3; aggregate the header/detail data and output the results to a csv that we kick out to s3
+
+maybe ask gippty what would be a good example to showcase how you can handle replaying orchestration in airflow when a task fails

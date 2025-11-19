@@ -1,9 +1,0 @@
-[2023-09-01 08:18:34 -0400] [14033] [INFO] Starting gunicorn 21.2.0
-[2023-09-01 08:18:34 -0400] [14033] [INFO] Listening at: http://[::]:8793 (14033)
-[2023-09-01 08:18:34 -0400] [14033] [INFO] Using worker: sync
-[2023-09-01 08:18:34 -0400] [14035] [INFO] Booting worker with pid: 14035
-[2023-09-01 08:18:34 -0400] [14036] [INFO] Booting worker with pid: 14036
-[2023-09-01 08:19:01 -0400] [14033] [INFO] Handling signal: term
-[2023-09-01 08:19:01 -0400] [14035] [INFO] Worker exiting (pid: 14035)
-[2023-09-01 08:19:01 -0400] [14036] [INFO] Worker exiting (pid: 14036)
-[2023-09-01 08:19:01 -0400] [14033] [INFO] Shutting down: Master

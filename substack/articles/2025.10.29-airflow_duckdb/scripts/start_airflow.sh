@@ -22,7 +22,7 @@ export AIRFLOW__CORE__DAGS_FOLDER="$(pwd)/dags"
 export PYTHONPATH="$(pwd):${PYTHONPATH:-}"
 
 # Set required JWT secret for api-server
-export AIRFLOW__API_AUTH__JWT_SECRET="$(openssl rand -base64 32)"
+#export AIRFLOW__API_AUTH__JWT_SECRET="$(openssl rand -base64 32)"
 
 # Use uv run to execute airflow in the venv context
 uv run airflow standalone

@@ -22,7 +22,9 @@ FROM read_parquet('$HOME/test_dummy_data/duckdb/data$files_to_sample.parquet');
 
 SELECT COALESCE(rpt_dt::date::varchar, 'GRAND TOTAL') AS rpt_dt,
     --count(distinct txn_key) AS unique_txn_keys,
-    printf('%,d', count(*)) AS total_rows,
+    printf('%,d', count(distinct row_id)) as unique_row_ids,
+    printf('%,d', approx_count_distinct(txn_key)) as approx_unique_row_ids,
+    --printf('%,d', count(*)) AS total_rows,
     printf('$%,.2f', sum(sales_amt)) AS total_sales_amt,
     printf('$%.2f', avg(sales_amt)) AS avg_sales_amt
 FROM all_data
