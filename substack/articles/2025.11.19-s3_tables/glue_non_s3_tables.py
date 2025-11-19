@@ -18,7 +18,6 @@ def create_duckdb_cn() -> duckdb.DuckDBPyConnection:
     """)
 
     aws_acct_id = os.getenv("AWS_ACCT_ID")
-    #bucket_name = os.getenv("aws_bucket")
 
     cn.execute(f"""
        attach '{aws_acct_id}' as glue_catalog (
@@ -80,7 +79,7 @@ def create_non_s3_iceberg_table(cn, glue_db_name, table_name):
     )
 
     # Get data as Arrow table
-    duck_df = cn.execute("SELECT * FROM v_data_gen")
+    duck_df = cn.execute("SELECT * FROM v_data_gen limit 1")
     arrow_table = duck_df.arrow().read_all()
     
     # Drop existing table if it exists
