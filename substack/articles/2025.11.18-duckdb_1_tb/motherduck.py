@@ -4,8 +4,6 @@ import time
 
 def create_data_gen_view(cn: duckdb.DuckDBPyConnection):
 
-    #cn = duckdb.connect('md:db1')
-
     lower_bound = "2020-01-01"
     upper_bound = "2025-01-01" 
     rows = 50_000_000
