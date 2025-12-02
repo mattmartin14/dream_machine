@@ -2,12 +2,12 @@ import duckdb
 import os
 import time
 
-def create_data_gen_view(cn: duckdb.DuckDBPyConnection):
+def create_assets(cn: duckdb.DuckDBPyConnection):
 
     rows = 20_000_000
 
     sql = f"""
-    create or replace view v_data as
+    create or replace table temp_stg as
     select  
               t.row_id
             , cast(uuid() as varchar(30)) as txn_key
@@ -28,19 +28,6 @@ def create_data_gen_view(cn: duckdb.DuckDBPyConnection):
 
     cn.execute(sql)
 
-    print('view created')
-
-
-def load_data(cn: duckdb.DuckDBPyConnection, iterations):
-    
-    start_time = time.time()
-
-    sql = """
-        create or replace table temp_stg as 
-        select *
-        from v_data
-    """
-    cn.execute(sql)
     print('staging table created')
 
 
@@ -61,6 +48,20 @@ def load_data(cn: duckdb.DuckDBPyConnection, iterations):
     """
 
     cn.execute(sql)
+    print('target table created')
+
+    cn.execute("""
+       create or replace table t_logger (
+               log_ts timestamp,
+               iteration_nbr integer
+        )        
+    """)
+    print('logger table created')
+
+def load_data(cn: duckdb.DuckDBPyConnection, iterations):
+    
+    start_time = time.time()
+
 
     elapsed_time = time.time() - start_time
     print(f'table t_data created in {elapsed_time:.2f} seconds')
@@ -82,6 +83,11 @@ def load_data(cn: duckdb.DuckDBPyConnection, iterations):
         elapsed_time = time.time() - iter_start_time
         print(f'iteration {i+1} (date: {current_date}) completed in {elapsed_time:.2f} seconds')
         
+        cn.execute(f"""
+            insert into t_logger (log_ts, iteration_nbr)
+            values (now(), {i+1})
+        """)
+
         # Increment date by 1 day
         current_date += timedelta(days=1)
     
@@ -97,6 +103,6 @@ if __name__ == "__main__":
     # 1,400
 
     cn = create_cn()
-    create_data_gen_view(cn)
+    create_assets(cn)
     load_data(cn, iterations=_ITERATIONS)
     print('data loaded to motherduck')
