@@ -1,104 +1,117 @@
 import duckdb
-from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
 import time
-import statistics
 import os
+import statistics
 
-DATA_PATH = '/Volumes/xd1/data/*.parquet'
-
-def create_spark_session():
-    """Create and configure Spark session once"""
-    # Suppress Hadoop native library warning
-    os.environ['HADOOP_HOME'] = '/tmp/hadoop'
+def benchmark_queries():
+    """Run benchmarks across MotherDuck and local datasets"""
     
-    spark = (SparkSession.builder
-             .appName("BenchmarkSparkRead")
-             .config("spark.driver.host", "127.0.0.1")
-             .config("spark.driver.bindAddress", "127.0.0.1")
-             .getOrCreate())
+    # Configuration
+    md_dbs_and_tables = [
+        {"db_name": "db1", "table_name": "t_data", "label": "MotherDuck Unsorted"},
+        {"db_name": "db_sorted", "table_name": "t_data_sorted", "label": "MotherDuck Sorted"}
+    ]
     
-    # Suppress verbose logging
-    spark.sparkContext.setLogLevel("ERROR")
+    local_config = {
+        "file_path": "/Volumes/xd1/data/*.parquet",
+        "label": "Local Parquet"
+    }
     
-    return spark
-
-def benchmark_spark_read(spark):
-    start_time = time.time()
-    df = spark.read.parquet(DATA_PATH)
-    grouped = df.groupBy("rand_dt").agg(F.count_distinct("rand_str").alias("distinct_rand_str_count")).orderBy("distinct_rand_str_count", ascending=False)
-    grouped.collect()
-    elapsed_time = time.time() - start_time
-    return elapsed_time
-
-def benchmark_duckdb_read():
-    start_time = time.time()
-    cn = duckdb.connect()
-    cn.sql(f"select rand_dt, count(distinct rand_str) from read_parquet('{DATA_PATH}') group by all order by 2 desc").fetchall()
-    cn.close()
-    elapsed_time = time.time() - start_time
-    return elapsed_time
-
-def run_benchmarks(num_runs=5):
-    print(f"Running {num_runs} benchmark iterations...\n")
-    print("Initializing Spark session...")
-    spark = create_spark_session()
-    print("Spark session ready.\n")
+    num_runs = 5
+    results = []
     
-    duckdb_times = []
-    spark_times = []
+    # Benchmark MotherDuck queries
+    print("="*70)
+    print("RUNNING MOTHERDUCK BENCHMARKS")
+    print("="*70 + "\n")
     
-    try:
-        for i in range(1, num_runs + 1):
-            print(f"Run {i}/{num_runs}...")
-            
-            # DuckDB
-            duckdb_time = benchmark_duckdb_read()
-            duckdb_times.append(duckdb_time)
-            print(f"  DuckDB: {duckdb_time:.2f}s")
-            
-            # Spark
-            spark_time = benchmark_spark_read(spark)
-            spark_times.append(spark_time)
-            print(f"  Spark:  {spark_time:.2f}s")
-            print()
-    finally:
-        # Clean up Spark session
-        spark.stop()
-        print("Spark session stopped.\n")
+    cn_md = duckdb.connect(f'md:?motherduck_token={os.getenv("MD_TOKEN")}')
     
-    # Calculate statistics
-    duckdb_avg = statistics.mean(duckdb_times)
-    duckdb_min = min(duckdb_times)
-    duckdb_max = max(duckdb_times)
-    duckdb_median = statistics.median(duckdb_times)
+    for config in md_dbs_and_tables:
+        print(f"Testing: {config['label']}")
+        print(f"  Database: {config['db_name']}, Table: {config['table_name']}")
+        
+        sql = f"""
+            select rand_dt, sum(rand_val), count(*)
+            from {config['db_name']}.main.{config['table_name']}
+            group by 1
+            order by 1 desc
+            limit 30
+        """
+        
+        times = []
+        for i in range(num_runs):
+            start_time = time.time()
+            result = cn_md.execute(sql).fetchall()
+            elapsed_time = time.time() - start_time
+            times.append(elapsed_time)
+            print(f"  Run {i+1}/{num_runs}: {elapsed_time:.2f}s")
+        
+        results.append({
+            "label": config['label'],
+            "times": times,
+            "avg": statistics.mean(times),
+            "min": min(times),
+            "max": max(times),
+            "median": statistics.median(times)
+        })
+        print()
     
-    spark_avg = statistics.mean(spark_times)
-    spark_min = min(spark_times)
-    spark_max = max(spark_times)
-    spark_median = statistics.median(spark_times)
+    cn_md.close()
     
-    # Print results
+    # Benchmark local query
+    print("="*70)
+    print("RUNNING LOCAL BENCHMARK")
+    print("="*70 + "\n")
+    
+    print(f"Testing: {local_config['label']}")
+    print(f"  File Path: {local_config['file_path']}")
+    
+    cn_local = duckdb.connect(':memory:')
+    
+    sql = f"""
+        select rand_dt, sum(rand_val), count(*)
+        from read_parquet('{local_config['file_path']}')
+        group by 1
+        order by 1 desc
+        limit 30
+    """
+    
+    times = []
+    for i in range(num_runs):
+        start_time = time.time()
+        result = cn_local.execute(sql).fetchall()
+        elapsed_time = time.time() - start_time
+        times.append(elapsed_time)
+        print(f"  Run {i+1}/{num_runs}: {elapsed_time:.2f}s")
+    
+    results.append({
+        "label": local_config['label'],
+        "times": times,
+        "avg": statistics.mean(times),
+        "min": min(times),
+        "max": max(times),
+        "median": statistics.median(times)
+    })
+    
+    cn_local.close()
+    
+    # Print summary
     print("\n" + "="*70)
-    print(f"{'BENCHMARK RESULTS':^70}")
+    print("BENCHMARK RESULTS SUMMARY")
     print("="*70)
-    print(f"{'Metric':<20} {'DuckDB':>20} {'Spark':>20} {'Winner':>10}")
-    print("-"*70)
-    print(f"{'Average':<20} {duckdb_avg:>18.2f}s {spark_avg:>18.2f}s {_winner(duckdb_avg, spark_avg):>10}")
-    print(f"{'Median':<20} {duckdb_median:>18.2f}s {spark_median:>18.2f}s {_winner(duckdb_median, spark_median):>10}")
-    print(f"{'Min':<20} {duckdb_min:>18.2f}s {spark_min:>18.2f}s {_winner(duckdb_min, spark_min):>10}")
-    print(f"{'Max':<20} {duckdb_max:>18.2f}s {spark_max:>18.2f}s {_winner(duckdb_max, spark_max):>10}")
+    print(f"{'Query':<25} {'Avg (s)':>10} {'Min (s)':>10} {'Max (s)':>10} {'Median (s)':>10}")
     print("-"*70)
     
-    speedup = spark_avg / duckdb_avg if duckdb_avg > 0 else 0
-    if speedup >= 1:
-        print(f"DuckDB is {speedup:.2f}x faster than Spark on average")
-    else:
-        print(f"Spark is {1/speedup:.2f}x faster than DuckDB on average")
+    for result in results:
+        print(f"{result['label']:<25} {result['avg']:>10.2f} {result['min']:>10.2f} {result['max']:>10.2f} {result['median']:>10.2f}")
+    
     print("="*70)
+    
+    # Find fastest
+    fastest = min(results, key=lambda x: x['avg'])
+    print(f"\nFastest: {fastest['label']} with average of {fastest['avg']:.2f} seconds")
 
-def _winner(duckdb_val, spark_val):
-    return "DuckDB" if duckdb_val < spark_val else "Spark"
 
 if __name__ == "__main__":
-    run_benchmarks(num_runs=5)
+    benchmark_queries()

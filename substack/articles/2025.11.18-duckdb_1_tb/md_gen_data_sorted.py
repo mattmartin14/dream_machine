@@ -1,6 +1,7 @@
 import duckdb
 import os
 import time
+from datetime import date, timedelta
 
 def create_assets(cn: duckdb.DuckDBPyConnection):
 
@@ -62,13 +63,9 @@ def load_data(cn: duckdb.DuckDBPyConnection, iterations):
     
     start_time = time.time()
 
-
-    elapsed_time = time.time() - start_time
-    print(f'table t_data created in {elapsed_time:.2f} seconds')
-
     # Starting date
-    from datetime import date, timedelta
-    current_date = date(2024, 1, 1)
+    #current_date = date(2024, 1, 1)
+    current_date = date(2027, 11, 4)
 
     for i in range(iterations):
         iter_start_time = time.time()
@@ -99,10 +96,10 @@ def create_cn() -> duckdb.DuckDBPyConnection:
 
 if __name__ == "__main__":
 
+    #_ITERATIONS = 30
     _ITERATIONS = 30
-    # 1,400
 
     cn = create_cn()
-    create_assets(cn)
+    #create_assets(cn)
     load_data(cn, iterations=_ITERATIONS)
     print('data loaded to motherduck')
