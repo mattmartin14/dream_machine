@@ -7,9 +7,15 @@ def benchmark_queries():
     """Run benchmarks across MotherDuck and local datasets"""
     
     # Configuration
+    # md_dbs_and_tables = [
+    #     {"db_name": "db1", "table_name": "t_data", "label": "MotherDuck Unsorted"},
+    #     {"db_name": "db_sorted", "table_name": "t_data_sorted", "label": "MotherDuck Sorted"}
+    # ]
+
     md_dbs_and_tables = [
-        {"db_name": "db1", "table_name": "t_data", "label": "MotherDuck Unsorted"},
-        {"db_name": "db_sorted", "table_name": "t_data_sorted", "label": "MotherDuck Sorted"}
+        {"db_name": "db_sorted", "table_name": "t_data_sorted", "label": "MotherDuck Sorted"},
+        {"db_name": "db1", "table_name": "t_data", "label": "MotherDuck Unsorted"}
+        
     ]
     
     local_config = {
