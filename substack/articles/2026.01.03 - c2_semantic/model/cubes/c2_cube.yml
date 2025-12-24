@@ -1,0 +1,33 @@
+cubes:
+- name: c2_cube
+  sql: SELECT * FROM read_csv_auto('/data/workouts/*summary*.csv')
+
+  dimensions:
+
+  - name: id
+    sql: "\"Log ID\""
+    type: number
+    primary_key: true
+
+  - name: "workout_date"
+    sql: "\"Date\""
+    type: time
+
+  - name: machine
+    sql: "Type"
+    type: string
+
+  measures:
+  - name: count
+    type: count
+
+  - name: total_distance_meters
+    title: "Total Distance (Meters)"
+    sql: "\"Work Distance\""
+    type: sum
+
+  - name: total_time_sec
+    title: "Total Time (Sec)"
+    sql: "\"Work Time (Seconds)\""
+    type: sum
+  
