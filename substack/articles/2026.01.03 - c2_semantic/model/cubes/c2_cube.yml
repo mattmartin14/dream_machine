@@ -30,4 +30,52 @@ cubes:
     title: "Total Time (Sec)"
     sql: "\"Work Time (Seconds)\""
     type: sum
+
+  - name: spm
+    title: "Strokes Per Minute"
+    sql: "sum(\"Stroke Count\") / sum(\"Work Time (Seconds)\") * 60.0"
+    type: number
+
+  - name: split_time_per_500m
+    title: "Split Time per 500m (Sec)"
+    sql: "CASE WHEN SUM(\"Work Distance\") = 0 THEN NULL ELSE (SUM(\"Work Time (Seconds)\") * 500.0) / SUM(\"Work Distance\") END"
+    type: number
+
+  - name: split_time_per_500m_mm_ss
+    title: "Split Time per 500m (mm:ss.ff)"
+    type: string
+    sql: |
+      CASE
+        WHEN SUM("Work Distance") = 0 THEN NULL
+        ELSE printf(
+          '%d:%05.2f',
+          CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2) / 60.0) AS INTEGER),
+          ROUND(
+            ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2)
+            - CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2) / 60.0) AS INTEGER) * 60.0,
+            2
+          )
+        )
+      END
+
+  - name: avg_drag_factor
+    title: "Average Drag Factor"
+    sql: "AVG(\"Drag Factor\")"
+    type: number
+
+  # - name: pace_sec
+  #   title: "Split per 500m (Sec)"
+  #   sql: 'CASE WHEN SUM("Work Distance") = 0 THEN NULL ELSE ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance")) END'
+  #   type: number
+
+  # - name: pace_mm_ss
+  #   title: "Split per 500m (mm:ss)"
+  #   #// Formats the rounded seconds as mm:ss
+  #   sql: 'CASE WHEN SUM("Work Distance") = 0 THEN NULL ELSE printf(''%d:%02d'', CAST(CAST(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance")) AS INTEGER) / 60 AS INTEGER), CAST(CAST(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance")) AS INTEGER) % 60 AS INTEGER)) END'
+  #   type: number
+
+  # - name: pace
+  #   title: "Pace (Sec/Meter)"
+  #   sql: "CASE WHEN SUM(\"Work Distance\") = 0 THEN NULL ELSE SUM(\"Work Time (Seconds)\") / SUM(\"Work Distance\") END"
+  #   type: number
   
