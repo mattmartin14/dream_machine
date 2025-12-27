@@ -8,5 +8,8 @@ services:
       - CUBEJS_DEV_MODE=true
       - CUBEJS_DB_TYPE=duckdb
     volumes:
-      - .:/cube/conf
+      # maps our cube model over
+      - ./model/cubes:/cube/conf/model/cubes:ro
+
+      # maps our workout data over
       - ${HOME}/concept2/workouts:/data/workouts:ro
