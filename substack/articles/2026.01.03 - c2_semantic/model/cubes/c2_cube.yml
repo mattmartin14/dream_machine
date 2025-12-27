@@ -34,7 +34,9 @@ cubes:
 
   measures:
   - name: workout_cnt
-    type: count
+    title: "Total Workouts"
+    sql: "{CUBE.id}"   
+    type: countDistinct
 
   - name: total_distance_m
     title: "Total Distance (Meters)"
