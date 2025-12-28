@@ -1,6 +1,9 @@
 cubes:
 - name: c2_cube
   sql: SELECT * FROM read_csv_auto('/data/workouts/*summary*.csv')
+  refreshKey:
+    every: 10 seconds
+
 
   dimensions:
 
@@ -53,27 +56,35 @@ cubes:
     sql: "\"Stroke Count\""
     type: sum
 
-  - name: total_calolries
+  - name: total_calories
     title: "Total Calories Burned"
     sql: "\"Total Cal\""
     type: sum
 
-  - name: watts_avg
+  - name: avg_watts
     title: "Average Watts"
     sql: "ROUND(AVG(\"Avg Watts\"),2)"
     type: number
 
-  - name: session_duration_min
-    title: "Average Session Duration (Minutes)"
-    sql: "ROUND(AVG(\"Work Time (Seconds)\"/60.0),2)"
-    type: number
+  - name: avg_session_duration
+    title: "Average Session Duration (mm:ss)"
+    type: string
+    sql: |
+      CASE
+        WHEN COUNT("Log ID") = 0 THEN NULL
+        ELSE printf(
+          '%d:%02d',
+          CAST(FLOOR(ROUND(SUM("Work Time (Seconds)") / COUNT("Log ID")) / 60.0) AS INTEGER),
+          CAST(CAST(ROUND(SUM("Work Time (Seconds)") / COUNT("Log ID")) AS INTEGER) % 60 AS INTEGER)
+        )
+      END
 
-  - name: spm
+  - name: avg_spm
     title: "Average Strokes Per Minute"
-    sql: "sum(\"Stroke Count\") / sum(\"Work Time (Seconds)\") * 60.0"
+    sql: "cast(sum(\"Stroke Count\") / sum(\"Work Time (Seconds)\") * 60.0 as decimal(10,2))"
     type: number
 
-  - name: pace
+  - name: avg_pace
     title: "Average Split Time per 500m (mm:ss.ff)"
     type: string
     sql: |
@@ -90,7 +101,7 @@ cubes:
         )
       END
 
-  - name: drag_factor
+  - name: avg_drag_factor
     title: "Average Drag Factor"
     sql: "ROUND(AVG(\"Drag Factor\"),2)"
     type: number
