@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>C2 Metrics Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #0f172a; /* slate-900 */
+        --panel: #111827; /* gray-900 */
+        --text: #e5e7eb; /* gray-200 */
+        --muted: #9ca3af; /* gray-400 */
+        --accent: #60a5fa; /* blue-400 */
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0; padding: 24px; background: var(--bg); color: var(--text);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      }
+      header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; }
+      h1 { font-size: 22px; margin: 0; }
+      .subtitle { color: var(--muted); font-size: 14px; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+      .card {
+        background: var(--panel); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+      }
+      .card h2 { font-size: 16px; margin: 0 0 8px; color: var(--text); }
+      .config { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+      .config input { flex: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #0b1220; color: var(--text); }
+      .config select { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #0b1220; color: var(--text); min-width: 120px; }
+      .config button { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: #0b1220; color: var(--text); cursor: pointer; }
+      .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+      /* Chart.js recommends sizing the container, not the canvas, to avoid Safari layout loops */
+      .chart-container { position: relative; width: 100%; height: 280px; }
+      canvas { width: 100%; }
+      a { color: var(--accent); text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>C2 Metrics Dashboard</h1>
+      <span class="subtitle">Daily and Weekly trends from Cube</span>
+    </header>
+
+    <div class="config">
+      <label for="cube-url" style="white-space:nowrap">Cube URL:</label>
+      <input id="cube-url" type="text" value="http://localhost:4000" />
+      <label for="auth-token" style="white-space:nowrap">Auth (optional):</label>
+      <input id="auth-token" type="text" placeholder="Bearer <token> or empty in dev" />
+      <label for="machine" style="white-space:nowrap">Machine:</label>
+      <select id="machine">
+        <option value="RowErg" selected>RowErg</option>
+        <option value="SkiErg">SkiErg</option>
+        <option value="BikeErg">BikeErg</option>
+      </select>
+      <label for="start-date" style="white-space:nowrap">Start Date:</label>
+      <input id="start-date" type="date" value="2025-07-01" style="flex: 0 0 auto;" />
+      <label for="use-start-date" style="white-space:nowrap">Use</label>
+      <input id="use-start-date" type="checkbox" checked style="flex: 0 0 auto; width: auto;" />
+      <button id="reload">Reload Data</button>
+    </div>
+    <div class="hint">If requests fail, ensure the Cube service is running (docker compose up -d) and update the URL/token as needed.</div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Avg Strokes per Minute — Daily</h2>
+        <div class="chart-container"><canvas id="spmDaily"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Avg Watts — Daily</h2>
+        <div class="chart-container"><canvas id="wattsDaily"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Avg Pace — Daily</h2>
+        <div class="chart-container"><canvas id="paceDaily"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Avg Session Duration — Daily</h2>
+        <div class="chart-container"><canvas id="durationDaily"></canvas></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+      const DEFAULT_MACHINE = 'RowErg';
+
+      function getConfig() {
+        const url = document.getElementById('cube-url').value.trim() || 'http://localhost:4000';
+        const token = document.getElementById('auth-token').value.trim();
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = token.startsWith('Bearer') ? token : `Bearer ${token}`;
+        return { url, headers };
+      }
+
+      function getMachine() {
+        const sel = document.getElementById('machine');
+        return (sel?.value || DEFAULT_MACHINE).trim();
+      }
+
+      function getStartDateEnabled() {
+        const cb = document.getElementById('use-start-date');
+        return !!cb?.checked;
+      }
+
+      function getStartDate() {
+        const inp = document.getElementById('start-date');
+        const v = (inp?.value || '').trim();
+        // Expect yyyy-mm-dd from <input type="date">
+        return v;
+      }
+
+      async function cubeLoad(query) {
+        const { url, headers } = getConfig();
+        const res = await fetch(`${url}/cubejs-api/v1/load`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ query })
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Cube load failed (${res.status}): ${text}`);
+        }
+        return res.json();
+      }
+
+      function detectTimeKey(row) {
+        const keys = Object.keys(row);
+        const k = keys.find(k => k.includes('workout_date')) || keys[0];
+        return k;
+      }
+
+      function extractSeries(result, measureKey) {
+        const rows = result.data || result.loadResponse?.data || [];
+        if (rows.length === 0) return { labels: [], values: [] };
+        const timeKey = detectTimeKey(rows[0]);
+        const labels = rows.map(r => formatDateLabel(r[timeKey]));
+        const values = rows.map(r => {
+          const val = r[measureKey];
+          return normalizeValue(measureKey, val);
+        });
+        return { labels, values };
+      }
+
+      // Format date labels as yyyy-mm-dd (strip time component if present)
+      function formatDateLabel(s) {
+        if (s == null) return '';
+        if (typeof s !== 'string') {
+          try { return new Date(s).toISOString().slice(0, 10); } catch { return ''; }
+        }
+        const t = s.trim();
+        // Handles ISO "YYYY-MM-DDTHH:mm:ss..." and plain "YYYY-MM-DD HH:mm:ss"
+        if (t.includes('T')) return t.split('T')[0];
+        if (t.includes(' ')) return t.split(' ')[0];
+        // If already in yyyy-mm-dd, return as-is
+        return t.length >= 10 ? t.slice(0,10) : t;
+      }
+
+      // Normalize measure values; time measures are parsed to seconds
+      function normalizeValue(measureKey, val) {
+        const isTime = /pace|duration/i.test(measureKey);
+        if (!isTime) {
+          return typeof val === 'string' ? parseFloat(val) : val;
+        }
+        return parseTimeToSeconds(val);
+      }
+
+      // Accept values like "mm:ss", "m:ss", seconds number, or string seconds
+      function parseTimeToSeconds(val) {
+        if (val == null) return 0;
+        if (typeof val === 'number') return val; // assume already seconds
+        if (typeof val === 'string') {
+          const s = val.trim();
+          if (s.includes(':')) {
+            const [mm, ss] = s.split(':');
+            const m = parseInt(mm, 10) || 0;
+            const sec = parseInt(ss, 10) || 0;
+            return m * 60 + sec;
+          }
+          const n = parseFloat(s);
+          return isNaN(n) ? 0 : n; // assume seconds
+        }
+        return 0;
+      }
+
+      function formatSecondsToMMSS(seconds) {
+        const s = Math.max(0, Math.round(seconds));
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${m}:${sec.toString().padStart(2, '0')}`;
+      }
+
+      function makeLineChart(ctx, { labels, values }, color, label, valueFormatter, yOptions) {
+        return new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label,
+              data: values,
+              borderColor: color,
+              backgroundColor: color,
+              tension: 0.25,
+              fill: false,
+              pointRadius: 2,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                mode: 'index', intersect: false,
+                callbacks: {
+                  title: (items) => {
+                    const raw = items?.[0]?.label ?? '';
+                    return raw; // labels are already yyyy-mm-dd
+                  },
+                  label: (ctx) => {
+                    const raw = ctx.parsed?.y;
+                    const v = valueFormatter ? valueFormatter(raw) : raw;
+                    return `${ctx.dataset.label}: ${v}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: '#cbd5e1',
+                  // labels already formatted; return as-is for clarity
+                  callback: (value, index, ticks) => labels[index]
+                },
+                grid: { color: 'rgba(255,255,255,0.06)' }
+              },
+              y: {
+                ticks: {
+                  color: '#cbd5e1',
+                  callback: (value) => (valueFormatter ? valueFormatter(value) : value),
+                  stepSize: yOptions?.stepSize
+                },
+                grid: { color: 'rgba(255,255,255,0.06)' },
+                beginAtZero: yOptions?.beginAtZero ?? (valueFormatter ? false : true),
+                min: yOptions?.min,
+                max: yOptions?.max
+              }
+            }
+          }
+        });
+      }
+
+      function computeTimeAxisOptions(values) {
+        if (!values || values.length === 0) return {};
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        if (!isFinite(min) || !isFinite(max)) return {};
+        const range = Math.max(1, max - min);
+        const padding = Math.max(3, Math.round(range * 0.08)); // ~8% padding, at least 3s
+        const yMin = Math.max(0, min - padding);
+        const yMax = max + padding;
+        let step;
+        if (range <= 60) step = 5;           // 5s ticks for <=1 min range
+        else if (range <= 120) step = 10;    // 10s ticks for <=2 min range
+        else if (range <= 300) step = 15;    // 15s ticks for <=5 min range
+        else step = 30;                      // 30s otherwise
+        return { min: yMin, max: yMax, stepSize: step };
+      }
+
+      function computeNumericAxisOptions(values) {
+        if (!values || values.length === 0) return {};
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        if (!isFinite(min) || !isFinite(max)) return {};
+        const range = Math.max(1e-6, max - min);
+        const padding = Math.max(1, Math.round(range * 0.08)); // ~8% padding, at least 1 unit
+        const yMin = min - padding;
+        const yMax = max + padding;
+        const r = yMax - yMin;
+        let step;
+        if (r <= 5) step = 1;
+        else if (r <= 10) step = 2;
+        else if (r <= 20) step = 5;
+        else if (r <= 50) step = 10;
+        else if (r <= 100) step = 20;
+        else step = 50;
+        return { min: yMin, max: yMax, stepSize: step, beginAtZero: false };
+      }
+
+      function quantile(values, q) {
+        const arr = (values || []).filter(v => isFinite(v)).slice().sort((a,b) => a-b);
+        const n = arr.length;
+        if (n === 0) return NaN;
+        const idx = (n - 1) * q;
+        const lo = Math.floor(idx);
+        const hi = Math.ceil(idx);
+        if (lo === hi) return arr[lo];
+        const h = idx - lo;
+        return arr[lo] + h * (arr[hi] - arr[lo]);
+      }
+
+      function computeSPMAxisOptions(values) {
+        if (!values || values.length === 0) return {};
+        const p05 = quantile(values, 0.05);
+        const p95 = quantile(values, 0.95);
+        if (!isFinite(p05) || !isFinite(p95)) return computeNumericAxisOptions(values);
+        const range = Math.max(1e-6, p95 - p05);
+        const pad = Math.max(0.3, range * 0.08); // ~8% padding, at least 0.3 spm
+        const yMin = Math.max(0, p05 - pad);
+        const yMax = p95 + pad;
+        const r = yMax - yMin;
+        let step;
+        if (r <= 2) step = 0.2;
+        else if (r <= 4) step = 0.5;
+        else if (r <= 10) step = 1;
+        else step = 2;
+        return { min: yMin, max: yMax, stepSize: step, beginAtZero: false };
+      }
+
+      function getSPMYAxisOptions(machine, values) {
+        if (machine === 'RowErg') return { min: 15, max: 30, stepSize: 1, beginAtZero: false };
+        if (machine === 'SkiErg') return { min: 30, max: 50, stepSize: 1, beginAtZero: false };
+        return computeSPMAxisOptions(values);
+      }
+
+      async function loadAll() {
+        const dailyQuery = {
+          timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'day' }],
+          measures: ['c2_cube.avg_watts', 'c2_cube.avg_spm', 'c2_cube.avg_pace', 'c2_cube.avg_session_duration'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: [getMachine()] },
+            { member: 'c2_cube.total_session_minutes', operator: 'gte', values: ['10'] },
+          ]
+        };
+
+        if (getStartDateEnabled()) {
+          const sd = getStartDate();
+          if (sd) {
+            dailyQuery.filters.push({ member: 'c2_cube.workout_date', operator: 'afterOrOnDate', values: [sd] });
+          }
+        }
+
+        try {
+          const dailyRes = await cubeLoad(dailyQuery);
+          const spmDaily = extractSeries(dailyRes, 'c2_cube.avg_spm');
+          const wattsDaily = extractSeries(dailyRes, 'c2_cube.avg_watts');
+          const paceDaily = extractSeries(dailyRes, 'c2_cube.avg_pace');
+          const durationDaily = extractSeries(dailyRes, 'c2_cube.avg_session_duration');
+
+          // Destroy existing charts if any
+          window.__charts?.forEach(c => c.destroy());
+          window.__charts = [];
+
+          const machine = getMachine();
+          window.__charts.push(
+            makeLineChart(
+              document.getElementById('spmDaily'),
+              spmDaily,
+              '#34d399',
+              'Avg SPM',
+              undefined,
+              getSPMYAxisOptions(machine, spmDaily.values)
+            ),
+            makeLineChart(
+              document.getElementById('wattsDaily'),
+              wattsDaily,
+              '#60a5fa',
+              'Avg Watts',
+              undefined,
+              computeNumericAxisOptions(wattsDaily.values)
+            ),
+            makeLineChart(
+              document.getElementById('paceDaily'),
+              paceDaily,
+              '#22d3ee',
+              'Avg Pace',
+              formatSecondsToMMSS,
+              computeTimeAxisOptions(paceDaily.values)
+            ),
+            makeLineChart(
+              document.getElementById('durationDaily'),
+              durationDaily,
+              '#f59e0b',
+              'Avg Session Duration',
+              formatSecondsToMMSS,
+              computeTimeAxisOptions(durationDaily.values)
+            )
+          );
+        } catch (e) {
+          console.error(e);
+          alert(e.message);
+        }
+      }
+
+      document.getElementById('reload').addEventListener('click', loadAll);
+      document.getElementById('machine').addEventListener('change', loadAll);
+      document.getElementById('start-date').addEventListener('change', loadAll);
+      document.getElementById('use-start-date').addEventListener('change', loadAll);
+      // Initial load after a short delay to let Cube start
+      setTimeout(loadAll, 300);
+    </script>
+  </body>
+</html>
