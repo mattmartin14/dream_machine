@@ -105,5 +105,10 @@ cubes:
     title: "Average Drag Factor"
     sql: "ROUND(AVG(\"Drag Factor\"),2)"
     type: number
+  
+  - name: total_session_minutes
+    title: "Total Session Duration (Minutes)"
+    sql: "ROUND(SUM(\"Work Time (Seconds)\") / 60.0, 2)"
+    type: number
 
   

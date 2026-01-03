@@ -25,6 +25,7 @@
       h1 { font-size: 22px; margin: 0; }
       .subtitle { color: var(--muted); font-size: 14px; }
       .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
+      .daily-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 16px; max-width: 1200px; margin: 0 auto; align-items: start; }
       .card {
         background: var(--panel); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);
         box-shadow: 0 1px 2px rgba(0,0,0,0.25);
@@ -39,6 +40,16 @@
       .chart-container { position: relative; width: 100%; height: 280px; }
       canvas { width: 100%; }
       a { color: var(--accent); text-decoration: none; }
+      /* Tabs */
+      .tabs { display: inline-flex; gap: 6px; background: #0b1220; border: 1px solid rgba(255,255,255,0.08); padding: 4px; border-radius: 10px; }
+      .tab { appearance: none; border: none; background: transparent; color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      .tab:hover { background: rgba(255,255,255,0.06); }
+      .tab.active { background: var(--accent); color: #0b1220; }
+      .hidden { display: none; }
+      .kpi-value { font-size: 24px; font-weight: 600; color: var(--text); margin-top: 6px; }
+      .kpi-subtitle { color: var(--muted); font-size: 12px; }
+      .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .kpi-label { color: var(--muted); }
     </style>
   </head>
   <body>
@@ -52,12 +63,12 @@
       <input id="cube-url" type="text" value="http://localhost:4000" />
       <label for="auth-token" style="white-space:nowrap">Auth (optional):</label>
       <input id="auth-token" type="text" placeholder="Bearer <token> or empty in dev" />
-      <label for="machine" style="white-space:nowrap">Machine:</label>
-      <select id="machine">
-        <option value="RowErg" selected>RowErg</option>
-        <option value="SkiErg">SkiErg</option>
-        <option value="BikeErg">BikeErg</option>
-      </select>
+      <div class="tabs" role="tablist" aria-label="View selector">
+        <button class="tab active" role="tab" aria-selected="true" data-view="daily" data-machine="RowErg">RowErg</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="daily" data-machine="SkiErg">SkiErg</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="summary">Summary</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="watts">Watts</button>
+      </div>
       <label for="start-date" style="white-space:nowrap">Start Date:</label>
       <input id="start-date" type="date" value="2025-07-01" style="flex: 0 0 auto;" />
       <label for="use-start-date" style="white-space:nowrap">Use</label>
@@ -66,28 +77,107 @@
     </div>
     <div class="hint">If requests fail, ensure the Cube service is running (docker compose up -d) and update the URL/token as needed.</div>
 
-    <div class="grid">
-      <div class="card">
-        <h2>Avg Strokes per Minute — Daily</h2>
-        <div class="chart-container"><canvas id="spmDaily"></canvas></div>
+    <div id="daily-section" class="daily-layout">
+      <div class="card" id="latest-card">
+        <h2>Most Recent Workout — <span id="latest-machine">RowErg</span></h2>
+        <div class="kpi-row">
+          <div>
+            <div class="kpi-label">Workout Date</div>
+            <div id="latest-date" class="kpi-value">—</div>
+          </div>
+          <div>
+            <div class="kpi-label">Total Distance</div>
+            <div id="latest-distance-km" class="kpi-value">—</div>
+          </div>
+        </div>
+        <div class="kpi-row" style="margin-top: 10px;">
+          <div>
+            <div class="kpi-label">Avg Pace</div>
+            <div id="latest-pace" class="kpi-value">—</div>
+          </div>
+          <div>
+            <div class="kpi-label">Avg Watts</div>
+            <div id="latest-watts" class="kpi-value">—</div>
+          </div>
+        </div>
+        <div class="kpi-row" style="margin-top: 10px;">
+          <div>
+            <div class="kpi-label">Avg SPM</div>
+            <div id="latest-spm" class="kpi-value">—</div>
+          </div>
+          <div>
+            <div class="kpi-label">Total Time</div>
+            <div id="latest-duration" class="kpi-value">—</div>
+          </div>
+        </div>
+        <div class="kpi-subtitle" style="margin-top: 8px;">Shows the most recent day with any workout for the selected machine.</div>
+      </div>
+      <div>
+        <div class="grid">
+          <div class="card">
+            <h2>Avg Strokes per Minute — Daily</h2>
+            <div class="chart-container"><canvas id="spmDaily"></canvas></div>
+          </div>
+          <div class="card">
+            <h2>Avg Watts — Daily</h2>
+            <div class="chart-container"><canvas id="wattsDaily"></canvas></div>
+          </div>
+          <div class="card">
+            <h2>Avg Pace — Daily</h2>
+            <div class="chart-container"><canvas id="paceDaily"></canvas></div>
+          </div>
+          <div class="card">
+            <h2>Avg Session Duration — Daily</h2>
+            <div class="chart-container"><canvas id="durationDaily"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="summary-section" class="grid hidden">
+      <div class="card" style="grid-column: span 2;">
+        <h2>Monthly Distance (km) — RowErg vs SkiErg</h2>
+        <div class="chart-container" style="height: 340px;"><canvas id="distanceMonthlySummary"></canvas></div>
+      </div>
+      <div class="card" style="grid-column: span 2;">
+        <h2>Lifetime Total Distance (km)</h2>
+        <div id="kpi-total-km" class="kpi-value">—</div>
+        <div class="kpi-subtitle">RowErg + SkiErg</div>
       </div>
       <div class="card">
-        <h2>Avg Watts — Daily</h2>
-        <div class="chart-container"><canvas id="wattsDaily"></canvas></div>
+        <h2>RowErg Total Distance (km)</h2>
+        <div id="kpi-row-km" class="kpi-value">—</div>
       </div>
       <div class="card">
-        <h2>Avg Pace — Daily</h2>
-        <div class="chart-container"><canvas id="paceDaily"></canvas></div>
+        <h2>SkiErg Total Distance (km)</h2>
+        <div id="kpi-ski-km" class="kpi-value">—</div>
       </div>
       <div class="card">
-        <h2>Avg Session Duration — Daily</h2>
-        <div class="chart-container"><canvas id="durationDaily"></canvas></div>
+        <h2>RowErg Lifetime Avg Pace</h2>
+        <div id="kpi-row-pace" class="kpi-value">—</div>
+      </div>
+      <div class="card">
+        <h2>SkiErg Lifetime Avg Pace</h2>
+        <div id="kpi-ski-pace" class="kpi-value">—</div>
+      </div>
+    </div>
+
+    <div id="watts-section" class="grid hidden">
+      <div class="card" style="grid-column: span 2;">
+        <h2>Avg Watts per Month — RowErg</h2>
+        <div class="chart-container" style="height: 340px;"><canvas id="wattsMonthlyRow"></canvas></div>
+      </div>
+      <div class="card" style="grid-column: span 2;">
+        <h2>Avg Watts per Month — SkiErg</h2>
+        <div class="chart-container" style="height: 340px;"><canvas id="wattsMonthlySki"></canvas></div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
       const DEFAULT_MACHINE = 'RowErg';
+      let activeMachine = DEFAULT_MACHINE;
+      let activeView = 'daily';
 
       function getConfig() {
         const url = document.getElementById('cube-url').value.trim() || 'http://localhost:4000';
@@ -98,8 +188,9 @@
       }
 
       function getMachine() {
-        const sel = document.getElementById('machine');
-        return (sel?.value || DEFAULT_MACHINE).trim();
+        const el = document.querySelector('.tab.active');
+        const v = el?.dataset?.machine || activeMachine || DEFAULT_MACHINE;
+        return v.trim();
       }
 
       function getStartDateEnabled() {
@@ -134,6 +225,12 @@
         return k;
       }
 
+      function detectMachineKey(row) {
+        const keys = Object.keys(row);
+        const k = keys.find(k => k.toLowerCase().includes('machine')) || keys[0];
+        return k;
+      }
+
       function extractSeries(result, measureKey) {
         const rows = result.data || result.loadResponse?.data || [];
         if (rows.length === 0) return { labels: [], values: [] };
@@ -160,6 +257,12 @@
         return t.length >= 10 ? t.slice(0,10) : t;
       }
 
+      // Format month labels as yyyy-mm
+      function formatMonthLabel(s) {
+        const d = formatDateLabel(s);
+        return d ? d.slice(0, 7) : '';
+      }
+
       // Normalize measure values; time measures are parsed to seconds
       function normalizeValue(measureKey, val) {
         const isTime = /pace|duration/i.test(measureKey);
@@ -178,7 +281,7 @@
           if (s.includes(':')) {
             const [mm, ss] = s.split(':');
             const m = parseInt(mm, 10) || 0;
-            const sec = parseInt(ss, 10) || 0;
+            const sec = parseFloat(ss) || 0; // allow fractional seconds
             return m * 60 + sec;
           }
           const n = parseFloat(s);
@@ -194,7 +297,22 @@
         return `${m}:${sec.toString().padStart(2, '0')}`;
       }
 
-      function makeLineChart(ctx, { labels, values }, color, label, valueFormatter, yOptions) {
+      function formatSecondsToMMSSff(seconds) {
+        const s = Math.max(0, Number(seconds));
+        const m = Math.floor(s / 60);
+        const remainder = s - m * 60;
+        const secStr = remainder.toFixed(2);
+        const [intPart, fracPart] = secStr.split('.')
+        const intPadded = (intPart || '0').padStart(2, '0');
+        return `${m}:${intPadded}.${fracPart || '00'}`;
+      }
+
+      function formatMinutesToMMSS(minutes) {
+        const s = Math.round((typeof minutes === 'string' ? parseFloat(minutes) : minutes) * 60);
+        return formatSecondsToMMSS(s);
+      }
+
+      function makeLineChart(ctx, { labels, values }, color, label, valueFormatter, yOptions, extraDatasets) {
         return new Chart(ctx, {
           type: 'line',
           data: {
@@ -207,7 +325,7 @@
               tension: 0.25,
               fill: false,
               pointRadius: 2,
-            }]
+            }].concat(extraDatasets || [])
           },
           options: {
             responsive: true,
@@ -223,6 +341,14 @@
                   },
                   label: (ctx) => {
                     const raw = ctx.parsed?.y;
+                    const isTrend = /trend/i.test(ctx.dataset?.label || '');
+                    if (isTrend) {
+                      // For time series trend (pace/duration), show mm:ss.ff; otherwise 2 decimals
+                      if (valueFormatter === formatSecondsToMMSS) {
+                        return `${ctx.dataset.label}: ${formatSecondsToMMSSff(raw)}`;
+                      }
+                      return `${ctx.dataset.label}: ${isFinite(raw) ? Number(raw).toFixed(2) : raw}`;
+                    }
                     const v = valueFormatter ? valueFormatter(raw) : raw;
                     return `${ctx.dataset.label}: ${v}`;
                   }
@@ -248,6 +374,214 @@
                 beginAtZero: yOptions?.beginAtZero ?? (valueFormatter ? false : true),
                 min: yOptions?.min,
                 max: yOptions?.max
+              }
+            }
+          }
+        });
+      }
+
+      // Global plugin to draw total labels atop each stacked bar
+      const StackedTotalLabelPlugin = {
+        id: 'stackedTotalLabel',
+        afterDraw(chart, args, opts) {
+          const ctx = chart.ctx;
+          const yScale = chart.scales['y'];
+          const xScale = chart.scales['x'];
+          const area = chart.chartArea || {};
+          if (!yScale || !xScale) return;
+          const metas = chart.getSortedVisibleDatasetMetas().filter(m => m.type === 'bar' && !m.hidden);
+          if (metas.length === 0) return;
+          const count = metas[0].data.length;
+
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+          const color = opts?.color || '#e5e7eb';
+          const fontSize = opts?.font?.size || 12;
+          const fontWeight = opts?.font?.weight || 'bold';
+          ctx.fillStyle = color;
+          ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+          ctx.lineWidth = 3;
+          ctx.font = `${fontWeight} ${fontSize}px Inter, system-ui, -apple-system, sans-serif`;
+
+          for (let i = 0; i < count; i++) {
+            let sum = 0;
+            metas.forEach(m => {
+              const v = m.dataset?.data?.[i];
+              const n = typeof v === 'string' ? parseFloat(v) : v;
+              if (isFinite(n)) sum += n;
+            });
+            if (!isFinite(sum) || sum <= 0) continue;
+
+            const el = metas[metas.length - 1].data[i] || metas[0].data[i];
+            const x = el?.x ?? xScale.getPixelForValue(i);
+            let y = yScale.getPixelForValue(sum) - 6;
+            if (typeof area.top === 'number') y = Math.max(area.top + 6, y);
+
+            const text = (opts && typeof opts.formatter === 'function') ? opts.formatter(sum) : `${sum.toFixed(1)} km`;
+            // Outline then fill for readability
+            ctx.strokeText(text, x, y);
+            ctx.fillText(text, x, y);
+          }
+
+          ctx.restore();
+        }
+      };
+      // Register plugin globally so per-chart options take effect
+      Chart.register(StackedTotalLabelPlugin);
+
+      function makeStackedBarChart(ctx, labels, datasets) {
+        return new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                mode: 'index', intersect: false,
+                callbacks: {
+                  footer: (items) => {
+                    if (!items || items.length === 0) return '';
+                    const idx = items[0].dataIndex;
+                    const chart = items[0].chart;
+                    const ds = chart.data?.datasets ?? [];
+                    let sum = 0;
+                    for (const d of ds) {
+                      const v = d.data?.[idx];
+                      const n = typeof v === 'string' ? parseFloat(v) : v;
+                      if (isFinite(n)) sum += n;
+                    }
+                    return `Total: ${sum.toFixed(1)} km`;
+                  }
+                }
+              },
+              stackedTotalLabel: {
+                color: '#e5e7eb',
+                font: { size: 12, weight: 'bold' },
+                formatter: (v) => `${v.toFixed(1)} km`
+              }
+            },
+            scales: {
+              x: { stacked: true, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+              y: { stacked: true, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            }
+          },
+          plugins: [StackedTotalLabelPlugin]
+        });
+      }
+
+      // Compute a simple linear regression trend line over series values
+      function computeLinearTrend(values) {
+        const n = values.length;
+        if (!values || n === 0) return [];
+        const xs = []; const ys = [];
+        for (let i = 0; i < n; i++) {
+          const v = values[i];
+          if (isFinite(v)) { xs.push(i); ys.push(v); }
+        }
+        if (xs.length < 2) return Array(n).fill(null);
+        const mean = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+        const mx = mean(xs);
+        const my = mean(ys);
+        let num = 0, den = 0;
+        for (let i = 0; i < xs.length; i++) {
+          const dx = xs[i] - mx;
+          const dy = ys[i] - my;
+          num += dx * dy;
+          den += dx * dx;
+        }
+        if (den === 0) return Array(n).fill(null);
+        const slope = num / den;
+        const intercept = my - slope * mx;
+        const trend = new Array(n);
+        for (let i = 0; i < n; i++) trend[i] = slope * i + intercept;
+        return trend;
+      }
+
+      function computeMoMPercent(values) {
+        const out = new Array(values.length).fill(null);
+        for (let i = 1; i < values.length; i++) {
+          const prev = values[i-1];
+          const curr = values[i];
+          if (isFinite(prev) && isFinite(curr) && prev !== 0) {
+            out[i] = ((curr - prev) / prev) * 100.0;
+          } else {
+            out[i] = null;
+          }
+        }
+        return out;
+      }
+
+      function makeComboBarLineChart(ctx, labels, barValues, lineValues, dragValues, colors, labelBar, labelLine) {
+        return new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                type: 'bar',
+                label: labelBar,
+                data: barValues,
+                backgroundColor: colors.bar,
+                borderColor: colors.bar,
+                yAxisID: 'y',
+              },
+              {
+                type: 'line',
+                label: labelLine,
+                data: lineValues,
+                borderColor: colors.line,
+                backgroundColor: colors.line,
+                tension: 0,
+                fill: false,
+                pointRadius: 2,
+                yAxisID: 'y1',
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                mode: 'index', intersect: false,
+                callbacks: {
+                  title: (items) => items?.[0]?.label ?? '',
+                  label: (ctx) => {
+                    if (ctx.dataset.yAxisID === 'y1') {
+                      const v = ctx.parsed?.y;
+                      const base = `${ctx.dataset.label}: ${isFinite(v) ? v.toFixed(1) + '% MoM' : '—'}`;
+                      const idx = ctx.dataIndex;
+                      const drag = dragValues?.[idx];
+                      const dragTxt = isFinite(drag) ? ` | Avg Drag: ${Number(drag).toFixed(0)}` : '';
+                      return base + dragTxt;
+                    }
+                    const v = ctx.parsed?.y;
+                    const base = `${ctx.dataset.label}: ${isFinite(v) ? v.toFixed(1) + ' W' : '—'}`;
+                    const idx = ctx.dataIndex;
+                    const drag = dragValues?.[idx];
+                    const dragTxt = isFinite(drag) ? ` | Avg Drag: ${Number(drag).toFixed(0)}` : '';
+                    return base + dragTxt;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { ticks: { color: '#cbd5e1', callback: (v, i) => labels[i] }, grid: { color: 'rgba(255,255,255,0.06)' } },
+              y: {
+                position: 'left',
+                ticks: { color: '#cbd5e1' },
+                grid: { color: 'rgba(255,255,255,0.06)' },
+                ...computeNumericAxisOptions(barValues)
+              },
+              y1: {
+                position: 'right',
+                ticks: { color: '#cbd5e1', callback: (v) => `${v}%` },
+                grid: { drawOnChartArea: false },
+                ...computePercentAxisOptions(lineValues)
               }
             }
           }
@@ -289,6 +623,18 @@
         else if (r <= 100) step = 20;
         else step = 50;
         return { min: yMin, max: yMax, stepSize: step, beginAtZero: false };
+      }
+
+      function computePercentAxisOptions(values) {
+        if (!values || values.length === 0) return { min: -50, max: 50, stepSize: 10 };
+        const arr = values.filter(v => isFinite(v));
+        if (arr.length === 0) return { min: -50, max: 50, stepSize: 10 };
+        const min = Math.min(...arr);
+        const max = Math.max(...arr);
+        const pad = Math.max(2, Math.round((max - min) * 0.1));
+        const yMin = Math.floor(Math.min(-5, min - pad));
+        const yMax = Math.ceil(Math.max(5, max + pad));
+        return { min: yMin, max: yMax, stepSize: 5, beginAtZero: false };
       }
 
       function quantile(values, q) {
@@ -371,7 +717,17 @@
               '#60a5fa',
               'Avg Watts',
               undefined,
-              computeNumericAxisOptions(wattsDaily.values)
+              computeNumericAxisOptions(wattsDaily.values),
+              [{
+                label: 'Avg Watts Trend',
+                data: computeLinearTrend(wattsDaily.values),
+                borderColor: '#93c5fd',
+                backgroundColor: '#93c5fd',
+                tension: 0,
+                fill: false,
+                pointRadius: 0,
+                borderDash: [6, 6],
+              }]
             ),
             makeLineChart(
               document.getElementById('paceDaily'),
@@ -379,7 +735,17 @@
               '#22d3ee',
               'Avg Pace',
               formatSecondsToMMSS,
-              computeTimeAxisOptions(paceDaily.values)
+              computeTimeAxisOptions(paceDaily.values),
+              [{
+                label: 'Avg Pace Trend',
+                data: computeLinearTrend(paceDaily.values),
+                borderColor: '#7dd3fc',
+                backgroundColor: '#7dd3fc',
+                tension: 0,
+                fill: false,
+                pointRadius: 0,
+                borderDash: [6, 6],
+              }]
             ),
             makeLineChart(
               document.getElementById('durationDaily'),
@@ -394,14 +760,279 @@
           console.error(e);
           alert(e.message);
         }
+
+        // Load latest workout card (includes all workouts, no 10-min filter)
+        try {
+          await loadLatestWorkoutCard();
+        } catch (e) {
+          console.warn('Latest workout card load failed:', e);
+        }
       }
 
-      document.getElementById('reload').addEventListener('click', loadAll);
-      document.getElementById('machine').addEventListener('change', loadAll);
-      document.getElementById('start-date').addEventListener('change', loadAll);
-      document.getElementById('use-start-date').addEventListener('change', loadAll);
+      async function loadLatestWorkoutCard() {
+        const query = {
+          timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'day' }],
+          measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace', 'c2_cube.avg_watts', 'c2_cube.total_session_minutes', 'c2_cube.avg_spm'],
+          dimensions: ['c2_cube.workout_date'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: [getMachine()] },
+          ],
+          order: { 'c2_cube.workout_date': 'desc' },
+          limit: 1
+        };
+        const res = await cubeLoad(query);
+        const rows = res.data || res.loadResponse?.data || [];
+        const r = rows[0];
+        document.getElementById('latest-machine').textContent = getMachine();
+        if (!r) {
+          document.getElementById('latest-date').textContent = '—';
+          document.getElementById('latest-distance-km').textContent = '—';
+          document.getElementById('latest-pace').textContent = '—';
+          document.getElementById('latest-watts').textContent = '—';
+          document.getElementById('latest-duration').textContent = '—';
+          return;
+        }
+        const timeKey = detectTimeKey(r);
+        const dateLabel = formatDateLabel(r[timeKey]);
+        const distKm = typeof r['c2_cube.total_distance_km'] === 'string' ? parseFloat(r['c2_cube.total_distance_km']) : r['c2_cube.total_distance_km'];
+        const watts = typeof r['c2_cube.avg_watts'] === 'string' ? parseFloat(r['c2_cube.avg_watts']) : r['c2_cube.avg_watts'];
+        const pace = r['c2_cube.avg_pace'];
+        const spm = typeof r['c2_cube.avg_spm'] === 'string' ? parseFloat(r['c2_cube.avg_spm']) : r['c2_cube.avg_spm'];
+        const minutes = typeof r['c2_cube.total_session_minutes'] === 'string' ? parseFloat(r['c2_cube.total_session_minutes']) : r['c2_cube.total_session_minutes'];
+
+        document.getElementById('latest-date').textContent = dateLabel || '—';
+        document.getElementById('latest-distance-km').textContent = isFinite(distKm) ? `${(Math.round(distKm * 10) / 10).toFixed(1)} km` : '—';
+        document.getElementById('latest-pace').textContent = pace ? formatSecondsToMMSSff(parseTimeToSeconds(pace)) : '—';
+        document.getElementById('latest-spm').textContent = isFinite(spm) ? `${Number(spm).toFixed(1)} spm` : '—';
+        document.getElementById('latest-watts').textContent = isFinite(watts) ? `${Math.round(watts)} W` : '—';
+        document.getElementById('latest-duration').textContent = isFinite(minutes) ? formatMinutesToMMSS(minutes) : '—';
+      }
+
+      async function loadSummary() {
+        const monthlyQuery = {
+          timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'month' }],
+          measures: ['c2_cube.total_distance_km'],
+          dimensions: ['c2_cube.machine'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+          ],
+          order: { 'c2_cube.workout_date': 'asc' }
+        };
+
+        try {
+          const res = await cubeLoad(monthlyQuery);
+          const rows = res.data || res.loadResponse?.data || [];
+          const labelsSet = new Set();
+          const timeKey = rows[0] ? detectTimeKey(rows[0]) : 'c2_cube.workout_date';
+          const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
+          const valKey = 'c2_cube.total_distance_km';
+          const byMonthMachine = {};
+          rows.forEach(r => {
+            const mLabel = formatMonthLabel(r[timeKey]);
+            const machine = (r[machineKey] || '').trim();
+            labelsSet.add(mLabel);
+            byMonthMachine[mLabel] = byMonthMachine[mLabel] || { RowErg: 0, SkiErg: 0 };
+            const v = typeof r[valKey] === 'string' ? parseFloat(r[valKey]) : r[valKey];
+            if (machine === 'RowErg' || machine === 'SkiErg') {
+              byMonthMachine[mLabel][machine] += (isFinite(v) ? v : 0);
+            }
+          });
+          const labels = Array.from(labelsSet).sort();
+          const rowKm = labels.map(l => byMonthMachine[l]?.RowErg ?? 0);
+          const skiKm = labels.map(l => byMonthMachine[l]?.SkiErg ?? 0);
+
+          // Destroy existing charts
+          window.__charts?.forEach(c => c.destroy());
+          window.__charts = [];
+
+          window.__charts.push(
+            makeStackedBarChart(
+              document.getElementById('distanceMonthlySummary'),
+              labels,
+              [
+                { label: 'RowErg', data: rowKm, backgroundColor: '#60a5fa', stack: 'distance' },
+                { label: 'SkiErg', data: skiKm, backgroundColor: '#22d3ee', stack: 'distance' },
+              ]
+            )
+          );
+
+          await loadLifetimeKPIs();
+        } catch (e) {
+          console.error(e);
+          alert(e.message);
+        }
+      }
+
+      async function loadWatts() {
+        const monthlyQuery = {
+          timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'month' }],
+          measures: ['c2_cube.avg_watts', 'c2_cube.avg_drag_factor'],
+          dimensions: ['c2_cube.machine'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+          ],
+          order: { 'c2_cube.workout_date': 'asc' }
+        };
+        if (getStartDateEnabled()) {
+          const sd = getStartDate();
+          if (sd) {
+            monthlyQuery.filters.push({ member: 'c2_cube.workout_date', operator: 'afterOrOnDate', values: [sd] });
+          }
+        }
+        try {
+          const res = await cubeLoad(monthlyQuery);
+          const rows = res.data || res.loadResponse?.data || [];
+          const timeKey = rows[0] ? detectTimeKey(rows[0]) : 'c2_cube.workout_date';
+          const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
+          const valKey = 'c2_cube.avg_watts';
+          const dragKey = 'c2_cube.avg_drag_factor';
+          const labelsSet = new Set();
+          const rowSeries = {};
+          const skiSeries = {};
+          const rowDragSeries = {};
+          const skiDragSeries = {};
+          rows.forEach(r => {
+            const label = formatMonthLabel(r[timeKey]);
+            labelsSet.add(label);
+            const machine = (r[machineKey] || '').trim();
+            const v = typeof r[valKey] === 'string' ? parseFloat(r[valKey]) : r[valKey];
+            const d = typeof r[dragKey] === 'string' ? parseFloat(r[dragKey]) : r[dragKey];
+            if (machine === 'RowErg') {
+              rowSeries[label] = isFinite(v) ? v : null;
+              rowDragSeries[label] = isFinite(d) ? d : null;
+            } else if (machine === 'SkiErg') {
+              skiSeries[label] = isFinite(v) ? v : null;
+              skiDragSeries[label] = isFinite(d) ? d : null;
+            }
+          });
+          const labels = Array.from(labelsSet).sort();
+          const rowVals = labels.map(l => rowSeries[l] ?? null);
+          const skiVals = labels.map(l => skiSeries[l] ?? null);
+          const rowDragVals = labels.map(l => rowDragSeries[l] ?? null);
+          const skiDragVals = labels.map(l => skiDragSeries[l] ?? null);
+          const rowMom = computeMoMPercent(rowVals);
+          const skiMom = computeMoMPercent(skiVals);
+
+          // Destroy existing charts
+          window.__charts?.forEach(c => c.destroy());
+          window.__charts = [];
+
+          window.__charts.push(
+            makeComboBarLineChart(
+              document.getElementById('wattsMonthlyRow'),
+              labels,
+              rowVals,
+              rowMom,
+              rowDragVals,
+              { bar: '#60a5fa', line: '#93c5fd' },
+              'Avg Watts',
+              'MoM Change'
+            ),
+            makeComboBarLineChart(
+              document.getElementById('wattsMonthlySki'),
+              labels,
+              skiVals,
+              skiMom,
+              skiDragVals,
+              { bar: '#22d3ee', line: '#7dd3fc' },
+              'Avg Watts',
+              'MoM Change'
+            ),
+          );
+        } catch (e) {
+          console.error(e);
+          alert(e.message);
+        }
+      }
+
+      async function loadLifetimeKPIs() {
+        const lifetimeQuery = {
+          measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace'],
+          dimensions: ['c2_cube.machine'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+          ]
+        };
+        try {
+          const res = await cubeLoad(lifetimeQuery);
+          const rows = res.data || res.loadResponse?.data || [];
+          const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
+          const distKey = 'c2_cube.total_distance_km';
+          const paceKey = 'c2_cube.avg_pace';
+
+          const toNum = (v) => {
+            const n = typeof v === 'string' ? parseFloat(v) : v;
+            return isFinite(n) ? n : 0;
+          };
+
+          let rowKm = 0, skiKm = 0, rowPace = null, skiPace = null;
+          rows.forEach(r => {
+            const m = (r[machineKey] || '').trim();
+            if (m === 'RowErg') {
+              rowKm += toNum(r[distKey]);
+              rowPace = r[paceKey] ?? rowPace;
+            } else if (m === 'SkiErg') {
+              skiKm += toNum(r[distKey]);
+              skiPace = r[paceKey] ?? skiPace;
+            }
+          });
+          const totalKm = rowKm + skiKm;
+
+          const formatKm = (n) => (Math.round(n * 10) / 10).toFixed(1);
+          const formatPace = (p) => formatSecondsToMMSS(parseTimeToSeconds(p));
+
+          document.getElementById('kpi-total-km').textContent = `${formatKm(totalKm)} km`;
+          document.getElementById('kpi-row-km').textContent = `${formatKm(rowKm)} km`;
+          document.getElementById('kpi-ski-km').textContent = `${formatKm(skiKm)} km`;
+          document.getElementById('kpi-row-pace').textContent = rowPace ? formatPace(rowPace) : '—';
+          document.getElementById('kpi-ski-pace').textContent = skiPace ? formatPace(skiPace) : '—';
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      document.getElementById('reload').addEventListener('click', () => {
+        if (activeView === 'summary') return loadSummary();
+        if (activeView === 'watts') return loadWatts();
+        return loadAll();
+      });
+      // Tab click handlers
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // Update ARIA
+          document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.classList.contains('active') ? 'true' : 'false'));
+
+          const view = btn.dataset.view || 'daily';
+          activeView = view;
+          if (view === 'summary') {
+            document.getElementById('daily-section').classList.add('hidden');
+            document.getElementById('summary-section').classList.remove('hidden');
+            loadSummary();
+          } else if (view === 'watts') {
+            document.getElementById('daily-section').classList.add('hidden');
+            document.getElementById('summary-section').classList.add('hidden');
+            document.getElementById('watts-section').classList.remove('hidden');
+            loadWatts();
+          } else {
+            activeMachine = btn.dataset.machine || DEFAULT_MACHINE;
+            document.getElementById('summary-section').classList.add('hidden');
+            document.getElementById('watts-section').classList.add('hidden');
+            document.getElementById('daily-section').classList.remove('hidden');
+            loadAll();
+          }
+        });
+      });
+      function reloadActiveView() {
+        if (activeView === 'summary') loadSummary();
+        else if (activeView === 'watts') loadWatts();
+        else loadAll();
+      }
+      document.getElementById('start-date').addEventListener('change', reloadActiveView);
+      document.getElementById('use-start-date').addEventListener('change', reloadActiveView);
       // Initial load after a short delay to let Cube start
-      setTimeout(loadAll, 300);
+      setTimeout(() => { loadAll(); }, 300);
     </script>
   </body>
 </html>
