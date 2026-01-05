@@ -1,0 +1,10 @@
+[project]
+name = "2026-01-10-md-multi-cloud"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.42.21",
+    "duckdb>=1.4.3",
+]

@@ -1,0 +1,5 @@
+to do:
+- get parquet files uploaded to aws and gcp
+- test data shares in motherduck
+- join as views
+- build tables/etc
