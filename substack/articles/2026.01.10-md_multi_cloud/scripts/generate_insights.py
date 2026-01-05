@@ -1,21 +1,12 @@
-import argparse
-from pathlib import Path
+
 import duckdb
 
-
-def generate_insights(orders_path: Path, out_path: Path, seed: int | None = None) -> None:
-    con = duckdb.connect()
-    if seed is not None:
-        try:
-            con.execute(f"PRAGMA random_seed={int(seed)}")
-        except Exception:
-            pass
-
-    orders_sql_path = orders_path.as_posix()
+def generate_insights() -> None:
+    cn = duckdb.connect()
 
     sql = f"""
     WITH orders AS (
-        SELECT order_id, cust_id, order_date, total_amount FROM read_parquet('{orders_sql_path}')
+        SELECT order_id, cust_id, order_date, total_amount FROM read_parquet('../data/orders.parquet')
     ),
     insights AS (
         SELECT
@@ -44,18 +35,7 @@ def generate_insights(orders_path: Path, out_path: Path, seed: int | None = None
     SELECT * FROM insights
     """
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    con.execute(f"COPY ({sql}) TO '{out_path.as_posix()}' (FORMAT 'parquet')")
-
-    cnt = con.sql(f"SELECT COUNT(*) AS n FROM read_parquet('{out_path.as_posix()}')").fetchone()[0]
-    print(f"Wrote {cnt} customer insights to {out_path}")
-
+    cn.execute(f"COPY ({sql}) TO '../data/customer_insights.parquet'")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate synthetic customer survey insights to Parquet using DuckDB")
-    parser.add_argument("--orders-path", type=Path, default=Path("data/orders.parquet"), help="Input orders Parquet path")
-    parser.add_argument("--out", type=Path, default=Path("data/customer_insights.parquet"), help="Output Parquet file path")
-    parser.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
-    args = parser.parse_args()
-
-    generate_insights(args.orders_path, args.out, args.seed)
+    generate_insights()

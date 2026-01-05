@@ -1,20 +1,12 @@
-import argparse
-from pathlib import Path
+
 import duckdb
 
-
-def generate_orders(count: int, customers: int, out_path: Path, seed: int | None = None) -> None:
-    con = duckdb.connect()
-    if seed is not None:
-        # Try to seed DuckDB's random; ignore if not supported by version
-        try:
-            con.execute(f"PRAGMA random_seed={int(seed)}")
-        except Exception:
-            pass
-
+def generate_orders(order_cnt: int, cust_cnt: int) -> None:
+    cn = duckdb.connect()
+    
     sql = f"""
     WITH params AS (
-        SELECT {int(count)}::INT AS order_count, {int(customers)}::INT AS customers_count
+        SELECT {int(order_cnt)}::INT AS order_count, {int(cust_cnt)}::INT AS customers_count
     ),
     base AS (
         SELECT
@@ -97,20 +89,10 @@ def generate_orders(count: int, customers: int, out_path: Path, seed: int | None
     FROM mid
     """
 
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    con.execute(f"COPY ({sql}) TO '{out_path.as_posix()}' (FORMAT 'parquet')")
-
-    # Optional: quick peek to confirm row count
-    cnt = con.sql(f"SELECT COUNT(*) AS n FROM read_parquet('{out_path.as_posix()}')").fetchone()[0]
-    print(f"Wrote {cnt} orders to {out_path}")
-
+    cn.execute(f"COPY ({sql}) TO '../data/orders.parquet'")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate synthetic rowing shop orders to Parquet using DuckDB")
-    parser.add_argument("--count", type=int, default=10_000, help="Number of orders to generate (default: 10000)")
-    parser.add_argument("--customers", type=int, default=3_000, help="Number of distinct customers (default: 3000)")
-    parser.add_argument("--out", type=Path, default=Path("data/orders.parquet"), help="Output Parquet file path")
-    parser.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
-    args = parser.parse_args()
 
-    generate_orders(args.count, args.customers, args.out, args.seed)
+    order_cnt = 10_000
+    cust_cnt = 3_000
+    generate_orders(order_cnt, cust_cnt)

@@ -7,4 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     "boto3>=1.42.21",
     "duckdb>=1.4.3",
+    "google-cloud-storage>=2.16.0",
+    "fsspec>=2025.12.0",
+    "gcsfs>=2025.12.0",
 ]
