@@ -1,0 +1,1 @@
+add wasm to have the charts query the raw data directly with duckdb so when i click on a data point, i get a lot more info off to the side

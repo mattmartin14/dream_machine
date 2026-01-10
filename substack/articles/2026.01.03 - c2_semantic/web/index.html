@@ -312,7 +312,7 @@
         return formatSecondsToMMSS(s);
       }
 
-      function makeLineChart(ctx, { labels, values }, color, label, valueFormatter, yOptions, extraDatasets) {
+      function makeLineChart(ctx, { labels, values }, color, label, valueFormatter, yOptions, extraDatasets, meta) {
         return new Chart(ctx, {
           type: 'line',
           data: {
@@ -350,7 +350,18 @@
                       return `${ctx.dataset.label}: ${isFinite(raw) ? Number(raw).toFixed(2) : raw}`;
                     }
                     const v = valueFormatter ? valueFormatter(raw) : raw;
-                    return `${ctx.dataset.label}: ${v}`;
+                    let base = `${ctx.dataset.label}: ${v}`;
+                    // Append total distance for the Avg Watts daily chart when provided
+                    if ((ctx.dataset?.label || '').toLowerCase() === 'avg watts') {
+                      const idx = ctx.dataIndex;
+                      const dist = meta?.distanceKm?.[idx];
+                      if (isFinite(dist)) {
+                        const distTxt = (Math.round(dist * 10) / 10).toFixed(1);
+                        const distLine = `Total Distance: ${distTxt} km`;
+                        return [base, distLine];
+                      }
+                    }
+                    return base;
                   }
                 }
               }
@@ -514,7 +525,7 @@
         return out;
       }
 
-      function makeComboBarLineChart(ctx, labels, barValues, lineValues, dragValues, colors, labelBar, labelLine) {
+      function makeComboBarLineChart(ctx, labels, barValues, lineValues, dragValues, distValues, colors, labelBar, labelLine) {
         return new Chart(ctx, {
           type: 'bar',
           data: {
@@ -564,6 +575,12 @@
                     const idx = ctx.dataIndex;
                     const drag = dragValues?.[idx];
                     const dragTxt = isFinite(drag) ? ` | Avg Drag: ${Number(drag).toFixed(0)}` : '';
+                    const dist = distValues?.[idx];
+                    if (isFinite(dist)) {
+                      const distLine = `Total Distance: ${(Math.round(dist * 10) / 10).toFixed(1)} km`;
+                      // First line: watts + drag on same line; second line: distance
+                      return [base + dragTxt, distLine];
+                    }
                     return base + dragTxt;
                   }
                 }
@@ -676,7 +693,7 @@
       async function loadAll() {
         const dailyQuery = {
           timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'day' }],
-          measures: ['c2_cube.avg_watts', 'c2_cube.avg_spm', 'c2_cube.avg_pace', 'c2_cube.avg_session_duration'],
+          measures: ['c2_cube.avg_watts', 'c2_cube.avg_spm', 'c2_cube.avg_pace', 'c2_cube.avg_session_duration', 'c2_cube.total_distance_km'],
           filters: [
             { member: 'c2_cube.machine', operator: 'equals', values: [getMachine()] },
             { member: 'c2_cube.total_session_minutes', operator: 'gte', values: ['10'] },
@@ -696,6 +713,7 @@
           const wattsDaily = extractSeries(dailyRes, 'c2_cube.avg_watts');
           const paceDaily = extractSeries(dailyRes, 'c2_cube.avg_pace');
           const durationDaily = extractSeries(dailyRes, 'c2_cube.avg_session_duration');
+          const distDaily = extractSeries(dailyRes, 'c2_cube.total_distance_km');
 
           // Destroy existing charts if any
           window.__charts?.forEach(c => c.destroy());
@@ -727,7 +745,8 @@
                 fill: false,
                 pointRadius: 0,
                 borderDash: [6, 6],
-              }]
+              }],
+              { distanceKm: distDaily.values }
             ),
             makeLineChart(
               document.getElementById('paceDaily'),
@@ -866,7 +885,7 @@
       async function loadWatts() {
         const monthlyQuery = {
           timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'month' }],
-          measures: ['c2_cube.avg_watts', 'c2_cube.avg_drag_factor'],
+          measures: ['c2_cube.avg_watts', 'c2_cube.avg_drag_factor', 'c2_cube.total_distance_km'],
           dimensions: ['c2_cube.machine'],
           filters: [
             { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
@@ -886,23 +905,29 @@
           const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
           const valKey = 'c2_cube.avg_watts';
           const dragKey = 'c2_cube.avg_drag_factor';
+          const distKey = 'c2_cube.total_distance_km';
           const labelsSet = new Set();
           const rowSeries = {};
           const skiSeries = {};
           const rowDragSeries = {};
           const skiDragSeries = {};
+          const rowDistSeries = {};
+          const skiDistSeries = {};
           rows.forEach(r => {
             const label = formatMonthLabel(r[timeKey]);
             labelsSet.add(label);
             const machine = (r[machineKey] || '').trim();
             const v = typeof r[valKey] === 'string' ? parseFloat(r[valKey]) : r[valKey];
             const d = typeof r[dragKey] === 'string' ? parseFloat(r[dragKey]) : r[dragKey];
+            const dist = typeof r[distKey] === 'string' ? parseFloat(r[distKey]) : r[distKey];
             if (machine === 'RowErg') {
               rowSeries[label] = isFinite(v) ? v : null;
               rowDragSeries[label] = isFinite(d) ? d : null;
+              rowDistSeries[label] = isFinite(dist) ? dist : null;
             } else if (machine === 'SkiErg') {
               skiSeries[label] = isFinite(v) ? v : null;
               skiDragSeries[label] = isFinite(d) ? d : null;
+              skiDistSeries[label] = isFinite(dist) ? dist : null;
             }
           });
           const labels = Array.from(labelsSet).sort();
@@ -910,6 +935,8 @@
           const skiVals = labels.map(l => skiSeries[l] ?? null);
           const rowDragVals = labels.map(l => rowDragSeries[l] ?? null);
           const skiDragVals = labels.map(l => skiDragSeries[l] ?? null);
+          const rowDistVals = labels.map(l => rowDistSeries[l] ?? null);
+          const skiDistVals = labels.map(l => skiDistSeries[l] ?? null);
           const rowMom = computeMoMPercent(rowVals);
           const skiMom = computeMoMPercent(skiVals);
 
@@ -924,6 +951,7 @@
               rowVals,
               rowMom,
               rowDragVals,
+              rowDistVals,
               { bar: '#60a5fa', line: '#93c5fd' },
               'Avg Watts',
               'MoM Change'
@@ -934,6 +962,7 @@
               skiVals,
               skiMom,
               skiDragVals,
+              skiDistVals,
               { bar: '#22d3ee', line: '#7dd3fc' },
               'Avg Watts',
               'MoM Change'
