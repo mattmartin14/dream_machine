@@ -24,8 +24,15 @@
       header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; }
       h1 { font-size: 22px; margin: 0; }
       .subtitle { color: var(--muted); font-size: 14px; }
-      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 1200px; margin: 0 auto; }
-      .daily-layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; max-width: 1200px; margin: 0 auto; align-items: start; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 1600px; margin: 0 auto; }
+      .daily-layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; max-width: 1600px; margin: 0 auto; align-items: start; }
+      /* Widen left column (latest + session detail) on larger screens for better readability */
+      @media (min-width: 1280px) {
+        .daily-layout { grid-template-columns: 480px minmax(0, 1fr); }
+      }
+      @media (min-width: 1536px) {
+        .daily-layout { grid-template-columns: 560px minmax(0, 1fr); }
+      }
       .card {
         background: var(--panel); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.06);
         box-shadow: 0 1px 2px rgba(0,0,0,0.25);
@@ -35,6 +42,9 @@
       .config input { flex: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #0b1220; color: var(--text); }
       .config select { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #0b1220; color: var(--text); min-width: 120px; }
       .config button { padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: #0b1220; color: var(--text); cursor: pointer; }
+      .radio-group { display: inline-flex; gap: 8px; align-items: center; background: #0b1220; border: 1px solid rgba(255,255,255,0.08); padding: 6px 8px; border-radius: 10px; }
+      .radio-group label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; color: var(--text); }
+      .radio-group input[type="radio"] { flex: 0 0 auto; }
       .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
       /* Chart.js recommends sizing the container, not the canvas, to avoid Safari layout loops */
       .chart-container { position: relative; width: 100%; height: 280px; }
@@ -73,12 +83,18 @@
       <input id="start-date" type="date" value="2025-07-01" style="flex: 0 0 auto;" />
       <label for="use-start-date" style="white-space:nowrap">Use</label>
       <input id="use-start-date" type="checkbox" checked style="flex: 0 0 auto; width: auto;" />
+      <div class="radio-group" role="group" aria-label="Distance Filter">
+        <span class="subtitle" style="margin-right:4px;">Distance:</span>
+        <label><input type="radio" name="distance-filter" value="all" checked /> Show All</label>
+        <label><input type="radio" name="distance-filter" value=">5k" /> Show >5k</label>
+      </div>
       <button id="reload">Reload Data</button>
     </div>
     <div class="hint">If requests fail, ensure the Cube service is running (docker compose up -d) and update the URL/token as needed.</div>
 
     <div id="daily-section" class="daily-layout">
-      <div class="card" id="latest-card">
+      <div id="left-col">
+        <div class="card" id="latest-card">
         <h2>Most Recent Workout — <span id="latest-machine">RowErg</span></h2>
         <div class="kpi-row">
           <div>
@@ -111,31 +127,71 @@
           </div>
         </div>
         <div class="kpi-subtitle" style="margin-top: 8px;">Shows the most recent day with any workout for the selected machine.</div>
+        </div>
+        <!-- Session Detail card under the latest workout card -->
+        <div class="card" style="margin-top: 16px;">
+        <h2>Session Detail — Watts per Stroke <span id="sessionMeta" class="subtitle"></span></h2>
+        <div class="chart-container" style="height: 280px;"><canvas id="sessionDetail"></canvas></div>
+        <div id="sessionDetailHint" class="hint">Click a point on Avg Watts — Daily to load session strokes (requires local API).</div>
+        </div>
+        <!-- Selected Session Summary KPIs -->
+        <div class="card" id="session-summary-card" style="margin-top: 16px;">
+          <h2>Selected Session — Summary</h2>
+          <div class="kpi-row">
+            <div>
+              <div class="kpi-label">Session Date</div>
+              <div id="session-date" class="kpi-value">—</div>
+            </div>
+            <div>
+              <div class="kpi-label">Total Distance</div>
+              <div id="session-distance-km" class="kpi-value">—</div>
+            </div>
+          </div>
+          <div class="kpi-row" style="margin-top: 10px;">
+            <div>
+              <div class="kpi-label">Avg Pace</div>
+              <div id="session-pace" class="kpi-value">—</div>
+            </div>
+            <div>
+              <div class="kpi-label">Avg Watts</div>
+              <div id="session-watts" class="kpi-value">—</div>
+            </div>
+          </div>
+          <div class="kpi-row" style="margin-top: 10px;">
+            <div>
+              <div class="kpi-label">Avg SPM</div>
+              <div id="session-spm" class="kpi-value">—</div>
+            </div>
+            <div>
+              <div class="kpi-label">Total Time</div>
+              <div id="session-duration" class="kpi-value">—</div>
+            </div>
+          </div>
+          <div class="kpi-subtitle" style="margin-top: 8px;">KPIs for the clicked session from the semantic layer.</div>
+        </div>
       </div>
       <div>
         <div class="grid">
           <div class="card">
             <h2>Avg Strokes per Minute — Daily</h2>
             <div class="chart-container"><canvas id="spmDaily"></canvas></div>
+            <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
           <div class="card">
             <h2>Avg Watts — Daily</h2>
             <div class="chart-container"><canvas id="wattsDaily"></canvas></div>
-            <div class="hint">Tip: Click a point to load that day's session detail below.</div>
+            <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
           <div class="card">
             <h2>Avg Pace — Daily</h2>
             <div class="chart-container"><canvas id="paceDaily"></canvas></div>
+            <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
           <div class="card">
             <h2>Avg Session Duration — Daily</h2>
             <div class="chart-container"><canvas id="durationDaily"></canvas></div>
+            <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
-        </div>
-        <div class="card" style="margin-top: 16px;">
-          <h2>Session Detail — Watts per Stroke <span id="sessionMeta" class="subtitle"></span></h2>
-          <div class="chart-container" style="height: 280px;"><canvas id="sessionDetail"></canvas></div>
-          <div id="sessionDetailHint" class="hint">Click a point on Avg Watts — Daily to load session strokes (requires local API).</div>
         </div>
       </div>
     </div>
@@ -184,6 +240,7 @@
       const DEFAULT_MACHINE = 'RowErg';
       let activeMachine = DEFAULT_MACHINE;
       let activeView = 'daily';
+      let selectedDateLabel = null; // cross-chart highlight
 
       function getConfig() {
         const url = document.getElementById('cube-url').value.trim() || 'http://localhost:4000';
@@ -211,6 +268,12 @@
         return v;
       }
 
+      function getDistanceFilterMode() {
+        const el = document.querySelector('input[name="distance-filter"]:checked');
+        const v = (el?.value || 'all').trim();
+        return v;
+      }
+
       async function cubeLoad(query) {
         const { url, headers } = getConfig();
         const res = await fetch(`${url}/cubejs-api/v1/load`, {
@@ -223,6 +286,78 @@
           throw new Error(`Cube load failed (${res.status}): ${text}`);
         }
         return res.json();
+      }
+
+      // Generic helpers for daily chart clicks
+      function getNearestIndex(chart, evt) {
+        let points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
+        if (!points || !points.length) {
+          points = chart.getElementsAtEventForMode(evt, 'index', { intersect: false }, true);
+        }
+        if (!points || !points.length) return null;
+        return points[0].index;
+      }
+
+      async function loadSessionDetailForDate(dateLabel, machineSel) {
+        const hint = document.getElementById('sessionDetailHint');
+        if (hint) hint.textContent = `Loading session detail for ${machineSel} ${dateLabel}...`;
+        try {
+          const api = 'http://127.0.0.1:8000/api/session_detail';
+          const res = await fetch(`${api}?date=${encodeURIComponent(dateLabel)}&machine=${encodeURIComponent(machineSel)}`);
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || `API error (${res.status})`);
+          }
+          renderSessionDetailChart(data);
+          const detail = document.getElementById('sessionDetail');
+          if (detail && typeof detail.scrollIntoView === 'function') {
+            detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        } catch (e) {
+          console.error('Session detail load failed:', e);
+          if (hint) hint.textContent = `Failed to load session detail: ${e.message}`;
+        }
+      }
+
+      // Cross-chart selected date highlight
+      function setSelectedDate(dateLabel) {
+        selectedDateLabel = dateLabel || null;
+        updateSelectedHighlight();
+      }
+
+      function updateSelectedHighlight() {
+        if (!window.__charts || window.__charts.length === 0) return;
+        window.__charts.forEach(chart => {
+          const labels = chart.data?.labels || [];
+          const idx = selectedDateLabel ? labels.indexOf(selectedDateLabel) : -1;
+          // Remove existing highlight dataset if present
+          const existingIdx = chart.data.datasets.findIndex(d => (d.label || '').toLowerCase() === 'selected date');
+          if (existingIdx >= 0) {
+            chart.data.datasets.splice(existingIdx, 1);
+          }
+          if (idx < 0) {
+            chart.update();
+            return;
+          }
+          const base = chart.data.datasets[0];
+          const values = Array.isArray(base?.data) ? base.data.slice() : [];
+          const radius = new Array(labels.length).fill(0);
+          radius[idx] = 6;
+          const borderWidth = new Array(labels.length).fill(0);
+          borderWidth[idx] = 2;
+          chart.data.datasets.push({
+            label: 'Selected Date',
+            type: 'line',
+            data: values,
+            borderColor: '#f87171',
+            backgroundColor: '#f87171',
+            pointRadius: radius,
+            pointHoverRadius: radius,
+            pointBorderWidth: borderWidth,
+            showLine: false,
+          });
+          chart.update();
+        });
       }
 
       function detectTimeKey(row) {
@@ -706,6 +841,11 @@
           ]
         };
 
+        // Apply distance filter to include only sessions >5k (5 km - 6 km, 6 km - 7 km, >= 7 km)
+        if (getDistanceFilterMode() === '>5k') {
+          dailyQuery.filters.push({ member: 'c2_cube.distance_block', operator: 'equals', values: ['5 km - 6 km', '6 km - 7 km', '>= 7 km'] });
+        }
+
         if (getStartDateEnabled()) {
           const sd = getStartDate();
           if (sd) {
@@ -777,43 +917,57 @@
               '#f59e0b',
               'Avg Session Duration',
               formatSecondsToMMSS,
-              computeTimeAxisOptions(durationDaily.values)
+              computeTimeAxisOptions(durationDaily.values),
+              [{
+                label: 'Avg Session Duration Trend',
+                data: computeLinearTrend(durationDaily.values),
+                borderColor: '#fcd34d',
+                backgroundColor: '#fcd34d',
+                tension: 0,
+                fill: false,
+                pointRadius: 0,
+                borderDash: [6, 6],
+              }]
             );
 
           window.__charts.push(spmChart, wattsDailyChart, paceChart, durationChart);
+          // Re-apply highlight after charts are recreated
+          updateSelectedHighlight();
 
           // Click handler for Avg Watts — Daily to load session detail
           wattsDailyChart.canvas.onclick = async (evt) => {
-            // Try to find the closest element without requiring exact intersection
-            let points = wattsDailyChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
-            if (!points || !points.length) {
-              // Fallback to index mode on the x position
-              points = wattsDailyChart.getElementsAtEventForMode(evt, 'index', { intersect: false }, true);
-            }
-            if (!points || !points.length) return;
-            const idx = points[0].index;
+            const idx = getNearestIndex(wattsDailyChart, evt);
+            if (idx == null) return;
             const dateLabel = wattsDaily.labels[idx];
             const machineSel = getMachine();
+            setSelectedDate(dateLabel);
+            await loadSessionDetailForDate(dateLabel, machineSel);
+          };
 
-            const hint = document.getElementById('sessionDetailHint');
-            if (hint) hint.textContent = `Loading session detail for ${machineSel} ${dateLabel}...`;
-            try {
-              const api = 'http://127.0.0.1:8000/api/session_detail';
-              const res = await fetch(`${api}?date=${encodeURIComponent(dateLabel)}&machine=${encodeURIComponent(machineSel)}`);
-              const data = await res.json();
-              if (!res.ok || data.error) {
-                throw new Error(data.error || `API error (${res.status})`);
-              }
-              renderSessionDetailChart(data);
-              // Scroll the detail chart into view for visibility
-              const detail = document.getElementById('sessionDetail');
-              if (detail && typeof detail.scrollIntoView === 'function') {
-                detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-              }
-            } catch (e) {
-              console.error('Session detail load failed:', e);
-              if (hint) hint.textContent = `Failed to load session detail: ${e.message}`;
-            }
+          // Click handlers for other daily charts
+          spmChart.canvas.onclick = async (evt) => {
+            const idx = getNearestIndex(spmChart, evt);
+            if (idx == null) return;
+            const dateLabel = spmDaily.labels[idx];
+            const machineSel = getMachine();
+            setSelectedDate(dateLabel);
+            await loadSessionDetailForDate(dateLabel, machineSel);
+          };
+          paceChart.canvas.onclick = async (evt) => {
+            const idx = getNearestIndex(paceChart, evt);
+            if (idx == null) return;
+            const dateLabel = paceDaily.labels[idx];
+            const machineSel = getMachine();
+            setSelectedDate(dateLabel);
+            await loadSessionDetailForDate(dateLabel, machineSel);
+          };
+          durationChart.canvas.onclick = async (evt) => {
+            const idx = getNearestIndex(durationChart, evt);
+            if (idx == null) return;
+            const dateLabel = durationDaily.labels[idx];
+            const machineSel = getMachine();
+            setSelectedDate(dateLabel);
+            await loadSessionDetailForDate(dateLabel, machineSel);
           };
         } catch (e) {
           console.error(e);
@@ -962,6 +1116,68 @@
           }
           c.update();
         }
+        // Also load summary KPIs for the selected session via Cube
+        if (payload && typeof payload.log_id !== 'undefined' && payload.log_id !== null) {
+          loadSessionSummaryById(payload.log_id).catch(err => console.warn('Session summary load by id failed:', err));
+        } else if (payload && payload.date && payload.machine) {
+          loadSessionSummaryByDay(payload.date, payload.machine).catch(err => console.warn('Session summary load by day failed:', err));
+        }
+      }
+
+      async function loadSessionSummaryById(logId) {
+        const query = {
+          measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace', 'c2_cube.avg_watts', 'c2_cube.total_session_minutes', 'c2_cube.avg_spm'],
+          dimensions: ['c2_cube.workout_date'],
+          filters: [
+            { member: 'c2_cube.id', operator: 'equals', values: [String(logId)] }
+          ],
+          limit: 1
+        };
+        const res = await cubeLoad(query);
+        const rows = res.data || res.loadResponse?.data || [];
+        updateSessionSummaryFromRow(rows[0]);
+      }
+
+      async function loadSessionSummaryByDay(dateLabel, machineSel) {
+        const query = {
+          timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'day', dateRange: [dateLabel, dateLabel] }],
+          measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace', 'c2_cube.avg_watts', 'c2_cube.total_session_minutes', 'c2_cube.avg_spm'],
+          dimensions: ['c2_cube.workout_date'],
+          filters: [
+            { member: 'c2_cube.machine', operator: 'equals', values: [machineSel] },
+          ],
+          limit: 1
+        };
+        const res = await cubeLoad(query);
+        const rows = res.data || res.loadResponse?.data || [];
+        updateSessionSummaryFromRow(rows[0]);
+      }
+
+      function updateSessionSummaryFromRow(r) {
+        const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+        if (!r) {
+          setText('session-date', '—');
+          setText('session-distance-km', '—');
+          setText('session-pace', '—');
+          setText('session-watts', '—');
+          setText('session-spm', '—');
+          setText('session-duration', '—');
+          return;
+        }
+        const timeKey = detectTimeKey(r);
+        const dateLabel = formatDateLabel(r[timeKey]);
+        const distKm = typeof r['c2_cube.total_distance_km'] === 'string' ? parseFloat(r['c2_cube.total_distance_km']) : r['c2_cube.total_distance_km'];
+        const watts = typeof r['c2_cube.avg_watts'] === 'string' ? parseFloat(r['c2_cube.avg_watts']) : r['c2_cube.avg_watts'];
+        const pace = r['c2_cube.avg_pace'];
+        const spm = typeof r['c2_cube.avg_spm'] === 'string' ? parseFloat(r['c2_cube.avg_spm']) : r['c2_cube.avg_spm'];
+        const minutes = typeof r['c2_cube.total_session_minutes'] === 'string' ? parseFloat(r['c2_cube.total_session_minutes']) : r['c2_cube.total_session_minutes'];
+
+        setText('session-date', dateLabel || '—');
+        setText('session-distance-km', isFinite(distKm) ? `${(Math.round(distKm * 10) / 10).toFixed(1)} km` : '—');
+        setText('session-pace', pace ? formatSecondsToMMSSff(parseTimeToSeconds(pace)) : '—');
+        setText('session-watts', isFinite(watts) ? `${Math.round(watts)} W` : '—');
+        setText('session-spm', isFinite(spm) ? `${Number(spm).toFixed(1)} spm` : '—');
+        setText('session-duration', isFinite(minutes) ? formatMinutesToMMSS(minutes) : '—');
       }
 
       async function loadLatestWorkoutCard() {
@@ -1236,6 +1452,9 @@
       }
       document.getElementById('start-date').addEventListener('change', reloadActiveView);
       document.getElementById('use-start-date').addEventListener('change', reloadActiveView);
+      document.querySelectorAll('input[name="distance-filter"]').forEach(inp => {
+        inp.addEventListener('change', reloadActiveView);
+      });
       // Initial load after a short delay to let Cube start
       setTimeout(() => { loadAll(); }, 300);
     </script>
