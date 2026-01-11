@@ -34,6 +34,22 @@ Alternatively, if you know the command/port combo you used:
 pkill -f "http.server 8080"
 ```
 
+## Run dashboard + API together (one command)
+From the project root, start both the static server and the local FastAPI session-detail API:
+
+```bash
+uv run python dev.py
+# Opens dashboard at http://localhost:8080
+# API available at    http://127.0.0.1:8000
+```
+
+Stop with Ctrl+C. If anything is left running, you can free the ports on macOS:
+
+```bash
+lsof -ti:8080 | xargs kill
+lsof -ti:8000 | xargs kill
+```
+
 ## Charts
 - Avg Strokes per Minute — Daily (line)
 - Avg Watts — Daily (line)

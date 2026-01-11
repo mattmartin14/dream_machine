@@ -121,6 +121,7 @@
           <div class="card">
             <h2>Avg Watts — Daily</h2>
             <div class="chart-container"><canvas id="wattsDaily"></canvas></div>
+            <div class="hint">Tip: Click a point to load that day's session detail below.</div>
           </div>
           <div class="card">
             <h2>Avg Pace — Daily</h2>
@@ -130,6 +131,11 @@
             <h2>Avg Session Duration — Daily</h2>
             <div class="chart-container"><canvas id="durationDaily"></canvas></div>
           </div>
+        </div>
+        <div class="card" style="margin-top: 16px;">
+          <h2>Session Detail — Watts per Stroke <span id="sessionMeta" class="subtitle"></span></h2>
+          <div class="chart-container" style="height: 280px;"><canvas id="sessionDetail"></canvas></div>
+          <div id="sessionDetailHint" class="hint">Click a point on Avg Watts — Daily to load session strokes (requires local API).</div>
         </div>
       </div>
     </div>
@@ -720,16 +726,15 @@
           window.__charts = [];
 
           const machine = getMachine();
-          window.__charts.push(
-            makeLineChart(
+          const spmChart = makeLineChart(
               document.getElementById('spmDaily'),
               spmDaily,
               '#34d399',
               'Avg SPM',
               undefined,
               getSPMYAxisOptions(machine, spmDaily.values)
-            ),
-            makeLineChart(
+            );
+          const wattsDailyChart = makeLineChart(
               document.getElementById('wattsDaily'),
               wattsDaily,
               '#60a5fa',
@@ -747,8 +752,8 @@
                 borderDash: [6, 6],
               }],
               { distanceKm: distDaily.values }
-            ),
-            makeLineChart(
+            );
+          const paceChart = makeLineChart(
               document.getElementById('paceDaily'),
               paceDaily,
               '#22d3ee',
@@ -765,16 +770,51 @@
                 pointRadius: 0,
                 borderDash: [6, 6],
               }]
-            ),
-            makeLineChart(
+            );
+          const durationChart = makeLineChart(
               document.getElementById('durationDaily'),
               durationDaily,
               '#f59e0b',
               'Avg Session Duration',
               formatSecondsToMMSS,
               computeTimeAxisOptions(durationDaily.values)
-            )
-          );
+            );
+
+          window.__charts.push(spmChart, wattsDailyChart, paceChart, durationChart);
+
+          // Click handler for Avg Watts — Daily to load session detail
+          wattsDailyChart.canvas.onclick = async (evt) => {
+            // Try to find the closest element without requiring exact intersection
+            let points = wattsDailyChart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
+            if (!points || !points.length) {
+              // Fallback to index mode on the x position
+              points = wattsDailyChart.getElementsAtEventForMode(evt, 'index', { intersect: false }, true);
+            }
+            if (!points || !points.length) return;
+            const idx = points[0].index;
+            const dateLabel = wattsDaily.labels[idx];
+            const machineSel = getMachine();
+
+            const hint = document.getElementById('sessionDetailHint');
+            if (hint) hint.textContent = `Loading session detail for ${machineSel} ${dateLabel}...`;
+            try {
+              const api = 'http://127.0.0.1:8000/api/session_detail';
+              const res = await fetch(`${api}?date=${encodeURIComponent(dateLabel)}&machine=${encodeURIComponent(machineSel)}`);
+              const data = await res.json();
+              if (!res.ok || data.error) {
+                throw new Error(data.error || `API error (${res.status})`);
+              }
+              renderSessionDetailChart(data);
+              // Scroll the detail chart into view for visibility
+              const detail = document.getElementById('sessionDetail');
+              if (detail && typeof detail.scrollIntoView === 'function') {
+                detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            } catch (e) {
+              console.error('Session detail load failed:', e);
+              if (hint) hint.textContent = `Failed to load session detail: ${e.message}`;
+            }
+          };
         } catch (e) {
           console.error(e);
           alert(e.message);
@@ -785,6 +825,142 @@
           await loadLatestWorkoutCard();
         } catch (e) {
           console.warn('Latest workout card load failed:', e);
+        }
+      }
+
+      // Render or update the Session Detail chart
+      function renderSessionDetailChart(payload) {
+        const metaEl = document.getElementById('sessionMeta');
+        if (metaEl) {
+          const idTxt = payload?.log_id ? ` · id ${payload.log_id}` : '';
+          metaEl.textContent = `(${payload?.machine || ''} · ${payload?.date || ''}${idTxt})`;
+        }
+        const hint = document.getElementById('sessionDetailHint');
+        if (hint) hint.textContent = '';
+
+        // Drop the first couple of strokes which are often outliers when starting
+        const SKIP_INITIAL_STROKES = 2;
+        const points = (payload?.points || []).slice(SKIP_INITIAL_STROKES);
+        const labels = points.map(p => (p.x ?? p.stroke_number));
+        const watts = points.map(p => (p.y ?? p.watts));
+        // Derive pace in seconds by prioritizing the formatted string column
+        const paceSecondsSeries = points.map(p => {
+          if (p && typeof p.pace_mm_ss_ff === 'string' && p.pace_mm_ss_ff.trim()) {
+            return parseTimeToSeconds(p.pace_mm_ss_ff.trim());
+          }
+          if (typeof p?.pace_seconds === 'number' && isFinite(p.pace_seconds)) {
+            return p.pace_seconds;
+          }
+          return null;
+        });
+        const hasAnyPace = paceSecondsSeries.some(v => typeof v === 'number' && isFinite(v));
+        // Compute nice axis bounds for pace
+        const paceAxis = hasAnyPace ? computeTimeAxisOptions(paceSecondsSeries) : {};
+
+        if (!window.__sessionChart) {
+          window.__sessionChart = new Chart(
+            document.getElementById('sessionDetail'),
+            {
+              type: 'line',
+              data: {
+                labels,
+                datasets: [{
+                  label: 'Watts per Stroke',
+                  data: watts,
+                  borderColor: '#60a5fa',
+                  backgroundColor: '#60a5fa',
+                  tension: 0.15,
+                  pointRadius: 1.5,
+                  fill: false,
+                  yAxisID: 'y',
+                }].concat(hasAnyPace ? [{
+                  label: 'Pace',
+                  data: paceSecondsSeries,
+                  borderColor: '#22d3ee',
+                  backgroundColor: '#22d3ee',
+                  tension: 0.15,
+                  pointRadius: 1.2,
+                  fill: false,
+                  yAxisID: 'y1',
+                  spanGaps: true,
+                }] : [])
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: true },
+                  tooltip: {
+                    callbacks: {
+                      label: (ctx) => {
+                        const name = ctx.dataset?.label || '';
+                        const val = ctx.parsed?.y;
+                        if (name === 'Pace') {
+                          const idx = ctx.dataIndex;
+                          const rawStr = points?.[idx]?.pace_mm_ss_ff;
+                          return `${name}: ${rawStr && typeof rawStr === 'string' ? rawStr : formatSecondsToMMSSff(val)}`;
+                        }
+                        return `${name}: ${isFinite(val) ? Math.round(val) : val}`;
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+                  y: {
+                    ticks: { color: '#cbd5e1' },
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    beginAtZero: false,
+                    title: { display: true, text: 'Watts', color: '#cbd5e1' }
+                  },
+                  y1: {
+                    position: 'right',
+                    ticks: {
+                      color: '#cbd5e1',
+                      callback: (v) => formatSecondsToMMSSff(v)
+                    },
+                    grid: { drawOnChartArea: false },
+                    beginAtZero: false,
+                    min: paceAxis.min,
+                    max: paceAxis.max,
+                    suggestedMin: paceAxis.min,
+                    suggestedMax: paceAxis.max,
+                    title: { display: true, text: 'Pace', color: '#cbd5e1' }
+                  }
+                }
+              }
+            }
+          );
+        } else {
+          const c = window.__sessionChart;
+          c.data.labels = labels;
+          c.data.datasets[0].data = watts;
+          // Update or toggle the pace dataset
+          const hasPaceDataset = c.data.datasets.length > 1 && c.data.datasets[1]?.label === 'Pace';
+          if (hasAnyPace) {
+            if (hasPaceDataset) {
+              c.data.datasets[1].data = paceSecondsSeries;
+            } else {
+              c.data.datasets.push({
+                label: 'Pace',
+                data: paceSecondsSeries,
+                borderColor: '#22d3ee',
+                backgroundColor: '#22d3ee',
+                tension: 0.15,
+                pointRadius: 1.2,
+                fill: false,
+                yAxisID: 'y1',
+                spanGaps: true,
+              });
+            }
+            // Update pace axis bounds
+            const paceAxis = computeTimeAxisOptions(paceSecondsSeries);
+            c.options.scales.y1.min = paceAxis.min;
+            c.options.scales.y1.max = paceAxis.max;
+          } else if (hasPaceDataset) {
+            c.data.datasets.pop();
+          }
+          c.update();
         }
       }
 
