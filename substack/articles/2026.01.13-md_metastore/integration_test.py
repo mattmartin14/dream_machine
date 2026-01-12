@@ -2,7 +2,7 @@ import duckdb
 import os
 
 
-def join_stuff(): 
+def integration_test_1(): 
 
     md_db_name = "multi_metastore"
 
@@ -50,4 +50,4 @@ def join_stuff():
     cn.sql(sql).show()
 
 if __name__ == "__main__":
-    join_stuff()
+    integration_test_1()
