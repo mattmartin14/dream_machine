@@ -1,0 +1,10 @@
+[project]
+name = "2026-01-13-md-metastore"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.4.3",
+    "ipykernel>=7.1.0",
+]
