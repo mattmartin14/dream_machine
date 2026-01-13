@@ -40,12 +40,6 @@ PRODUCTS = [
 
 
 def generate_orders(n_orders: int):
-	"""Generate order headers and details, saved as parquet files.
-
-	Only parameter is number of order headers.
-	Outputs are written to data/order_headers.parquet and data/order_details.parquet.
-	"""
-	os.makedirs('data', exist_ok=True)
 
 	# Config
 	tax_rate = 0.08
