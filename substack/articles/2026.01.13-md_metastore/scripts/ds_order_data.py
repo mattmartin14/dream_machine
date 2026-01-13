@@ -171,8 +171,8 @@ def generate_orders(n_orders: int):
 		[tax_rate, tax_rate],
 	)
 
-	headers_path = 'data/order_headers.parquet'
-	details_path = 'data/order_details.parquet'
+	headers_path = '../data/order_headers.parquet'
+	details_path = '../data/order_details.parquet'
 
 	cn.execute(
 		"COPY (SELECT * FROM order_headers) TO ? (FORMAT 'parquet')",

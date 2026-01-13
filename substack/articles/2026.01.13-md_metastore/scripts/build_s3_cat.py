@@ -50,7 +50,7 @@ def build_s3_tables() -> None:
     cn.execute(f"""
         INSERT INTO s3cat.{glue_db_name}.order_header
         SELECT *
-        FROM read_parquet('data/order_headers.parquet')
+        FROM read_parquet('../data/order_headers.parquet')
     """)
 
     cn.execute(f"""
@@ -68,7 +68,7 @@ def build_s3_tables() -> None:
     cn.execute(f"""
        INSERT INTO s3cat.{glue_db_name}.order_detail
        SELECT * 
-       FROM read_parquet('data/order_details.parquet')       
+       FROM read_parquet('../data/order_details.parquet')       
     """)
 
 if __name__ == "__main__":

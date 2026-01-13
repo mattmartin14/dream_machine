@@ -79,7 +79,7 @@ def generate_store_geography(n_stores: int = 50):
 		[n_stores],
 	)
 
-	out_path = 'data/store_geography.parquet'
+	out_path = '../data/store_geography.parquet'
 	cn.execute("COPY (SELECT * FROM store_geography ORDER BY store_id) TO ? (FORMAT 'parquet')", [out_path])
 	return out_path
 

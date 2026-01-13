@@ -1,8 +1,8 @@
-from gen_order_data import generate_orders
-from store_geography import generate_store_geography
+from ds_order_data import generate_orders
+from ds_store_geo import generate_store_geography
 from build_md_table import load_md_table
 from build_s3_cat import build_s3_tables
-from integration_test import integration_test_1
+from integration_test import run_all
 
 if __name__ == "__main__":
     order_cnt = 10_000
@@ -14,6 +14,6 @@ if __name__ == "__main__":
     print("built s3 tables")
     load_md_table()
     print("loaded md table")
-    integration_test_1()
+    run_all()
     print("completed integration test")
 

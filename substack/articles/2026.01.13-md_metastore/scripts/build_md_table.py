@@ -11,7 +11,7 @@ def load_md_table():
         CREATE OR REPLACE TABLE {db_name}.main.store_geo
         AS
         SELECT *
-        FROM read_parquet('data/store_geography.parquet')
+        FROM read_parquet('../data/store_geography.parquet')
     """)
 
 if __name__ == "__main__": 
