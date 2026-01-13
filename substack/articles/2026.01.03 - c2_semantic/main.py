@@ -40,6 +40,7 @@ def _query_detail_for_file(file_path: str) -> List[Dict[str, Any]]:
         select
             stroke_number,
             watts,
+            stroke_rate,
             pace_seconds,
             printf(
                 '%d:%02d.%02d',
@@ -51,6 +52,7 @@ def _query_detail_for_file(file_path: str) -> List[Dict[str, Any]]:
             select
                 "Number" as stroke_number,
                 "Watts" as watts,
+                try_cast("Stroke Rate" as DOUBLE) as stroke_rate,
                 CASE
                   WHEN try_cast("Pace (seconds)" as DOUBLE) is null THEN NULL
                   WHEN try_cast("Pace (seconds)" as DOUBLE) < 10 THEN try_cast("Pace (seconds)" as DOUBLE) * 60
@@ -66,6 +68,7 @@ def _query_detail_for_file(file_path: str) -> List[Dict[str, Any]]:
     for _, r in df.iterrows():
         sn = r.get("stroke_number")
         w = r.get("watts")
+        sr = r.get("stroke_rate", None)
         psec = r.get("pace_seconds", None)
         pstr = r.get("pace_mm_ss_ff", None)
         if sn is None or w is None:
@@ -78,6 +81,11 @@ def _query_detail_for_file(file_path: str) -> List[Dict[str, Any]]:
         except Exception:
             continue
         out: Dict[str, Any] = {"stroke_number": sn_i, "watts": w_f}
+        if sr is not None and not pd.isna(sr):
+            try:
+                out["stroke_rate"] = float(sr)
+            except Exception:
+                pass
         if psec is not None and not pd.isna(psec):
             try:
                 out["pace_seconds"] = float(psec)
@@ -128,6 +136,8 @@ def session_detail(date: str = Query(..., description="YYYY-MM-DD"), machine: st
             item["pace_seconds"] = r.get("pace_seconds")
         if "pace_mm_ss_ff" in r:
             item["pace_mm_ss_ff"] = r.get("pace_mm_ss_ff")
+        if "stroke_rate" in r:
+            item["stroke_rate"] = r.get("stroke_rate")
         strokes.append(item)
     return {
         "log_id": log_id,

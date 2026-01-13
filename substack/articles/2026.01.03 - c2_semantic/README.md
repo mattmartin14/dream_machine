@@ -50,5 +50,6 @@ docker compose down
 
 ## Notes
 - The dashboard defaults to `http://localhost:4000` for Cube; you can change the URL and provide an auth token at the top of the page.
-- Interactive charts: clicking any daily chart point (SPM, Watts, Pace, Duration) loads the selected session’s stroke detail on the left and shows session KPIs.
+- Interactive charts: clicking any daily chart point (Watts, Pace, Duration) loads the selected session’s stroke detail on the left and shows session KPIs.
+- SPM histogram: clicking a point on the SPM daily chart opens a modal with a histogram of the session’s stroke rate distribution (requires the local API).
 - A distance filter at the top lets you switch between “Show All” and “Show >5k” for daily charts.

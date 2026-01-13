@@ -130,7 +130,7 @@
         </div>
         <!-- Session Detail card under the latest workout card -->
         <div class="card" style="margin-top: 16px;">
-        <h2>Session Detail — Watts per Stroke <span id="sessionMeta" class="subtitle"></span></h2>
+        <h2><span id="sessionTitle">Session Detail — Watts per Stroke</span> <span id="sessionMeta" class="subtitle"></span></h2>
         <div class="chart-container" style="height: 280px;"><canvas id="sessionDetail"></canvas></div>
         <div id="sessionDetailHint" class="hint">Click a point on Avg Watts — Daily to load session strokes (requires local API).</div>
         </div>
@@ -298,9 +298,8 @@
         return points[0].index;
       }
 
-      async function loadSessionDetailForDate(dateLabel, machineSel) {
+      async function fetchSessionDetail(dateLabel, machineSel) {
         const hint = document.getElementById('sessionDetailHint');
-        if (hint) hint.textContent = `Loading session detail for ${machineSel} ${dateLabel}...`;
         try {
           const api = 'http://127.0.0.1:8000/api/session_detail';
           const res = await fetch(`${api}?date=${encodeURIComponent(dateLabel)}&machine=${encodeURIComponent(machineSel)}`);
@@ -308,14 +307,187 @@
           if (!res.ok || data.error) {
             throw new Error(data.error || `API error (${res.status})`);
           }
+          return data;
+        } catch (e) {
+          console.error('Session detail load failed:', e);
+          if (hint) hint.textContent = `Failed to load session detail: ${e.message}`;
+          throw e;
+        }
+      }
+
+      async function loadSessionDetailForDate(dateLabel, machineSel) {
+        const hint = document.getElementById('sessionDetailHint');
+        if (hint) hint.textContent = `Loading session detail for ${machineSel} ${dateLabel}...`;
+        try {
+          const data = await fetchSessionDetail(dateLabel, machineSel);
           renderSessionDetailChart(data);
           const detail = document.getElementById('sessionDetail');
           if (detail && typeof detail.scrollIntoView === 'function') {
             detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
         } catch (e) {
-          console.error('Session detail load failed:', e);
-          if (hint) hint.textContent = `Failed to load session detail: ${e.message}`;
+          // errors handled in fetch
+        }
+      }
+
+      // Histogram modal helpers
+      function ensureHistogramModal() {
+        let modal = document.getElementById('spmHistogramModal');
+        if (modal) return modal;
+        const html = `
+          <div id="spmHistogramModal" class="hidden" style="position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.5);">
+            <div class="card" style="width: 720px; max-width: 90vw; position: relative;">
+              <button id="spmHistX" type="button" aria-label="Close" title="Close" style="position:absolute; top:8px; right:8px; padding:4px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#0b1220; color:var(--text); cursor:pointer; z-index: 3;">✕</button>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding-right:40px;">
+                <h2>SPM Distribution — <span id="spmHistMeta" class="subtitle"></span></h2>
+                <button id="spmHistClose" type="button" aria-label="Close" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#0b1220; color:var(--text); cursor:pointer; position: relative; z-index: 2;" onclick="event && event.stopPropagation(); (function(){var m=document.getElementById('spmHistogramModal'); if(m){m.classList.add('hidden');}})()">Close</button>
+              </div>
+              <div class="chart-container" style="height: 320px;"><canvas id="spmHistogramCanvas"></canvas></div>
+              <div class="hint">Histogram of stroke rates (SPM) for the selected session.</div>
+            </div>
+          </div>`;
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        document.body.appendChild(container.firstElementChild);
+        modal = document.getElementById('spmHistogramModal');
+        const closeBtn = document.getElementById('spmHistClose');
+        closeBtn?.addEventListener('click', (e) => { e.stopPropagation?.(); hideHistogramModal(); });
+        const closeX = document.getElementById('spmHistX');
+        closeX?.addEventListener('click', (e) => { e.stopPropagation?.(); hideHistogramModal(); });
+        // Close on overlay click
+        modal?.addEventListener('click', (e) => {
+          const target = e.target;
+          if (target && target.id === 'spmHistogramModal') hideHistogramModal();
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') hideHistogramModal();
+        });
+        return modal;
+      }
+
+      function showHistogramModal() {
+        const modal = ensureHistogramModal();
+        modal.classList.remove('hidden');
+      }
+
+      function hideHistogramModal() {
+        const modal = document.getElementById('spmHistogramModal');
+        if (modal) modal.classList.add('hidden');
+      }
+
+      // Global click delegation for robust close handling
+      document.addEventListener('click', (e) => {
+        const t = e.target;
+        if (!t) return;
+        // Close button
+        if (t.id === 'spmHistClose') {
+          hideHistogramModal();
+        } else if (typeof t.closest === 'function') {
+          const btn = t.closest('#spmHistClose');
+          if (btn) hideHistogramModal();
+          const btn2 = t.closest('#spmHistX');
+          if (btn2) hideHistogramModal();
+        }
+      });
+
+      function destroySessionChartIfTypeNot(type) {
+        if (window.__sessionChart && window.__sessionChart.config && window.__sessionChart.config.type !== type) {
+          try { window.__sessionChart.destroy(); } catch {}
+          window.__sessionChart = null;
+        }
+      }
+
+      function renderSPMHistogramInDetail(data) {
+        const titleEl = document.getElementById('sessionTitle');
+        if (titleEl) titleEl.textContent = 'Session Detail — Distribution of SPM';
+        const points = Array.isArray(data?.points) ? data.points : [];
+        const rates = points.map(p => {
+          const r = p?.stroke_rate;
+          return typeof r === 'string' ? parseFloat(r) : r;
+        }).filter(r => isFinite(r));
+        const dateLabel = data?.date || '';
+        const machineSel = data?.machine || '';
+        const metaEl = document.getElementById('sessionMeta');
+        if (metaEl) {
+          const idTxt = data?.log_id ? ` · id ${data.log_id}` : '';
+          metaEl.textContent = `(${machineSel} · ${dateLabel}${idTxt})`;
+        }
+
+        // Build integer SPM bins from floor(min) to ceil(max)
+        const minR = rates.length ? Math.floor(Math.min(...rates)) : 0;
+        const maxR = rates.length ? Math.ceil(Math.max(...rates)) : 0;
+        const labels = [];
+        const counts = [];
+        for (let r = minR; r <= maxR; r++) {
+          labels.push(String(r));
+          counts.push(0);
+        }
+        rates.forEach(v => {
+          const idx = Math.round(v) - minR; // nearest integer bucket
+          if (idx >= 0 && idx < counts.length) counts[idx]++;
+        });
+
+        // Render bar chart into sessionDetail canvas
+        destroySessionChartIfTypeNot('bar');
+        const ctx = document.getElementById('sessionDetail');
+        if (!ctx) return;
+        if (window.__sessionChart) {
+          // Update existing bar chart
+          const c = window.__sessionChart;
+          c.data.labels = labels;
+          c.data.datasets = [{ label: 'Stroke Count', data: counts, backgroundColor: '#34d399' }];
+          c.options.scales = {
+            x: { title: { display: true, text: 'SPM (Strokes per Minute)' }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            y: { title: { display: true, text: 'Stroke Count' }, beginAtZero: true, ticks: { precision: 0, color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+          };
+          c.update();
+          return;
+        }
+        window.__sessionChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Stroke Count',
+              data: counts,
+              backgroundColor: '#34d399',
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => `SPM ${ctx.label}: ${ctx.parsed.y} strokes`
+                }
+              }
+            },
+            scales: {
+              x: { title: { display: true, text: 'SPM (Strokes per Minute)' }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+              y: { title: { display: true, text: 'Stroke Count' }, beginAtZero: true, ticks: { precision: 0, color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } }
+            }
+          }
+        });
+      }
+
+      async function loadSPMHistogramForDate(dateLabel, machineSel) {
+        try {
+          // Ensure modal exists before rendering into it
+          ensureHistogramModal();
+          const api = 'http://127.0.0.1:8000/api/session_detail';
+          const res = await fetch(`${api}?date=${encodeURIComponent(dateLabel)}&machine=${encodeURIComponent(machineSel)}`);
+          const data = await res.json();
+          if (!res.ok || data.error) {
+            throw new Error(data.error || `API error (${res.status})`);
+          }
+          renderSPMHistogram(data);
+          showHistogramModal();
+        } catch (e) {
+          console.error('SPM histogram load failed:', e);
+          alert(`Failed to load SPM histogram: ${e.message}`);
         }
       }
 
@@ -951,7 +1123,17 @@
             const dateLabel = spmDaily.labels[idx];
             const machineSel = getMachine();
             setSelectedDate(dateLabel);
-            await loadSessionDetailForDate(dateLabel, machineSel);
+            // For SPM chart, render histogram in Session Detail area
+            try {
+              const data = await fetchSessionDetail(dateLabel, machineSel);
+              renderSPMHistogramInDetail(data);
+              const detail = document.getElementById('sessionDetail');
+              if (detail && typeof detail.scrollIntoView === 'function') {
+                detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+              // Load summary KPIs for the selected session via Cube
+              await loadSessionSummaryByDay(dateLabel, machineSel);
+            } catch (e) {}
           };
           paceChart.canvas.onclick = async (evt) => {
             const idx = getNearestIndex(paceChart, evt);
@@ -984,6 +1166,10 @@
 
       // Render or update the Session Detail chart
       function renderSessionDetailChart(payload) {
+        const titleEl = document.getElementById('sessionTitle');
+        if (titleEl) titleEl.textContent = 'Session Detail — Watts per Stroke';
+        // Ensure chart is a line chart; destroy if currently another type
+        try { destroySessionChartIfTypeNot('line'); } catch {}
         const metaEl = document.getElementById('sessionMeta');
         if (metaEl) {
           const idTxt = payload?.log_id ? ` · id ${payload.log_id}` : '';
@@ -1173,7 +1359,7 @@
         const minutes = typeof r['c2_cube.total_session_minutes'] === 'string' ? parseFloat(r['c2_cube.total_session_minutes']) : r['c2_cube.total_session_minutes'];
 
         setText('session-date', dateLabel || '—');
-        setText('session-distance-km', isFinite(distKm) ? `${(Math.round(distKm * 10) / 10).toFixed(1)} km` : '—');
+        setText('session-distance-km', isFinite(distKm) ? `${(Math.round(distKm * 100) / 100).toFixed(2)} km` : '—');
         setText('session-pace', pace ? formatSecondsToMMSSff(parseTimeToSeconds(pace)) : '—');
         setText('session-watts', isFinite(watts) ? `${Math.round(watts)} W` : '—');
         setText('session-spm', isFinite(spm) ? `${Number(spm).toFixed(1)} spm` : '—');
