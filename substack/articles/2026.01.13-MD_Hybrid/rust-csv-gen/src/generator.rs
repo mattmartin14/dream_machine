@@ -97,7 +97,7 @@ fn write_orders_pair(
     let statuses = ["NEW", "PICK", "SHIP", "CLOSE", "CANCEL"];
     let channels = ["Store", "Online", "Mobile", "Marketplace"];
     let payments = ["Card", "Cash", "Gift", "ApplePay", "PayPal"];
-    let categories = ["Decoys", "Apparel", "Camping", "Fishing", "Hunting", "Boating", "Optics", "Footwear"];
+    // categories removed; not used in order generation
 
     // headers
     writeln!(
