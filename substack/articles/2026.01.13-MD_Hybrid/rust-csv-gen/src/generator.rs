@@ -29,7 +29,7 @@ impl<W: Write> Write for CountingWriter<W> {
     }
 }
 
-pub fn generate_inventory_csv(out_dir: &Path, base_filename: &str, target_bytes: u64, seed: u64) -> Result<()> {
+pub fn generate_inventory_csv(out_dir: &Path, base_filename: &str, target_bytes: u64, seed: u64) -> Result<Vec<u32>> {
     let file_path = out_dir.join(format!("{}{}.csv", base_filename, ""));
     let file = File::create(&file_path)?;
     let mut writer = CountingWriter::new(BufWriter::with_capacity(8 * 1024 * 1024, file));
@@ -49,23 +49,29 @@ pub fn generate_inventory_csv(out_dir: &Path, base_filename: &str, target_bytes:
     // header
     writeln!(writer, "sku,name,category,price_cents,stock_qty,location,updated_at")?;
     let now_str = OffsetDateTime::now_utc().format(&Rfc3339).unwrap_or_default();
+    let mut skus: Vec<u32> = Vec::with_capacity(1_000_000);
+    let mut sku_counter: u32 = 1;
     while writer.bytes < target_bytes {
         let category = categories[rng.usize(..categories.len())];
+        let location = format!("Aisle-{}-Bin-{}", rng.u32(1..50), rng.u32(1..20));
+        let name_id = rng.u32(..);
         writeln!(
             writer,
-            "DUCK-{:08},Duckland {} {},{},{}{},{}",
-            rng.u32(..),
+            "DUCK-{:08},Duckland Item {},{},{},{},{},{}",
+            sku_counter,
+            name_id,
             category,
-            rng.u16(..),
             rng.u32(500..50_000),
             rng.u32(..10_000),
-            format!("Aisle-{}-Bin-{}", rng.u32(1..50), rng.u32(1..20)),
+            location,
             now_str
         )?;
+        skus.push(sku_counter);
+        sku_counter = sku_counter.wrapping_add(1);
     }
 
     writer.flush()?;
-    Ok(())
+    Ok(skus)
 }
 
 fn write_orders_pair(
@@ -76,6 +82,7 @@ fn write_orders_pair(
     detail_target_bytes: u64,
     seed: u64,
     id_offset: u64,
+    inventory_skus: &[u32],
 ) -> Result<()> {
     let header_path = out_dir.join(format!("{}_header_{:02}.csv", base_filename, file_index));
     let detail_path = out_dir.join(format!("{}_detail_{:02}.csv", base_filename, file_index));
@@ -125,10 +132,12 @@ fn write_orders_pair(
             let line_total_cents = unit_price_cents as u64 * qty as u64;
             total_cents += line_total_cents;
 
+            let sku_idx = rng.usize(..inventory_skus.len());
+            let sku_val = inventory_skus[sku_idx];
             writeln!(
                 detail_wtr,
                 "{order_id},{line_id},DUCK-{sku:08},{qty},{unit_price_cents},{line_total_cents}",
-                sku = rng.u32(..)
+                sku = sku_val
             )?;
         }
 
@@ -149,7 +158,7 @@ fn write_orders_pair(
     Ok(())
 }
 
-pub fn generate_orders_csv_parallel(out_dir: &Path, base_filename: &str, total_target_bytes: u64, files: usize, seed: u64) -> Result<()> {
+pub fn generate_orders_csv_parallel(out_dir: &Path, base_filename: &str, total_target_bytes: u64, files: usize, seed: u64, inventory_skus: &[u32]) -> Result<()> {
     // Split total target across header and detail roughly equally
     let header_total = total_target_bytes / 2;
     let detail_total = total_target_bytes - header_total;
@@ -160,7 +169,7 @@ pub fn generate_orders_csv_parallel(out_dir: &Path, base_filename: &str, total_t
     (0..files).into_par_iter().try_for_each(|i| {
         // Give each file a disjoint order_id range offset to avoid collisions
         let id_offset = (i as u64) * 1_000_000_000; // large gap per file
-        write_orders_pair(out_dir, base_filename, i, header_per_file, detail_per_file, seed, id_offset)
+        write_orders_pair(out_dir, base_filename, i, header_per_file, detail_per_file, seed, id_offset, inventory_skus)
     })?;
 
     Ok(())

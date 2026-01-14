@@ -65,10 +65,10 @@ fn main() -> anyhow::Result<()> {
     );
 
     // Inventory first (single file)
-    generator::generate_inventory_csv(&out_dir, "inventory", inventory_bytes, seed)?;
+    let inventory_skus = generator::generate_inventory_csv(&out_dir, "inventory", inventory_bytes, seed)?;
 
     // Orders (header + detail) split across N files and generated in parallel
-    generator::generate_orders_csv_parallel(&out_dir, "orders", orders_total_bytes, args.files, seed)?;
+    generator::generate_orders_csv_parallel(&out_dir, "orders", orders_total_bytes, args.files, seed, &inventory_skus)?;
 
     let elapsed = t0.elapsed();
     info!(
