@@ -1442,14 +1442,53 @@
           window.__charts?.forEach(c => c.destroy());
           window.__charts = [];
 
+          // Build per-year average trend line datasets
+          const totals = labels.map((l, i) => {
+            const rk = typeof rowKm[i] === 'string' ? parseFloat(rowKm[i]) : rowKm[i];
+            const sk = typeof skiKm[i] === 'string' ? parseFloat(skiKm[i]) : skiKm[i];
+            const r = (isFinite(rk) ? rk : 0) + (isFinite(sk) ? sk : 0);
+            return isFinite(r) ? r : 0;
+          });
+          const years = Array.from(new Set(labels.map(l => (l || '').slice(0,4)))).sort();
+          const yearColors = ['#f59e0b', '#f87171', '#a78bfa', '#34d399', '#ef4444', '#eab308'];
+          const fmtKm = (n) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
+          const lineDatasets = years.map((y, idx) => {
+            // compute average for this year
+            let sum = 0, count = 0;
+            for (let i = 0; i < labels.length; i++) {
+              if (labels[i].startsWith(y)) {
+                const v = totals[i];
+                if (isFinite(v)) { sum += v; count += 1; }
+              }
+            }
+            const avg = count > 0 ? (sum / count) : null;
+            const data = labels.map(l => l.startsWith(y) && isFinite(avg) ? avg : null);
+            const color = yearColors[idx % yearColors.length];
+            return {
+              type: 'line',
+              label: `${y} Avg: ${avg != null ? fmtKm(avg) + ' km' : '—'}`,
+              data,
+              borderColor: color,
+              backgroundColor: color,
+              tension: 0,
+              fill: false,
+              pointRadius: 0,
+              yAxisID: 'y',
+              borderDash: [6, 6],
+              spanGaps: true,
+            };
+          });
+
+          const summaryDatasets = [
+            { label: 'RowErg', data: rowKm, backgroundColor: '#60a5fa', stack: 'distance' },
+            { label: 'SkiErg', data: skiKm, backgroundColor: '#22d3ee', stack: 'distance' },
+          ].concat(lineDatasets);
+
           window.__charts.push(
             makeStackedBarChart(
               document.getElementById('distanceMonthlySummary'),
               labels,
-              [
-                { label: 'RowErg', data: rowKm, backgroundColor: '#60a5fa', stack: 'distance' },
-                { label: 'SkiErg', data: skiKm, backgroundColor: '#22d3ee', stack: 'distance' },
-              ]
+              summaryDatasets
             )
           );
 
@@ -1585,7 +1624,7 @@
           });
           const totalKm = rowKm + skiKm;
 
-          const formatKm = (n) => (Math.round(n * 10) / 10).toFixed(1);
+          const formatKm = (n) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
           const formatPace = (p) => formatSecondsToMMSS(parseTimeToSeconds(p));
 
           document.getElementById('kpi-total-km').textContent = `${formatKm(totalKm)} km`;
