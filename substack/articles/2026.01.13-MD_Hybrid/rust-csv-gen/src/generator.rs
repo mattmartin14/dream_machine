@@ -111,7 +111,12 @@ fn write_orders_pair(
 
     let mut next_order_id = id_offset;
     let now_str = OffsetDateTime::now_utc().format(&Rfc3339).unwrap_or_default();
-    while header_wtr.bytes < header_target_bytes || detail_wtr.bytes < detail_target_bytes {
+
+    // Treat the per-file goal as a combined header+detail size so that
+    // total_target_bytes represents the sum of header and detail bytes.
+    let combined_target_bytes = header_target_bytes + detail_target_bytes;
+
+    while header_wtr.bytes + detail_wtr.bytes < combined_target_bytes {
         // Order header
         let order_id = next_order_id;
         next_order_id += 1;
@@ -146,11 +151,6 @@ fn write_orders_pair(
             "{order_id},{customer_id},{order_date},{status},{store_id},{channel},{payment_method},{ship_zip:05},{total_cents}",
             ship_zip = ship_zip_val
         )?;
-
-        // Stop when both targets reached
-        if header_wtr.bytes >= header_target_bytes && detail_wtr.bytes >= detail_target_bytes {
-            break;
-        }
     }
 
     header_wtr.flush()?;
