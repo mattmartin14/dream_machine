@@ -81,7 +81,15 @@ cubes:
 
   - name: avg_spm
     title: "Average Strokes Per Minute"
-    sql: "cast(sum(\"Stroke Count\") / sum(\"Work Time (Seconds)\") * 60.0 as decimal(10,2))"
+    sql: |
+      CAST(
+        CASE
+          WHEN SUM("Rest Distance") IS NOT NULL
+            THEN AVG("Stroke Rate/Cadence")
+          ELSE
+            SUM("Stroke Count") / SUM("Work Time (Seconds)") * 60.0
+        END AS DECIMAL(10, 2)
+      )
     type: number
 
   - name: avg_pace

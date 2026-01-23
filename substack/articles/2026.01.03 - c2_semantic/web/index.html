@@ -1009,7 +1009,7 @@
           measures: ['c2_cube.avg_watts', 'c2_cube.avg_spm', 'c2_cube.avg_pace', 'c2_cube.avg_session_duration', 'c2_cube.total_distance_km'],
           filters: [
             { member: 'c2_cube.machine', operator: 'equals', values: [getMachine()] },
-            { member: 'c2_cube.total_session_minutes', operator: 'gte', values: ['10'] },
+            { member: 'c2_cube.total_session_minutes', operator: 'gte', values: ['5'] },
           ]
         };
 
