@@ -79,18 +79,28 @@ cubes:
         )
       END
 
+
+
+  ## note: for days doing intervals (rest distance present), we have to weigth by work time
+  ## because the total stroke count for interval sessions includes resting strokes and distorts the spm calculation
   - name: avg_spm
     title: "Average Strokes Per Minute"
-    sql: |
-      CAST(
-        CASE
-          WHEN SUM("Rest Distance") IS NOT NULL
-            THEN AVG("Stroke Rate/Cadence")
-          ELSE
-            SUM("Stroke Count") / SUM("Work Time (Seconds)") * 60.0
-        END AS DECIMAL(10, 2)
-      )
     type: number
+    sql: |
+      CASE
+        WHEN SUM("Work Time (Seconds)") = 0 THEN NULL
+        ELSE
+          SUM(
+            CASE
+              WHEN COALESCE("Rest Distance", 0) > 0
+                -- interval: trust the session's Stroke Rate, weight by work time
+                THEN "Stroke Rate/Cadence" * "Work Time (Seconds)"
+              ELSE
+                -- non-interval: strokes per second * 60, weight by work time
+                "Stroke Count" * 60.0
+            END
+          ) / SUM("Work Time (Seconds)")
+      END
 
   - name: avg_pace
     title: "Average Split Time per 500m (mm:ss.ff)"
