@@ -87,20 +87,20 @@ cubes:
     title: "Average Strokes Per Minute"
     type: number
     sql: |
-      CASE
+      CAST(CASE
         WHEN SUM("Work Time (Seconds)") = 0 THEN NULL
         ELSE
           SUM(
             CASE
-              WHEN COALESCE("Rest Distance", 0) > 0
-                -- interval: trust the session's Stroke Rate, weight by work time
+              -- handles situations for interval sessions and/or missing stroke count
+              WHEN COALESCE("Rest Distance", 0) > 0 OR "Stroke Count" IS NULL
                 THEN "Stroke Rate/Cadence" * "Work Time (Seconds)"
               ELSE
                 -- non-interval: strokes per second * 60, weight by work time
                 "Stroke Count" * 60.0
             END
           ) / SUM("Work Time (Seconds)")
-      END
+      END as DECIMAL(10,2))
 
   - name: avg_pace
     title: "Average Split Time per 500m (mm:ss.ff)"
