@@ -43,7 +43,7 @@ cubes:
 
   - name: total_distance_m
     title: "Total Distance (Meters)"
-    sql: "\"Work Distance\""
+    sql: "Work Distance"
     type: sum
 
   - name: total_distance_km
@@ -51,14 +51,29 @@ cubes:
     sql: "ROUND(sum(\"Work Distance\") / 1000.0, 2)"
     type: number
 
+  - name: total_rest_distance_m
+    title: "Total Rest Distance (Meters)"
+    sql: "Rest Distance"
+    type: sum
+
+  - name: total_rest_distance_km
+    title: "Total Rest Distance (Kilometers)"
+    sql: "ROUND(sum(\"Rest Distance\") / 1000.0, 2)"
+    type: number
+
+  - name: total_distance_with_rest_km
+    title: "Total Distance (Kilometers, Incl. Rest)"
+    sql: "ROUND(SUM(COALESCE(\"Work Distance\", 0) + COALESCE(\"Rest Distance\", 0)) / 1000.0, 2)"
+    type: number
+
   - name: total_strokes
     title: "Total Strokes"
-    sql: "\"Stroke Count\""
+    sql: "Stroke Count"
     type: sum
 
   - name: total_calories
     title: "Total Calories Burned"
-    sql: "\"Total Cal\""
+    sql: "Total Cal"
     type: sum
 
   - name: avg_watts

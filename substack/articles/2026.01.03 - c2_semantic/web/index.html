@@ -770,9 +770,12 @@
                     if (!items || items.length === 0) return '';
                     const idx = items[0].dataIndex;
                     const chart = items[0].chart;
-                    const ds = chart.data?.datasets ?? [];
                     let sum = 0;
+                    const ds = chart.data?.datasets ?? [];
                     for (const d of ds) {
+                      // Treat datasets with explicit type 'line' as overlays; only sum bars.
+                      const t = (d.type || chart.config?.type || 'bar');
+                      if (t === 'line') continue;
                       const v = d.data?.[idx];
                       const n = typeof v === 'string' ? parseFloat(v) : v;
                       if (isFinite(n)) sum += n;
@@ -1408,7 +1411,7 @@
       async function loadSummary() {
         const monthlyQuery = {
           timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'month' }],
-          measures: ['c2_cube.total_distance_km'],
+          measures: ['c2_cube.total_distance_with_rest_km'],
           dimensions: ['c2_cube.machine'],
           filters: [
             { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
@@ -1422,7 +1425,7 @@
           const labelsSet = new Set();
           const timeKey = rows[0] ? detectTimeKey(rows[0]) : 'c2_cube.workout_date';
           const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
-          const valKey = 'c2_cube.total_distance_km';
+          const valKey = 'c2_cube.total_distance_with_rest_km';
           const byMonthMachine = {};
           rows.forEach(r => {
             const mLabel = formatMonthLabel(r[timeKey]);
@@ -1593,7 +1596,7 @@
 
       async function loadLifetimeKPIs() {
         const lifetimeQuery = {
-          measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace'],
+          measures: ['c2_cube.total_distance_with_rest_km', 'c2_cube.avg_pace'],
           dimensions: ['c2_cube.machine'],
           filters: [
             { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
@@ -1603,7 +1606,7 @@
           const res = await cubeLoad(lifetimeQuery);
           const rows = res.data || res.loadResponse?.data || [];
           const machineKey = rows[0] ? detectMachineKey(rows[0]) : 'c2_cube.machine';
-          const distKey = 'c2_cube.total_distance_km';
+          const distKey = 'c2_cube.total_distance_with_rest_km';
           const paceKey = 'c2_cube.avg_pace';
 
           const toNum = (v) => {
