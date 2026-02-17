@@ -2,7 +2,7 @@ cubes:
 - name: c2_cube
   sql: SELECT * FROM read_csv_auto('/data/workouts/*summary*.csv')
   refreshKey:
-    every: 10 seconds
+    every: 3 seconds
 
 
   dimensions:
@@ -43,7 +43,7 @@ cubes:
 
   - name: total_distance_m
     title: "Total Distance (Meters)"
-    sql: "Work Distance"
+    sql: "\"Work Distance\""
     type: sum
 
   - name: total_distance_km
@@ -53,7 +53,7 @@ cubes:
 
   - name: total_rest_distance_m
     title: "Total Rest Distance (Meters)"
-    sql: "Rest Distance"
+    sql: "\"Rest Distance\""
     type: sum
 
   - name: total_rest_distance_km
@@ -68,12 +68,12 @@ cubes:
 
   - name: total_strokes
     title: "Total Strokes"
-    sql: "Stroke Count"
+    sql: "\"Stroke Count\""
     type: sum
 
   - name: total_calories
     title: "Total Calories Burned"
-    sql: "Total Cal"
+    sql: "\"Total Cal\""
     type: sum
 
   - name: avg_watts

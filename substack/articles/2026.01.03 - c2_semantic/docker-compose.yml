@@ -7,7 +7,14 @@ services:
     environment:
       - CUBEJS_DEV_MODE=true
       - CUBEJS_DB_TYPE=duckdb
+      - CUBE_QUERY_LOG_PATH=/cube/conf/query_logs.json
     volumes:
+      # cube configuration (logging, etc.)
+      - ./cube.js:/cube/conf/cube.js:ro
+
+      # query log file (host-visible, JSON Lines)
+      - ./query_logs.json:/cube/conf/query_logs.json
+
       # maps our cube model over
       - ./model/cubes:/cube/conf/model/cubes:ro
 

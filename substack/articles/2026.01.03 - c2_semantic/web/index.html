@@ -183,6 +183,11 @@
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
           <div class="card">
+            <h2>Avg Watts — Daily by SPM Band</h2>
+            <div class="chart-container"><canvas id="wattsSpmBucketsDaily"></canvas></div>
+            <div class="hint">Colors show SPM bands (≤22, 23–25, ≥26) over time.</div>
+          </div>
+          <div class="card">
             <h2>Avg Pace — Daily</h2>
             <div class="chart-container"><canvas id="paceDaily"></canvas></div>
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
@@ -1036,6 +1041,40 @@
           const durationDaily = extractSeries(dailyRes, 'c2_cube.avg_session_duration');
           const distDaily = extractSeries(dailyRes, 'c2_cube.total_distance_km');
 
+          // Build SPM bucketed watts series for color-encoded progress over time
+          const spmVals = spmDaily.values || [];
+          const wattsVals = wattsDaily.values || [];
+          const labels = spmDaily.labels || wattsDaily.labels || [];
+          const n = Math.min(spmVals.length, wattsVals.length, labels.length);
+          const bucketLabels = {
+            low: '≤22 spm',
+            midLow: '23–25 spm',
+            high: '≥26 spm',
+          };
+          const bucketColors = {
+            // SPM 22: bright Concept2-style green
+            low: '#7CFC00',     // neon-like green
+            midLow: '#60a5fa',  // blue (2325)
+            high: '#f97316',    // orange (26)
+          };
+          const wattsLow = new Array(n).fill(null);
+          const wattsMidLow = new Array(n).fill(null);
+          const wattsHigh = new Array(n).fill(null);
+          const combinedWatts = new Array(n).fill(null);
+          for (let i = 0; i < n; i++) {
+            const s = typeof spmVals[i] === 'string' ? parseFloat(spmVals[i]) : spmVals[i];
+            const w = typeof wattsVals[i] === 'string' ? parseFloat(wattsVals[i]) : wattsVals[i];
+            if (!isFinite(s) || !isFinite(w)) continue;
+            combinedWatts[i] = w;
+            if (s <= 22) {
+              wattsLow[i] = w;
+            } else if (s >= 23 && s <= 25) {
+              wattsMidLow[i] = w;
+            } else if (s >= 26) {
+              wattsHigh[i] = w;
+            }
+          }
+
           // Destroy existing charts if any
           window.__charts?.forEach(c => c.destroy());
           window.__charts = [];
@@ -1068,6 +1107,93 @@
               }],
               { distanceKm: distDaily.values }
             );
+          // New: Avg Watts — Daily by SPM Band (time on x, SPM as color)
+          const wattsSpmBucketsCanvas = document.getElementById('wattsSpmBucketsDaily');
+          let wattsSpmBucketsChart = null;
+          if (wattsSpmBucketsCanvas) {
+            wattsSpmBucketsChart = new Chart(wattsSpmBucketsCanvas, {
+              type: 'line',
+              data: {
+                labels,
+                datasets: [
+                  // Invisible base series so the global selected-date highlight uses the true watts values
+                  {
+                    label: 'Avg Watts (all)',
+                    data: combinedWatts,
+                    borderColor: 'rgba(148, 163, 184, 0.4)',
+                    backgroundColor: 'rgba(148, 163, 184, 0.0)',
+                    tension: 0,
+                    pointRadius: 0,
+                    borderWidth: 0,
+                    spanGaps: true,
+                  },
+                  {
+                    label: bucketLabels.low,
+                    data: wattsLow,
+                    borderColor: bucketColors.low,
+                    backgroundColor: bucketColors.low,
+                    tension: 0,
+                    pointRadius: 4,
+                    showLine: false,
+                    spanGaps: true,
+                  },
+                  {
+                    label: bucketLabels.midLow,
+                    data: wattsMidLow,
+                    borderColor: bucketColors.midLow,
+                    backgroundColor: bucketColors.midLow,
+                    tension: 0,
+                    pointRadius: 4,
+                    showLine: false,
+                    spanGaps: true,
+                  },
+                  {
+                    label: bucketLabels.high,
+                    data: wattsHigh,
+                    borderColor: bucketColors.high,
+                    backgroundColor: bucketColors.high,
+                    tension: 0,
+                    pointRadius: 4,
+                    showLine: false,
+                    spanGaps: true,
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: true },
+                  tooltip: {
+                    mode: 'nearest', intersect: false,
+                    callbacks: {
+                      title: (items) => items?.[0]?.label ?? '',
+                      label: (ctx) => {
+                        const v = ctx.parsed?.y;
+                        const label = ctx.dataset?.label || '';
+                        if (!isFinite(v)) return label || '';
+                        return `${label}: ${Math.round(v)} W`;
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  x: {
+                    ticks: {
+                      color: '#cbd5e1',
+                      callback: (value, index) => labels[index]
+                    },
+                    grid: { color: 'rgba(255,255,255,0.06)' }
+                  },
+                  y: {
+                    ticks: { color: '#cbd5e1' },
+                    grid: { color: 'rgba(255,255,255,0.06)' },
+                    ...computeNumericAxisOptions(wattsVals)
+                  }
+                }
+              }
+            });
+          }
           const paceChart = makeLineChart(
               document.getElementById('paceDaily'),
               paceDaily,
@@ -1106,6 +1232,9 @@
             );
 
           window.__charts.push(spmChart, wattsDailyChart, paceChart, durationChart);
+          if (wattsSpmBucketsChart) {
+            window.__charts.push(wattsSpmBucketsChart);
+          }
           // Re-apply highlight after charts are recreated
           updateSelectedHighlight();
 
@@ -1118,6 +1247,18 @@
             setSelectedDate(dateLabel);
             await loadSessionDetailForDate(dateLabel, machineSel);
           };
+
+          // Click handler for Avg Watts — Daily by SPM Band to load session detail
+          if (wattsSpmBucketsChart) {
+            wattsSpmBucketsChart.canvas.onclick = async (evt) => {
+              const idx = getNearestIndex(wattsSpmBucketsChart, evt);
+              if (idx == null) return;
+              const dateLabel = labels[idx];
+              const machineSel = getMachine();
+              setSelectedDate(dateLabel);
+              await loadSessionDetailForDate(dateLabel, machineSel);
+            };
+          }
 
           // Click handlers for other daily charts
           spmChart.canvas.onclick = async (evt) => {
