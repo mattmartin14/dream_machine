@@ -9,6 +9,39 @@ const LOG_PATH = process.env.CUBE_QUERY_LOG_PATH || path.join('/cube/conf', 'que
 // Set to true if you want to capture the SQL again.
 const CAPTURE_SQL = false;
 
+function extractCubeNames(cubeQuery) {
+  if (!cubeQuery || typeof cubeQuery !== 'object') return [];
+  const names = new Set();
+
+  const addMember = (member) => {
+    if (!member || typeof member !== 'string') return;
+    const base = member.split('.')[0];
+    if (base) names.add(base);
+  };
+
+  // Measures: ["c2_cube.avg_watts", ...]
+  if (Array.isArray(cubeQuery.measures)) {
+    cubeQuery.measures.forEach(addMember);
+  }
+
+  // Dimensions: ["c2_cube.workout_date", ...]
+  if (Array.isArray(cubeQuery.dimensions)) {
+    cubeQuery.dimensions.forEach(addMember);
+  }
+
+  // Time dimensions: [{ dimension: "c2_cube.workout_date", ... }]
+  if (Array.isArray(cubeQuery.timeDimensions)) {
+    cubeQuery.timeDimensions.forEach((td) => addMember(td && td.dimension));
+  }
+
+  // Filters: [{ member: "c2_cube.machine", ... }]
+  if (Array.isArray(cubeQuery.filters)) {
+    cubeQuery.filters.forEach((f) => addMember(f && f.member));
+  }
+
+  return Array.from(names);
+}
+
 function appendJsonLog(entry) {
   try {
     const enriched = {
@@ -35,6 +68,11 @@ function appendJsonLog(entry) {
 let lastCubeQuery = null;
 
 class LoggingDuckDBDriver extends DuckDBDriver {
+  constructor(options = {}) {
+    super(options);
+    this.dataSource = options.dataSource || 'default';
+  }
+
   async query(query, values, options) {
     const text = (query || '').trim();
     const upper = text.toUpperCase();
@@ -50,6 +88,8 @@ class LoggingDuckDBDriver extends DuckDBDriver {
         const entry = {
           type: 'CUBE_QUERY_EXECUTION',
           duration_ms: durationMs,
+          data_source: this.dataSource,
+          cube_names: extractCubeNames(lastCubeQuery),
           cube_query: lastCubeQuery,
         };
         if (CAPTURE_SQL) {
@@ -67,6 +107,8 @@ class LoggingDuckDBDriver extends DuckDBDriver {
         const entry = {
           type: 'CUBE_QUERY_ERROR',
           duration_ms: durationMs,
+          data_source: this.dataSource,
+          cube_names: extractCubeNames(lastCubeQuery),
           cube_query: lastCubeQuery,
           error: err && err.message ? err.message : String(err),
         };
@@ -87,7 +129,9 @@ class LoggingDuckDBDriver extends DuckDBDriver {
 }
 
 module.exports = {
-  driverFactory: () => new LoggingDuckDBDriver(),
+  // Pass Cube's dataSource context into our logging driver so
+  // each log record can include which Cube data source was used.
+  driverFactory: ({ dataSource } = {}) => new LoggingDuckDBDriver({ dataSource }),
 
   // Log the Cube REST API JSON (semantic query) before it is translated to SQL
   queryRewrite: (query, { securityContext }) => {

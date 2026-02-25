@@ -1062,9 +1062,12 @@
           const wattsHigh = new Array(n).fill(null);
           const combinedWatts = new Array(n).fill(null);
           for (let i = 0; i < n; i++) {
-            const s = typeof spmVals[i] === 'string' ? parseFloat(spmVals[i]) : spmVals[i];
+            const rawS = typeof spmVals[i] === 'string' ? parseFloat(spmVals[i]) : spmVals[i];
             const w = typeof wattsVals[i] === 'string' ? parseFloat(wattsVals[i]) : wattsVals[i];
-            if (!isFinite(s) || !isFinite(w)) continue;
+            if (!isFinite(rawS) || !isFinite(w)) continue;
+            // Round SPM to nearest integer so values like 25.15
+            // are included in the expected 23–25 or ≥26 buckets
+            const s = Math.round(rawS);
             combinedWatts[i] = w;
             if (s <= 22) {
               wattsLow[i] = w;
