@@ -76,6 +76,7 @@
       <div class="tabs" role="tablist" aria-label="View selector">
         <button class="tab active" role="tab" aria-selected="true" data-view="daily" data-machine="RowErg">RowErg</button>
         <button class="tab" role="tab" aria-selected="false" data-view="daily" data-machine="SkiErg">SkiErg</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="daily" data-machine="BikeErg">BikeErg</button>
         <button class="tab" role="tab" aria-selected="false" data-view="summary">Summary</button>
         <button class="tab" role="tab" aria-selected="false" data-view="watts">Watts</button>
       </div>
@@ -108,7 +109,7 @@
         </div>
         <div class="kpi-row" style="margin-top: 10px;">
           <div>
-            <div class="kpi-label">Avg Pace</div>
+            <div id="latest-pace-label" class="kpi-label">Avg Pace</div>
             <div id="latest-pace" class="kpi-value">—</div>
           </div>
           <div>
@@ -118,7 +119,7 @@
         </div>
         <div class="kpi-row" style="margin-top: 10px;">
           <div>
-            <div class="kpi-label">Avg SPM</div>
+            <div id="latest-cadence-label" class="kpi-label">Avg SPM</div>
             <div id="latest-spm" class="kpi-value">—</div>
           </div>
           <div>
@@ -149,7 +150,7 @@
           </div>
           <div class="kpi-row" style="margin-top: 10px;">
             <div>
-              <div class="kpi-label">Avg Pace</div>
+              <div id="session-pace-label" class="kpi-label">Avg Pace</div>
               <div id="session-pace" class="kpi-value">—</div>
             </div>
             <div>
@@ -159,7 +160,7 @@
           </div>
           <div class="kpi-row" style="margin-top: 10px;">
             <div>
-              <div class="kpi-label">Avg SPM</div>
+              <div id="session-cadence-label" class="kpi-label">Avg SPM</div>
               <div id="session-spm" class="kpi-value">—</div>
             </div>
             <div>
@@ -173,7 +174,7 @@
       <div>
         <div class="grid">
           <div class="card">
-            <h2>Avg Strokes per Minute — Daily</h2>
+            <h2 id="cadence-daily-title">Avg Strokes per Minute — Daily</h2>
             <div class="chart-container"><canvas id="spmDaily"></canvas></div>
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
@@ -183,12 +184,12 @@
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
           <div class="card">
-            <h2>Avg Watts — Daily by SPM Band</h2>
+            <h2 id="watts-cadence-band-title">Avg Watts — Daily by SPM Band</h2>
             <div class="chart-container"><canvas id="wattsSpmBucketsDaily"></canvas></div>
-            <div class="hint">Colors show SPM bands (≤22, 23–25, ≥26) over time.</div>
+            <div id="watts-cadence-band-hint" class="hint">Colors show SPM bands (≤22, 23–25, ≥26) over time.</div>
           </div>
           <div class="card">
-            <h2>Avg Pace — Daily</h2>
+            <h2 id="pace-daily-title">Avg Pace — Daily</h2>
             <div class="chart-container"><canvas id="paceDaily"></canvas></div>
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
@@ -203,13 +204,13 @@
 
     <div id="summary-section" class="grid hidden">
       <div class="card" style="grid-column: span 2;">
-        <h2>Monthly Distance (km) — RowErg vs SkiErg</h2>
+        <h2>Monthly Distance (km) — RowErg vs SkiErg vs BikeErg</h2>
         <div class="chart-container" style="height: 340px;"><canvas id="distanceMonthlySummary"></canvas></div>
       </div>
       <div class="card" style="grid-column: span 2;">
         <h2>Lifetime Total Distance (km)</h2>
         <div id="kpi-total-km" class="kpi-value">—</div>
-        <div class="kpi-subtitle">RowErg + SkiErg</div>
+        <div class="kpi-subtitle">RowErg + SkiErg + BikeErg</div>
       </div>
       <div class="card">
         <h2>RowErg Total Distance (km)</h2>
@@ -220,12 +221,20 @@
         <div id="kpi-ski-km" class="kpi-value">—</div>
       </div>
       <div class="card">
-        <h2>RowErg Lifetime Avg Pace</h2>
+        <h2>BikeErg Total Distance (km)</h2>
+        <div id="kpi-bike-km" class="kpi-value">—</div>
+      </div>
+      <div class="card">
+        <h2>RowErg Lifetime Avg Pace (/500m)</h2>
         <div id="kpi-row-pace" class="kpi-value">—</div>
       </div>
       <div class="card">
-        <h2>SkiErg Lifetime Avg Pace</h2>
+        <h2>SkiErg Lifetime Avg Pace (/500m)</h2>
         <div id="kpi-ski-pace" class="kpi-value">—</div>
+      </div>
+      <div class="card">
+        <h2>BikeErg Lifetime Avg Pace (/1000m)</h2>
+        <div id="kpi-bike-pace" class="kpi-value">—</div>
       </div>
     </div>
 
@@ -237,6 +246,10 @@
       <div class="card" style="grid-column: span 2;">
         <h2>Avg Watts per Month — SkiErg</h2>
         <div class="chart-container" style="height: 340px;"><canvas id="wattsMonthlySki"></canvas></div>
+      </div>
+      <div class="card" style="grid-column: span 2;">
+        <h2>Avg Watts per Month — BikeErg</h2>
+        <div class="chart-container" style="height: 340px;"><canvas id="wattsMonthlyBike"></canvas></div>
       </div>
     </div>
 
@@ -259,6 +272,56 @@
         const el = document.querySelector('.tab.active');
         const v = el?.dataset?.machine || activeMachine || DEFAULT_MACHINE;
         return v.trim();
+      }
+
+      function isBikeErg(machine) {
+        return (machine || '').toLowerCase() === 'bikeerg';
+      }
+
+      function cadenceUnit(machine) {
+        return isBikeErg(machine) ? 'rpm' : 'spm';
+      }
+
+      function cadenceLabel(machine) {
+        return isBikeErg(machine) ? 'RPM' : 'SPM';
+      }
+
+      function paceSplitLabel(machine) {
+        return isBikeErg(machine) ? '/1000m' : '/500m';
+      }
+
+      function updateMachineAwareLabels(machine) {
+        const cadence = cadenceLabel(machine);
+        const cadenceLong = isBikeErg(machine) ? 'Avg Revolutions per Minute — Daily' : 'Avg Strokes per Minute — Daily';
+        const paceTitle = `Avg Pace — Daily (${paceSplitLabel(machine)})`;
+
+        const latestCadenceLabel = document.getElementById('latest-cadence-label');
+        if (latestCadenceLabel) latestCadenceLabel.textContent = `Avg ${cadence}`;
+
+        const sessionCadenceLabel = document.getElementById('session-cadence-label');
+        if (sessionCadenceLabel) sessionCadenceLabel.textContent = `Avg ${cadence}`;
+
+        const latestPaceLabel = document.getElementById('latest-pace-label');
+        if (latestPaceLabel) latestPaceLabel.textContent = `Avg Pace (${paceSplitLabel(machine)})`;
+
+        const sessionPaceLabel = document.getElementById('session-pace-label');
+        if (sessionPaceLabel) sessionPaceLabel.textContent = `Avg Pace (${paceSplitLabel(machine)})`;
+
+        const cadenceDailyTitle = document.getElementById('cadence-daily-title');
+        if (cadenceDailyTitle) cadenceDailyTitle.textContent = cadenceLong;
+
+        const cadenceBandTitle = document.getElementById('watts-cadence-band-title');
+        if (cadenceBandTitle) cadenceBandTitle.textContent = `Avg Watts — Daily by ${cadence} Band`;
+
+        const cadenceBandHint = document.getElementById('watts-cadence-band-hint');
+        if (cadenceBandHint) {
+          cadenceBandHint.textContent = isBikeErg(machine)
+            ? 'Colors show RPM bands (≤65, 66–80, ≥81) over time.'
+            : 'Colors show SPM bands (≤22, 23–25, ≥26) over time.';
+        }
+
+        const paceDailyTitle = document.getElementById('pace-daily-title');
+        if (paceDailyTitle) paceDailyTitle.textContent = paceTitle;
       }
 
       function getStartDateEnabled() {
@@ -344,11 +407,11 @@
             <div class="card" style="width: 720px; max-width: 90vw; position: relative;">
               <button id="spmHistX" type="button" aria-label="Close" title="Close" style="position:absolute; top:8px; right:8px; padding:4px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#0b1220; color:var(--text); cursor:pointer; z-index: 3;">✕</button>
               <div style="display:flex; justify-content:space-between; align-items:center; padding-right:40px;">
-                <h2>SPM Distribution — <span id="spmHistMeta" class="subtitle"></span></h2>
+                <h2>Cadence Distribution — <span id="spmHistMeta" class="subtitle"></span></h2>
                 <button id="spmHistClose" type="button" aria-label="Close" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:#0b1220; color:var(--text); cursor:pointer; position: relative; z-index: 2;" onclick="event && event.stopPropagation(); (function(){var m=document.getElementById('spmHistogramModal'); if(m){m.classList.add('hidden');}})()">Close</button>
               </div>
               <div class="chart-container" style="height: 320px;"><canvas id="spmHistogramCanvas"></canvas></div>
-              <div class="hint">Histogram of stroke rates (SPM) for the selected session.</div>
+              <div class="hint">Histogram of cadence rates (SPM/RPM) for the selected session.</div>
             </div>
           </div>`;
         const container = document.createElement('div');
@@ -405,14 +468,15 @@
 
       function renderSPMHistogramInDetail(data) {
         const titleEl = document.getElementById('sessionTitle');
-        if (titleEl) titleEl.textContent = 'Session Detail — Distribution of SPM';
+        const machineSel = data?.machine || getMachine();
+        const cadence = cadenceLabel(machineSel);
+        if (titleEl) titleEl.textContent = `Session Detail — Distribution of ${cadence}`;
         const points = Array.isArray(data?.points) ? data.points : [];
         const rates = points.map(p => {
           const r = p?.stroke_rate;
           return typeof r === 'string' ? parseFloat(r) : r;
         }).filter(r => isFinite(r));
         const dateLabel = data?.date || '';
-        const machineSel = data?.machine || '';
         const metaEl = document.getElementById('sessionMeta');
         if (metaEl) {
           const idTxt = data?.log_id ? ` · id ${data.log_id}` : '';
@@ -443,7 +507,7 @@
           c.data.labels = labels;
           c.data.datasets = [{ label: 'Stroke Count', data: counts, backgroundColor: '#34d399' }];
           c.options.scales = {
-            x: { title: { display: true, text: 'SPM (Strokes per Minute)' }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            x: { title: { display: true, text: `${cadence} (${isBikeErg(machineSel) ? 'Revolutions per Minute' : 'Strokes per Minute'})` }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
             y: { title: { display: true, text: 'Stroke Count' }, beginAtZero: true, ticks: { precision: 0, color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } }
           };
           c.update();
@@ -466,12 +530,12 @@
               legend: { display: true },
               tooltip: {
                 callbacks: {
-                  label: (ctx) => `SPM ${ctx.label}: ${ctx.parsed.y} strokes`
+                  label: (ctx) => `${cadence} ${ctx.label}: ${ctx.parsed.y} strokes`
                 }
               }
             },
             scales: {
-              x: { title: { display: true, text: 'SPM (Strokes per Minute)' }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
+              x: { title: { display: true, text: `${cadence} (${isBikeErg(machineSel) ? 'Revolutions per Minute' : 'Strokes per Minute'})` }, ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } },
               y: { title: { display: true, text: 'Stroke Count' }, beginAtZero: true, ticks: { precision: 0, color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.06)' } }
             }
           }
@@ -491,8 +555,8 @@
           renderSPMHistogram(data);
           showHistogramModal();
         } catch (e) {
-          console.error('SPM histogram load failed:', e);
-          alert(`Failed to load SPM histogram: ${e.message}`);
+          console.error('Cadence histogram load failed:', e);
+          alert(`Failed to load cadence histogram: ${e.message}`);
         }
       }
 
@@ -1008,15 +1072,18 @@
       function getSPMYAxisOptions(machine, values) {
         if (machine === 'RowErg') return { min: 15, max: 30, stepSize: 1, beginAtZero: false };
         if (machine === 'SkiErg') return { min: 30, max: 50, stepSize: 1, beginAtZero: false };
+        if (machine === 'BikeErg') return { min: 50, max: 95, stepSize: 5, beginAtZero: false };
         return computeSPMAxisOptions(values);
       }
 
       async function loadAll() {
+        const machine = getMachine();
+        updateMachineAwareLabels(machine);
         const dailyQuery = {
           timeDimensions: [{ dimension: 'c2_cube.workout_date', granularity: 'day' }],
           measures: ['c2_cube.avg_watts', 'c2_cube.avg_spm', 'c2_cube.avg_pace', 'c2_cube.avg_session_duration', 'c2_cube.total_distance_km'],
           filters: [
-            { member: 'c2_cube.machine', operator: 'equals', values: [getMachine()] },
+            { member: 'c2_cube.machine', operator: 'equals', values: [machine] },
             { member: 'c2_cube.total_session_minutes', operator: 'gte', values: ['5'] },
           ]
         };
@@ -1046,11 +1113,9 @@
           const wattsVals = wattsDaily.values || [];
           const labels = spmDaily.labels || wattsDaily.labels || [];
           const n = Math.min(spmVals.length, wattsVals.length, labels.length);
-          const bucketLabels = {
-            low: '≤22 spm',
-            midLow: '23–25 spm',
-            high: '≥26 spm',
-          };
+          const bucketLabels = isBikeErg(machine)
+            ? { low: '≤65 rpm', midLow: '66–80 rpm', high: '≥81 rpm' }
+            : { low: '≤22 spm', midLow: '23–25 spm', high: '≥26 spm' };
           const bucketColors = {
             // SPM 22: bright Concept2-style green
             low: '#7CFC00',     // neon-like green
@@ -1065,16 +1130,26 @@
             const rawS = typeof spmVals[i] === 'string' ? parseFloat(spmVals[i]) : spmVals[i];
             const w = typeof wattsVals[i] === 'string' ? parseFloat(wattsVals[i]) : wattsVals[i];
             if (!isFinite(rawS) || !isFinite(w)) continue;
-            // Round SPM to nearest integer so values like 25.15
-            // are included in the expected 23–25 or ≥26 buckets
+            // Round cadence to nearest integer so values like 25.15
+            // are included in the expected buckets
             const s = Math.round(rawS);
             combinedWatts[i] = w;
-            if (s <= 22) {
-              wattsLow[i] = w;
-            } else if (s >= 23 && s <= 25) {
-              wattsMidLow[i] = w;
-            } else if (s >= 26) {
-              wattsHigh[i] = w;
+            if (isBikeErg(machine)) {
+              if (s <= 65) {
+                wattsLow[i] = w;
+              } else if (s >= 66 && s <= 80) {
+                wattsMidLow[i] = w;
+              } else if (s >= 81) {
+                wattsHigh[i] = w;
+              }
+            } else {
+              if (s <= 22) {
+                wattsLow[i] = w;
+              } else if (s >= 23 && s <= 25) {
+                wattsMidLow[i] = w;
+              } else if (s >= 26) {
+                wattsHigh[i] = w;
+              }
             }
           }
 
@@ -1082,12 +1157,11 @@
           window.__charts?.forEach(c => c.destroy());
           window.__charts = [];
 
-          const machine = getMachine();
           const spmChart = makeLineChart(
               document.getElementById('spmDaily'),
               spmDaily,
               '#34d399',
-              'Avg SPM',
+              `Avg ${cadenceLabel(machine)}`,
               undefined,
               getSPMYAxisOptions(machine, spmDaily.values)
             );
@@ -1201,11 +1275,11 @@
               document.getElementById('paceDaily'),
               paceDaily,
               '#22d3ee',
-              'Avg Pace',
+              `Avg Pace (${paceSplitLabel(machine)})`,
               formatSecondsToMMSS,
               computeTimeAxisOptions(paceDaily.values),
               [{
-                label: 'Avg Pace Trend',
+                label: `Avg Pace (${paceSplitLabel(machine)}) Trend`,
                 data: computeLinearTrend(paceDaily.values),
                 borderColor: '#7dd3fc',
                 backgroundColor: '#7dd3fc',
@@ -1315,6 +1389,7 @@
       function renderSessionDetailChart(payload) {
         const titleEl = document.getElementById('sessionTitle');
         if (titleEl) titleEl.textContent = 'Session Detail — Watts per Stroke';
+        const machine = payload?.machine || getMachine();
         // Ensure chart is a line chart; destroy if currently another type
         try { destroySessionChartIfTypeNot('line'); } catch {}
         const metaEl = document.getElementById('sessionMeta');
@@ -1361,7 +1436,7 @@
                   fill: false,
                   yAxisID: 'y',
                 }].concat(hasAnyPace ? [{
-                  label: 'Pace',
+                  label: `Pace (${paceSplitLabel(machine)})`,
                   data: paceSecondsSeries,
                   borderColor: '#22d3ee',
                   backgroundColor: '#22d3ee',
@@ -1382,7 +1457,7 @@
                       label: (ctx) => {
                         const name = ctx.dataset?.label || '';
                         const val = ctx.parsed?.y;
-                        if (name === 'Pace') {
+                        if (name.startsWith('Pace')) {
                           const idx = ctx.dataIndex;
                           const rawStr = points?.[idx]?.pace_mm_ss_ff;
                           return `${name}: ${rawStr && typeof rawStr === 'string' ? rawStr : formatSecondsToMMSSff(val)}`;
@@ -1412,7 +1487,7 @@
                     max: paceAxis.max,
                     suggestedMin: paceAxis.min,
                     suggestedMax: paceAxis.max,
-                    title: { display: true, text: 'Pace', color: '#cbd5e1' }
+                    title: { display: true, text: `Pace (${paceSplitLabel(machine)})`, color: '#cbd5e1' }
                   }
                 }
               }
@@ -1423,13 +1498,14 @@
           c.data.labels = labels;
           c.data.datasets[0].data = watts;
           // Update or toggle the pace dataset
-          const hasPaceDataset = c.data.datasets.length > 1 && c.data.datasets[1]?.label === 'Pace';
+          const hasPaceDataset = c.data.datasets.length > 1 && (c.data.datasets[1]?.label || '').startsWith('Pace');
           if (hasAnyPace) {
             if (hasPaceDataset) {
               c.data.datasets[1].data = paceSecondsSeries;
+              c.data.datasets[1].label = `Pace (${paceSplitLabel(machine)})`;
             } else {
               c.data.datasets.push({
-                label: 'Pace',
+                label: `Pace (${paceSplitLabel(machine)})`,
                 data: paceSecondsSeries,
                 borderColor: '#22d3ee',
                 backgroundColor: '#22d3ee',
@@ -1444,6 +1520,7 @@
             const paceAxis = computeTimeAxisOptions(paceSecondsSeries);
             c.options.scales.y1.min = paceAxis.min;
             c.options.scales.y1.max = paceAxis.max;
+            c.options.scales.y1.title.text = `Pace (${paceSplitLabel(machine)})`;
           } else if (hasPaceDataset) {
             c.data.datasets.pop();
           }
@@ -1451,13 +1528,13 @@
         }
         // Also load summary KPIs for the selected session via Cube
         if (payload && typeof payload.log_id !== 'undefined' && payload.log_id !== null) {
-          loadSessionSummaryById(payload.log_id).catch(err => console.warn('Session summary load by id failed:', err));
+          loadSessionSummaryById(payload.log_id, machine).catch(err => console.warn('Session summary load by id failed:', err));
         } else if (payload && payload.date && payload.machine) {
           loadSessionSummaryByDay(payload.date, payload.machine).catch(err => console.warn('Session summary load by day failed:', err));
         }
       }
 
-      async function loadSessionSummaryById(logId) {
+      async function loadSessionSummaryById(logId, machineSel = getMachine()) {
         const query = {
           measures: ['c2_cube.total_distance_km', 'c2_cube.avg_pace', 'c2_cube.avg_watts', 'c2_cube.total_session_minutes', 'c2_cube.avg_spm'],
           dimensions: ['c2_cube.workout_date'],
@@ -1468,7 +1545,7 @@
         };
         const res = await cubeLoad(query);
         const rows = res.data || res.loadResponse?.data || [];
-        updateSessionSummaryFromRow(rows[0]);
+        updateSessionSummaryFromRow(rows[0], machineSel);
       }
 
       async function loadSessionSummaryByDay(dateLabel, machineSel) {
@@ -1483,11 +1560,12 @@
         };
         const res = await cubeLoad(query);
         const rows = res.data || res.loadResponse?.data || [];
-        updateSessionSummaryFromRow(rows[0]);
+        updateSessionSummaryFromRow(rows[0], machineSel);
       }
 
-      function updateSessionSummaryFromRow(r) {
+      function updateSessionSummaryFromRow(r, machineSel = getMachine()) {
         const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+        const unit = cadenceUnit(machineSel);
         if (!r) {
           setText('session-date', '—');
           setText('session-distance-km', '—');
@@ -1509,7 +1587,7 @@
         setText('session-distance-km', isFinite(distKm) ? `${(Math.round(distKm * 100) / 100).toFixed(2)} km` : '—');
         setText('session-pace', pace ? formatSecondsToMMSSff(parseTimeToSeconds(pace)) : '—');
         setText('session-watts', isFinite(watts) ? `${Math.round(watts)} W` : '—');
-        setText('session-spm', isFinite(spm) ? `${Number(spm).toFixed(1)} spm` : '—');
+        setText('session-spm', isFinite(spm) ? `${Number(spm).toFixed(1)} ${unit}` : '—');
         setText('session-duration', isFinite(minutes) ? formatMinutesToMMSS(minutes) : '—');
       }
 
@@ -1547,7 +1625,7 @@
         document.getElementById('latest-date').textContent = dateLabel || '—';
         document.getElementById('latest-distance-km').textContent = isFinite(distKm) ? `${(Math.round(distKm * 10) / 10).toFixed(1)} km` : '—';
         document.getElementById('latest-pace').textContent = pace ? formatSecondsToMMSSff(parseTimeToSeconds(pace)) : '—';
-        document.getElementById('latest-spm').textContent = isFinite(spm) ? `${Number(spm).toFixed(1)} spm` : '—';
+        document.getElementById('latest-spm').textContent = isFinite(spm) ? `${Number(spm).toFixed(1)} ${cadenceUnit(getMachine())}` : '—';
         document.getElementById('latest-watts').textContent = isFinite(watts) ? `${Math.round(watts)} W` : '—';
         document.getElementById('latest-duration').textContent = isFinite(minutes) ? formatMinutesToMMSS(minutes) : '—';
       }
@@ -1558,7 +1636,7 @@
           measures: ['c2_cube.total_distance_with_rest_km'],
           dimensions: ['c2_cube.machine'],
           filters: [
-            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg', 'BikeErg'] },
           ],
           order: { 'c2_cube.workout_date': 'asc' }
         };
@@ -1575,15 +1653,16 @@
             const mLabel = formatMonthLabel(r[timeKey]);
             const machine = (r[machineKey] || '').trim();
             labelsSet.add(mLabel);
-            byMonthMachine[mLabel] = byMonthMachine[mLabel] || { RowErg: 0, SkiErg: 0 };
+            byMonthMachine[mLabel] = byMonthMachine[mLabel] || { RowErg: 0, SkiErg: 0, BikeErg: 0 };
             const v = typeof r[valKey] === 'string' ? parseFloat(r[valKey]) : r[valKey];
-            if (machine === 'RowErg' || machine === 'SkiErg') {
+            if (machine === 'RowErg' || machine === 'SkiErg' || machine === 'BikeErg') {
               byMonthMachine[mLabel][machine] += (isFinite(v) ? v : 0);
             }
           });
           const labels = Array.from(labelsSet).sort();
           const rowKm = labels.map(l => byMonthMachine[l]?.RowErg ?? 0);
           const skiKm = labels.map(l => byMonthMachine[l]?.SkiErg ?? 0);
+          const bikeKm = labels.map(l => byMonthMachine[l]?.BikeErg ?? 0);
 
           // Destroy existing charts
           window.__charts?.forEach(c => c.destroy());
@@ -1593,7 +1672,8 @@
           const totals = labels.map((l, i) => {
             const rk = typeof rowKm[i] === 'string' ? parseFloat(rowKm[i]) : rowKm[i];
             const sk = typeof skiKm[i] === 'string' ? parseFloat(skiKm[i]) : skiKm[i];
-            const r = (isFinite(rk) ? rk : 0) + (isFinite(sk) ? sk : 0);
+            const bk = typeof bikeKm[i] === 'string' ? parseFloat(bikeKm[i]) : bikeKm[i];
+            const r = (isFinite(rk) ? rk : 0) + (isFinite(sk) ? sk : 0) + (isFinite(bk) ? bk : 0);
             return isFinite(r) ? r : 0;
           });
           const years = Array.from(new Set(labels.map(l => (l || '').slice(0,4)))).sort();
@@ -1629,6 +1709,7 @@
           const summaryDatasets = [
             { label: 'RowErg', data: rowKm, backgroundColor: '#60a5fa', stack: 'distance' },
             { label: 'SkiErg', data: skiKm, backgroundColor: '#22d3ee', stack: 'distance' },
+            { label: 'BikeErg', data: bikeKm, backgroundColor: '#f59e0b', stack: 'distance' },
           ].concat(lineDatasets);
 
           window.__charts.push(
@@ -1652,7 +1733,7 @@
           measures: ['c2_cube.avg_watts', 'c2_cube.avg_drag_factor', 'c2_cube.total_distance_km'],
           dimensions: ['c2_cube.machine'],
           filters: [
-            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg', 'BikeErg'] },
           ],
           order: { 'c2_cube.workout_date': 'asc' }
         };
@@ -1673,10 +1754,13 @@
           const labelsSet = new Set();
           const rowSeries = {};
           const skiSeries = {};
+          const bikeSeries = {};
           const rowDragSeries = {};
           const skiDragSeries = {};
+          const bikeDragSeries = {};
           const rowDistSeries = {};
           const skiDistSeries = {};
+          const bikeDistSeries = {};
           rows.forEach(r => {
             const label = formatMonthLabel(r[timeKey]);
             labelsSet.add(label);
@@ -1692,17 +1776,25 @@
               skiSeries[label] = isFinite(v) ? v : null;
               skiDragSeries[label] = isFinite(d) ? d : null;
               skiDistSeries[label] = isFinite(dist) ? dist : null;
+            } else if (machine === 'BikeErg') {
+              bikeSeries[label] = isFinite(v) ? v : null;
+              bikeDragSeries[label] = isFinite(d) ? d : null;
+              bikeDistSeries[label] = isFinite(dist) ? dist : null;
             }
           });
           const labels = Array.from(labelsSet).sort();
           const rowVals = labels.map(l => rowSeries[l] ?? null);
           const skiVals = labels.map(l => skiSeries[l] ?? null);
+          const bikeVals = labels.map(l => bikeSeries[l] ?? null);
           const rowDragVals = labels.map(l => rowDragSeries[l] ?? null);
           const skiDragVals = labels.map(l => skiDragSeries[l] ?? null);
+          const bikeDragVals = labels.map(l => bikeDragSeries[l] ?? null);
           const rowDistVals = labels.map(l => rowDistSeries[l] ?? null);
           const skiDistVals = labels.map(l => skiDistSeries[l] ?? null);
+          const bikeDistVals = labels.map(l => bikeDistSeries[l] ?? null);
           const rowMom = computeMoMPercent(rowVals);
           const skiMom = computeMoMPercent(skiVals);
+          const bikeMom = computeMoMPercent(bikeVals);
 
           // Destroy existing charts
           window.__charts?.forEach(c => c.destroy());
@@ -1731,6 +1823,17 @@
               'Avg Watts',
               'MoM Change'
             ),
+            makeComboBarLineChart(
+              document.getElementById('wattsMonthlyBike'),
+              labels,
+              bikeVals,
+              bikeMom,
+              bikeDragVals,
+              bikeDistVals,
+              { bar: '#f59e0b', line: '#fcd34d' },
+              'Avg Watts',
+              'MoM Change'
+            ),
           );
         } catch (e) {
           console.error(e);
@@ -1743,7 +1846,7 @@
           measures: ['c2_cube.total_distance_with_rest_km', 'c2_cube.avg_pace'],
           dimensions: ['c2_cube.machine'],
           filters: [
-            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg'] },
+            { member: 'c2_cube.machine', operator: 'equals', values: ['RowErg', 'SkiErg', 'BikeErg'] },
           ]
         };
         try {
@@ -1758,7 +1861,7 @@
             return isFinite(n) ? n : 0;
           };
 
-          let rowKm = 0, skiKm = 0, rowPace = null, skiPace = null;
+          let rowKm = 0, skiKm = 0, bikeKm = 0, rowPace = null, skiPace = null, bikePace = null;
           rows.forEach(r => {
             const m = (r[machineKey] || '').trim();
             if (m === 'RowErg') {
@@ -1767,9 +1870,12 @@
             } else if (m === 'SkiErg') {
               skiKm += toNum(r[distKey]);
               skiPace = r[paceKey] ?? skiPace;
+            } else if (m === 'BikeErg') {
+              bikeKm += toNum(r[distKey]);
+              bikePace = r[paceKey] ?? bikePace;
             }
           });
-          const totalKm = rowKm + skiKm;
+          const totalKm = rowKm + skiKm + bikeKm;
 
           const formatKm = (n) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
           const formatPace = (p) => formatSecondsToMMSS(parseTimeToSeconds(p));
@@ -1777,8 +1883,10 @@
           document.getElementById('kpi-total-km').textContent = `${formatKm(totalKm)} km`;
           document.getElementById('kpi-row-km').textContent = `${formatKm(rowKm)} km`;
           document.getElementById('kpi-ski-km').textContent = `${formatKm(skiKm)} km`;
+          document.getElementById('kpi-bike-km').textContent = `${formatKm(bikeKm)} km`;
           document.getElementById('kpi-row-pace').textContent = rowPace ? formatPace(rowPace) : '—';
           document.getElementById('kpi-ski-pace').textContent = skiPace ? formatPace(skiPace) : '—';
+          document.getElementById('kpi-bike-pace').textContent = bikePace ? formatPace(bikePace) : '—';
         } catch (e) {
           console.error(e);
         }

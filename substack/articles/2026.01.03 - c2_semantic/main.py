@@ -25,6 +25,8 @@ def _machine_slug(machine: str) -> str:
         return "rowerg"
     if m.startswith("ski"):  # SkiErg
         return "skierg"
+    if m.startswith("bike"):  # BikeErg
+        return "bikeerg"
     return m or "rowerg"
 
 

@@ -1,6 +1,6 @@
 # C2 Metrics Dashboard
 
-A minimal dashboard for Concept2 workout metrics powered by a Cube semantic layer. It shows daily charts for RowErg and SkiErg, lets you click a data point to load per-session stroke detail, and provides summary KPIs.
+A minimal dashboard for Concept2 workout metrics powered by a Cube semantic layer. It shows daily charts for RowErg, SkiErg, and BikeErg, lets you click a data point to load per-session stroke detail, and provides summary KPIs. BikeErg pace is reported per 1000m while RowErg/SkiErg pace is per 500m.
 
 ## Prerequisites
 - Docker installed and running.
@@ -51,5 +51,5 @@ docker compose down
 ## Notes
 - The dashboard defaults to `http://localhost:4000` for Cube; you can change the URL and provide an auth token at the top of the page.
 - Interactive charts: clicking any daily chart point (Watts, Pace, Duration) loads the selected session’s stroke detail on the left and shows session KPIs.
-- SPM histogram: clicking a point on the SPM daily chart opens a modal with a histogram of the session’s stroke rate distribution (requires the local API).
+- Cadence histogram: clicking a point on the daily cadence chart opens a modal with a histogram of the session’s stroke rate distribution (SPM for Row/Ski, RPM for Bike; requires the local API).
 - A distance filter at the top lets you switch between “Show All” and “Show >5k” for daily charts.

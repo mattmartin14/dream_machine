@@ -118,17 +118,17 @@ cubes:
       END as DECIMAL(10,2))
 
   - name: avg_pace
-    title: "Average Split Time per 500m (mm:ss.ff)"
+    title: "Average Split Time (mm:ss.ff; BikeErg per 1000m, Row/Ski per 500m)"
     type: string
     sql: |
       CASE
         WHEN SUM("Work Distance") = 0 THEN NULL
         ELSE printf(
           '%d:%05.2f',
-          CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2) / 60.0) AS INTEGER),
+          CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * CASE WHEN UPPER(COALESCE(MAX("Type"), '')) = 'BIKEERG' THEN 1000.0 ELSE 500.0 END) / SUM("Work Distance"), 2) / 60.0) AS INTEGER),
           ROUND(
-            ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2)
-            - CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * 500.0) / SUM("Work Distance"), 2) / 60.0) AS INTEGER) * 60.0,
+            ROUND((SUM("Work Time (Seconds)") * CASE WHEN UPPER(COALESCE(MAX("Type"), '')) = 'BIKEERG' THEN 1000.0 ELSE 500.0 END) / SUM("Work Distance"), 2)
+            - CAST(FLOOR(ROUND((SUM("Work Time (Seconds)") * CASE WHEN UPPER(COALESCE(MAX("Type"), '')) = 'BIKEERG' THEN 1000.0 ELSE 500.0 END) / SUM("Work Distance"), 2) / 60.0) AS INTEGER) * 60.0,
             2
           )
         )
