@@ -150,19 +150,57 @@ def benchmark_pair(
 
 def print_results(results: list[BenchmarkResult]) -> None:
     print("\nBenchmark Results (median values)")
-    print(
-        "query, json_ms, parquet_ms, speedup_x, json_scanned_bytes, parquet_scanned_bytes, scan_reduction_x"
-    )
+
+    headers = [
+        "Query",
+        "JSON ms",
+        "Parquet ms",
+        "Speedup x",
+        "JSON scanned bytes",
+        "Parquet scanned bytes",
+        "Scan reduction x",
+    ]
+
+    rows = []
     for result in results:
-        print(
-            f"{result.name},"
-            f" {result.json_ms_median:.1f},"
-            f" {result.parquet_ms_median:.1f},"
-            f" {result.speedup:.2f},"
-            f" {result.json_bytes_median:.0f},"
-            f" {result.parquet_bytes_median:.0f},"
-            f" {result.scan_reduction:.2f}"
+        speedup = "inf" if result.speedup == float("inf") else f"{result.speedup:.2f}"
+        scan_reduction = "inf" if result.scan_reduction == float("inf") else f"{result.scan_reduction:.2f}"
+        rows.append(
+            [
+                result.name,
+                f"{result.json_ms_median:.1f}",
+                f"{result.parquet_ms_median:.1f}",
+                speedup,
+                f"{result.json_bytes_median:.0f}",
+                f"{result.parquet_bytes_median:.0f}",
+                scan_reduction,
+            ]
         )
+
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for idx, cell in enumerate(row):
+            widths[idx] = max(widths[idx], len(cell))
+
+    def border() -> str:
+        return "+" + "+".join("-" * (w + 2) for w in widths) + "+"
+
+    def format_row(cells: list[str], numeric_cols: set[int]) -> str:
+        formatted = []
+        for idx, cell in enumerate(cells):
+            if idx in numeric_cols:
+                formatted.append(f" {cell:>{widths[idx]}} ")
+            else:
+                formatted.append(f" {cell:<{widths[idx]}} ")
+        return "|" + "|".join(formatted) + "|"
+
+    numeric_columns = {1, 2, 3, 4, 5, 6}
+    print(border())
+    print(format_row(headers, set()))
+    print(border())
+    for row in rows:
+        print(format_row(row, numeric_columns))
+    print(border())
 
 
 def build_queries(json_table: str, parquet_table: str) -> list[tuple[str, str, str]]:
