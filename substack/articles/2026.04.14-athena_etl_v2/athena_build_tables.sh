@@ -21,6 +21,7 @@ PARQUET_PREFIX="${PARQUET_PREFIX:-demo_athena/parquet}"
 RESULTS_PREFIX="${RESULTS_PREFIX:-demo_athena/query_results}"
 STAGING_DATABASE="${STAGING_DATABASE:-db1_staging}"
 ANALYTICS_DATABASE="${ANALYTICS_DATABASE:-db1}"
+RECREATE_STAGING_DB="${RECREATE_STAGING_DB:-false}"
 DATABASE="${ANALYTICS_DATABASE}"
 WORKGROUP="${WORKGROUP:-primary}"
 JSON_TABLE="${JSON_TABLE:-bike_orders_json}"
@@ -68,9 +69,22 @@ main() {
   log "Using region=${REGION}, workgroup=${WORKGROUP}"
   log "Staging database: ${STAGING_DATABASE}"
   log "Analytics database: ${ANALYTICS_DATABASE}"
+  log "Recreate staging database: ${RECREATE_STAGING_DB}"
   log "Raw location: ${RAW_S3}"
   log "Parquet location: ${PARQUET_S3}"
   log "Athena results location: ${RESULTS_S3}"
+
+  case "${RECREATE_STAGING_DB,,}" in
+    true|1|yes)
+      exec_athena_query "Drop staging database (CASCADE)" "00_drop_staging_database.sql" "no"
+      ;;
+    false|0|no)
+      ;;
+    *)
+      echo "Invalid RECREATE_STAGING_DB value: ${RECREATE_STAGING_DB}. Use true/false." >&2
+      exit 1
+      ;;
+  esac
 
   exec_athena_query "Create staging database if missing" "01_create_staging_database.sql" "no"
   exec_athena_query "Create analytics database if missing" "02_create_analytics_database.sql" "no"

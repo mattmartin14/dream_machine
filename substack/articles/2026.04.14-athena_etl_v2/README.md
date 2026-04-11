@@ -55,6 +55,7 @@ The shell runner stays small while ETL logic lives in reusable SQL templates.
 
 SQL files execute in this order:
 
+0. `00_drop_staging_database.sql` (optional, when `RECREATE_STAGING_DB=true`)
 1. `01_create_staging_database.sql`
 2. `02_create_analytics_database.sql`
 3. `03_drop_staging_json_table.sql`
@@ -104,6 +105,12 @@ Change database names at runtime:
 
 ```bash
 STAGING_DATABASE=my_staging ANALYTICS_DATABASE=my_analytics bash athena_build_tables.sh
+```
+
+Force a full staging database reset before ETL:
+
+```bash
+RECREATE_STAGING_DB=true bash athena_build_tables.sh
 ```
 
 Run benchmarks against custom database names:
