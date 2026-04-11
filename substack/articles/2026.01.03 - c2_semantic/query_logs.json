@@ -3438,3 +3438,1237 @@
     "timeDimensions": []
   }
 }
+{
+  "timestamp": "2026-04-01T10:02:29.020Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 105.771833,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:02:29.181Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 68.813291,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-01T10:02:44.817Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 78.778292,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.id",
+        "operator": "equals",
+        "values": [
+          "114837991"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:00.974Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 81.5395,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "SkiErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:01.090Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 66.171333,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "SkiErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:22.648Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 77.442708,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "SkiErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.distance_block",
+        "operator": "equals",
+        "values": [
+          "5 km - 6 km",
+          "6 km - 7 km",
+          ">= 7 km"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:32.923Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 79.653792,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.id",
+        "operator": "equals",
+        "values": [
+          "114391911"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:38.458Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 78.450542,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.distance_block",
+        "operator": "equals",
+        "values": [
+          "5 km - 6 km",
+          "6 km - 7 km",
+          ">= 7 km"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:38.555Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 63.924209,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-01T10:03:59.918Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 80.869417,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day",
+        "dateRange": [
+          "2026-04-01T00:00:00.000",
+          "2026-04-01T23:59:59.999"
+        ]
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-01T10:04:03.524Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 84.53825,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day",
+        "dateRange": [
+          "2026-03-27T00:00:00.000",
+          "2026-03-27T23:59:59.999"
+        ]
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-01T10:04:09.308Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 78.611291,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "month"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_with_rest_km"
+    ],
+    "dimensions": [
+      "c2_cube.machine"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg",
+          "SkiErg",
+          "BikeErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "asc"
+      ]
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000
+  }
+}
+{
+  "timestamp": "2026-04-01T10:04:09.399Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 62.648084,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_with_rest_km",
+      "c2_cube.avg_pace"
+    ],
+    "dimensions": [
+      "c2_cube.machine"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg",
+          "SkiErg",
+          "BikeErg"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:39:14.729Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 98.810584,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:39:14.903Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 69.9145,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:39:26.540Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 77.270208,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.id",
+        "operator": "equals",
+        "values": [
+          "115035755"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:39:54.133Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 74.707958,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "SkiErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:39:54.253Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 63.549709,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "SkiErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:13.083Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 79.409333,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.id",
+        "operator": "equals",
+        "values": [
+          "115003649"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:23.912Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 75.641333,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_spm",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_session_duration",
+      "c2_cube.total_distance_km"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      },
+      {
+        "member": "c2_cube.total_session_minutes",
+        "operator": "gte",
+        "values": [
+          "5"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "dimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:24.012Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 64.000625,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "desc"
+      ]
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:30.683Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 78.116584,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day",
+        "dateRange": [
+          "2026-04-06T00:00:00.000",
+          "2026-04-06T23:59:59.999"
+        ]
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:38.074Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 79.087959,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day",
+        "dateRange": [
+          "2026-04-01T00:00:00.000",
+          "2026-04-01T23:59:59.999"
+        ]
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:40.750Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 79.962084,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "day",
+        "dateRange": [
+          "2026-03-27T00:00:00.000",
+          "2026-03-27T23:59:59.999"
+        ]
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "BikeErg"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC"
+  }
+}
+{
+  "timestamp": "2026-04-06T10:40:49.896Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 75.295166,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_km",
+      "c2_cube.avg_pace",
+      "c2_cube.avg_watts",
+      "c2_cube.total_session_minutes",
+      "c2_cube.avg_spm"
+    ],
+    "dimensions": [
+      "c2_cube.workout_date"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.id",
+        "operator": "equals",
+        "values": [
+          "115067919"
+        ]
+      }
+    ],
+    "limit": 1,
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:41:04.310Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 81.220584,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "month"
+      }
+    ],
+    "measures": [
+      "c2_cube.total_distance_with_rest_km"
+    ],
+    "dimensions": [
+      "c2_cube.machine"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg",
+          "SkiErg",
+          "BikeErg"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "asc"
+      ]
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000
+  }
+}
+{
+  "timestamp": "2026-04-06T10:41:04.404Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 62.570792,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "measures": [
+      "c2_cube.total_distance_with_rest_km",
+      "c2_cube.avg_pace"
+    ],
+    "dimensions": [
+      "c2_cube.machine"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg",
+          "SkiErg",
+          "BikeErg"
+        ]
+      }
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000,
+    "timeDimensions": []
+  }
+}
+{
+  "timestamp": "2026-04-06T10:41:05.676Z",
+  "type": "CUBE_QUERY_EXECUTION",
+  "duration_ms": 77.273084,
+  "data_source": "default",
+  "cube_names": [
+    "c2_cube"
+  ],
+  "cube_query": {
+    "timeDimensions": [
+      {
+        "dimension": "c2_cube.workout_date",
+        "granularity": "month"
+      }
+    ],
+    "measures": [
+      "c2_cube.avg_watts",
+      "c2_cube.avg_drag_factor",
+      "c2_cube.total_distance_km"
+    ],
+    "dimensions": [
+      "c2_cube.machine"
+    ],
+    "filters": [
+      {
+        "member": "c2_cube.machine",
+        "operator": "equals",
+        "values": [
+          "RowErg",
+          "SkiErg",
+          "BikeErg"
+        ]
+      },
+      {
+        "member": "c2_cube.workout_date",
+        "operator": "afterOrOnDate",
+        "values": [
+          "2025-07-01"
+        ]
+      }
+    ],
+    "order": [
+      [
+        "c2_cube.workout_date",
+        "asc"
+      ]
+    ],
+    "cacheMode": "stale-if-slow",
+    "timezone": "UTC",
+    "limit": 10000
+  }
+}

@@ -46,7 +46,7 @@ load_sql_template() {
   printf '%s' "$sql"
 }
 
-run_sql_file() {
+exec_athena_query() {
   local title="$1"
   local file_name="$2"
   local use_db="${3:-yes}"
@@ -72,21 +72,21 @@ main() {
   log "Parquet location: ${PARQUET_S3}"
   log "Athena results location: ${RESULTS_S3}"
 
-  run_sql_file "Create staging database if missing" "01_create_staging_database.sql" "no"
-  run_sql_file "Create analytics database if missing" "02_create_analytics_database.sql" "no"
+  exec_athena_query "Create staging database if missing" "01_create_staging_database.sql" "no"
+  exec_athena_query "Create analytics database if missing" "02_create_analytics_database.sql" "no"
 
-  run_sql_file "Drop existing staging JSON table (if any)" "03_drop_staging_json_table.sql" "no"
-  run_sql_file "Create staging JSON external table" "04_create_staging_json_table.sql" "no"
+  exec_athena_query "Drop existing staging JSON table (if any)" "03_drop_staging_json_table.sql" "no"
+  exec_athena_query "Create staging JSON external table" "04_create_staging_json_table.sql" "no"
 
   log "Clearing existing Parquet UNLOAD output"
   aws s3 rm "${PARQUET_S3}" --recursive --region "$REGION" >/dev/null || true
 
-  run_sql_file "UNLOAD staging JSON data into Parquet" "05_unload_to_parquet.sql" "no"
+  exec_athena_query "UNLOAD staging JSON data into Parquet" "05_unload_to_parquet.sql" "no"
 
-  run_sql_file "Drop existing analytics Parquet table (if any)" "06_drop_analytics_parquet_table.sql" "no"
-  run_sql_file "Create analytics Parquet external table" "07_create_analytics_parquet_table.sql" "no"
+  exec_athena_query "Drop existing analytics Parquet table (if any)" "06_drop_analytics_parquet_table.sql" "no"
+  exec_athena_query "Create analytics Parquet external table" "07_create_analytics_parquet_table.sql" "no"
 
-  run_sql_file "Sanity check row counts" "08_sanity_check_counts.sql" "no"
+  exec_athena_query "Sanity check row counts" "08_sanity_check_counts.sql" "no"
 
   log "Done."
   log "JSON table: ${STAGING_DATABASE}.${JSON_TABLE}"

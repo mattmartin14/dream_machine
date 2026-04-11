@@ -11,7 +11,7 @@ def create_multi_metastore_conn(md_db_name)-> duckdb.DuckDBPyConnection:
     cn.execute("install iceberg; load iceberg")
 
     cn.execute("""
-        CREATE SECRET s3_creds (
+        CREATE OR REPLACE SECRET s3_creds (
             TYPE S3,
             PROVIDER CREDENTIAL_CHAIN,
             REGION 'us-east-1'
