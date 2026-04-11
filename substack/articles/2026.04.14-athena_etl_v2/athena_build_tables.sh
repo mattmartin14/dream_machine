@@ -65,6 +65,8 @@ exec_athena_query() {
 
 main() {
   require_cmd aws
+  local recreate_staging_db_normalized
+  recreate_staging_db_normalized="$(printf '%s' "$RECREATE_STAGING_DB" | tr '[:upper:]' '[:lower:]')"
 
   log "Using region=${REGION}, workgroup=${WORKGROUP}"
   log "Staging database: ${STAGING_DATABASE}"
@@ -74,7 +76,7 @@ main() {
   log "Parquet location: ${PARQUET_S3}"
   log "Athena results location: ${RESULTS_S3}"
 
-  case "${RECREATE_STAGING_DB,,}" in
+  case "${recreate_staging_db_normalized}" in
     true|1|yes)
       exec_athena_query "Drop staging database (CASCADE)" "00_drop_staging_database.sql" "no"
       ;;
