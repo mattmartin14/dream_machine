@@ -177,6 +177,14 @@ Why this pattern is powerful:
 
 This gives you a clean SQL-first orchestration style while still allowing operational steps around the SQL.
 
+### Why switch to Python for some S3 workflows
+Python is a strong pivot when you want to keep everything in one flow without local temp files.
+
+- You can build dynamic S3 paths with variable substitution
+- You can push and read back in a single script run
+- You avoid local staging files for simple round trips
+- CLI variable substitution is more limited, so dynamic path logic is often cleaner in Python
+
 ### Option B: boto3 upload/download + DuckDB query
 
 ```python
@@ -188,11 +196,22 @@ bucket = os.getenv("aws_bucket")
 if not bucket:
   raise ValueError("Set aws_bucket env var before running this example")
 
-s3 = boto3.client("s3")
-s3.upload_file("sales.parquet", bucket, "training/sales.parquet")
-s3.download_file(bucket, "training/sales.parquet", "sales_from_s3.parquet")
+s3_uri = f"s3://{bucket}/training/sales.parquet"
 
-cn.sql("SELECT COUNT(*) AS rows_from_s3 FROM read_parquet('sales_from_s3.parquet')").show()
+cn.execute("INSTALL AWS")
+cn.execute("LOAD AWS")
+cn.execute("CREATE OR REPLACE SECRET aws_creds (TYPE S3, PROVIDER CREDENTIAL_CHAIN)")
+
+# Single-shot push from in-memory table to S3, no local temp files needed.
+cn.execute(f"COPY sales TO '{s3_uri}' (FORMAT PARQUET)")
+
+# Single-shot pull/read directly from S3.
+sq = f"SELECT COUNT(*) AS rows_from_s3 FROM read_parquet('{s3_uri}')"
+cn.sql(sq).show()
+
+# Optional: keep boto3 for broader service integrations beyond SQL-centric steps.
+s3 = boto3.client("s3")
+print(s3.head_object(Bucket=bucket, Key="training/sales.parquet")["ContentLength"])
 ```
 
 ### Option C: DuckDB direct S3 read (advanced follow-up)
