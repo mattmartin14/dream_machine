@@ -206,8 +206,8 @@ cn.execute("CREATE OR REPLACE SECRET aws_creds (TYPE S3, PROVIDER CREDENTIAL_CHA
 cn.execute(f"COPY sales TO '{s3_uri}' (FORMAT PARQUET)")
 
 # Single-shot pull/read directly from S3.
-sq = f"SELECT COUNT(*) AS rows_from_s3 FROM read_parquet('{s3_uri}')"
-cn.sql(sq).show()
+sql = f"SELECT COUNT(*) AS rows_from_s3 FROM read_parquet('{s3_uri}')"
+cn.sql(sql).show()
 
 # Optional: keep boto3 for broader service integrations beyond SQL-centric steps.
 s3 = boto3.client("s3")

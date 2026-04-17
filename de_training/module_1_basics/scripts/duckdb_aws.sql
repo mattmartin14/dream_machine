@@ -18,7 +18,7 @@ COPY sales to 'sales.parquet';
 .shell aws s3 cp sales.csv s3://$AWS_BUCKET/sales.csv
 .shell aws s3 cp sales.parquet s3://$AWS_BUCKET/sales.parquet
 
--- duckdb cli currently does not support an expression in its copy command; you'd have to hard code the bucke name
+-- duckdb cli currently does not support an expression in its copy command; you'd have to hardcode the bucket name
 --COPY sales TO concat('s3://', getenv('AWS_BUCKET'), '/sales.csv');
 
 .print 'cleaning up local files'
