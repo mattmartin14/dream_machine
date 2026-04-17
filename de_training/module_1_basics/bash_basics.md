@@ -25,6 +25,14 @@ name="${1:-data-engineer}"
 echo "Hello, ${name}!"
 ```
 
+Why `set -euo pipefail` is important:
+
+1. `-e` stops the script as soon as a command fails, so later steps do not run on bad state.
+2. `-u` fails fast when an unset variable is referenced, which catches variable-name typos early.
+3. `pipefail` makes a pipeline fail if any command fails, not only the last command.
+
+For data engineering scripts, this prevents silent failures that can produce misleading outputs or partial runs.
+
 ### Method A: Invoke with Bash directly
 
 ```bash
@@ -43,6 +51,12 @@ chmod +x hello.sh
 ```
 
 This uses the shebang (`#!/usr/bin/env bash`) and runs the script as an executable program.
+
+Do you need a shebang?
+
+1. If you run scripts as `bash script.sh`, a shebang is optional because Bash is explicitly chosen.
+2. If you run scripts as `./script.sh`, a shebang is strongly recommended so the system knows which interpreter to use.
+3. For training and production scripts, include a shebang by default to make script behavior explicit and portable.
 
 ## Part 2: Export Environment Variables Before Running Commands
 Environment variables are a standard way to parameterize scripts and avoid hardcoding values.

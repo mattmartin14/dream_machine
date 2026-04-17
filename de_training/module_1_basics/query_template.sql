@@ -1,0 +1,1 @@
+SELECT '${AWS_BUCKET}' AS bucket_name;
