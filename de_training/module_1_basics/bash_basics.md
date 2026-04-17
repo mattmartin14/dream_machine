@@ -99,6 +99,24 @@ You can also set a variable inline for a single command (does not persist afterw
 AWS_BUCKET="my-training-bucket" duckdb -c "SELECT '$AWS_BUCKET' AS bucket_name;"
 ```
 
+### Persist Variables in `.zshrc` (macOS default shell)
+If you always want certain variables available when a new shell starts, add exports to `~/.zshrc`.
+
+Example:
+
+```bash
+echo 'export AWS_REGION="us-east-1"' >> ~/.zshrc
+echo 'export AWS_BUCKET="my-training-bucket"' >> ~/.zshrc
+```
+
+Apply changes to your current shell immediately:
+
+```bash
+source ~/.zshrc
+```
+
+Use this for stable defaults you want on every terminal session. For secrets (for example access keys), prefer a secrets manager or short-lived session exports instead of committing them to startup files.
+
 ## Part 3: Runtime Variable Substitution into SQL
 A common pattern is to keep SQL in files and inject values at runtime.
 
