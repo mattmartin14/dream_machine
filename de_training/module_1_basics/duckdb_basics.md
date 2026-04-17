@@ -223,10 +223,3 @@ FROM read_parquet('s3://${aws_bucket}/training/sales.parquet');
 ```
 
 Use this as an advanced sidebar after the boto3-first approach if you want the beginner path to stay predictable.
-
-## Mentor Talking Points
-- Python API, CLI, and `.sql` files are complementary, not competing approaches.
-- Use Python for orchestration, SQL files for reusable logic, and CLI for quick exploration.
-- CSV and Parquet generation/read-back builds confidence before introducing cloud storage.
-- MFA-based authentication teaches secure default habits before cloud data movement.
-- S3 push/pull shows how local analytics patterns transition into cloud workflows.

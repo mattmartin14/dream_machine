@@ -142,9 +142,3 @@ That file demonstrates two useful substitution patterns:
 - Quote variable expansions as `"$VAR"` in shell commands to avoid word-splitting issues.
 - Prefer environment variables over hardcoded paths and credentials.
 - For simple orchestration and parameterized runs, Bash can be faster to write and easier to run than a full Python wrapper.
-
-## Mentor Talking Points
-- Bash is not just a setup tool; it is a production-grade glue language for data workflows.
-- Script execution mode (`bash script.sh` vs `./script.sh`) is a foundational operational skill.
-- Environment-variable driven workflows create reusable scripts across local/dev/prod contexts.
-- SQL templates plus runtime substitution are a practical bridge from shell automation into analytics workflows.

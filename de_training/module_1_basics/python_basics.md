@@ -62,8 +62,3 @@ Run a tiny import test:
 ```bash
 uv run python -c "import duckdb; print(duckdb.__version__)"
 ```
-
-## Mentor Talking Points
-- uv removes environment-management noise so beginners focus on Python and SQL fundamentals.
-- Version pinning is not just a packaging trick; it is a debugging and reproducibility skill.
-- Switching versions quickly helps teach how dependency changes can affect behavior.
