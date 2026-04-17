@@ -25,6 +25,18 @@ name="${1:-data-engineer}"
 echo "Hello, ${name}!"
 ```
 
+How `name` is assigned at runtime:
+
+1. `$1` means the first positional argument passed to the script.
+2. `${1:-data-engineer}` means "use `$1` if it is set and non-empty; otherwise use `data-engineer`."
+
+Examples:
+
+```bash
+bash hello.sh matt   # name becomes matt
+bash hello.sh        # name becomes data-engineer
+```
+
 Why `set -euo pipefail` is important:
 
 1. `-e` stops the script as soon as a command fails, so later steps do not run on bad state.
