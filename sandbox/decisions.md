@@ -8,7 +8,7 @@
 		'fontFamily': '"Bradley Hand", cursive',
 		'fontSize': '22px'
 	},
-	'themeCSS': '.nodeLabel, .edgeLabel { font-family: "Bradley Hand", cursive; font-size: 22px; }'
+	'themeCSS': '.nodeLabel, .edgeLabel { font-family: "Bradley Hand", cursive; font-size: 22px; } .edgeLabel rect { fill: transparent !important; stroke: none !important; }'
 }}%%
 flowchart TB
 	A(Is the dataset<br/>50GB or less?)
@@ -18,8 +18,8 @@ flowchart TB
 	E(Use DuckDB<br/>CLI and SQL<br/>files)
 	F(Use DuckDB<br/>and Python)
 
-	A -->|Yes| B
-	A -->|No| C
+	A -->|No| B
+	A -->|Yes| C
 	B -->|No| C
 	B -->|Yes| D
 	C -->|No| E
