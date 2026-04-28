@@ -1,0 +1,1 @@
+duckdb -c ".read data.sql"
