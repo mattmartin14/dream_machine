@@ -1,0 +1,9 @@
+# DuckDB downloaded artifacts
+libduckdb/
+libduckdb-osx-universal.zip
+
+# Build output
+copy_answer_to_csv
+
+# Generated data output
+data.csv
