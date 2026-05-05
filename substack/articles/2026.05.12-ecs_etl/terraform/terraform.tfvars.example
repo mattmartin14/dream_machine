@@ -1,0 +1,22 @@
+aws_region      = "us-east-1"
+project_name    = "ecs-duckdb-etl"
+environment     = "demo"
+image_tag       = "latest"
+
+# Optional: set your own globally unique bucket name, else Terraform auto-generates one.
+s3_bucket_name  = ""
+s3_input_prefix = "raw/"
+s3_output_prefix = "processed/"
+s3_script_key   = "etl/scripts/main_etl.py"
+
+# 05:00 in New York time, every day.
+schedule_expression = "cron(0 5 * * ? *)"
+schedule_timezone   = "America/New_York"
+
+container_cpu    = 512
+container_memory = 1024
+log_level        = "INFO"
+
+tags = {
+  Owner = "your-name"
+}
