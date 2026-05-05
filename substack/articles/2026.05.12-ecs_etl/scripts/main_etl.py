@@ -3,8 +3,7 @@ import logging
 import os
 import sys
 from datetime import UTC, datetime
-
-import duckdb
+from helpers.common import establish_duckdb_connection
 
 
 def setup_logging() -> None:
@@ -35,12 +34,10 @@ def run_etl() -> str:
 
     logging.info("etl_start %s", json.dumps({"bucket": bucket, "input_uri": input_uri, "output_uri": output_uri}))
 
-    con = duckdb.connect(":memory:")
-    con.execute(f"SET extension_directory='{duckdb_extension_dir}';")
-    con.execute("LOAD httpfs;")
-    con.execute("LOAD aws;")
-    con.execute(f"SET s3_region='{aws_region}';")
-    con.execute("CREATE OR REPLACE SECRET s3_default (TYPE S3, PROVIDER CREDENTIAL_CHAIN);")
+    con = establish_duckdb_connection(
+        aws_region=aws_region,
+        extension_directory=duckdb_extension_dir,
+    )
 
     con.execute(
         f"""

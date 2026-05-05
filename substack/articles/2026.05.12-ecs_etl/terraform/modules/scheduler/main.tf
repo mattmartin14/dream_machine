@@ -1,5 +1,5 @@
 resource "aws_scheduler_schedule" "etl" {
-  name       = "${var.name_prefix}-daily"
+  name       = "${var.name_prefix}-${var.app_name}-daily"
   group_name = "default"
 
   flexible_time_window {
@@ -12,6 +12,19 @@ resource "aws_scheduler_schedule" "etl" {
   target {
     arn      = var.ecs_cluster_arn
     role_arn = var.scheduler_role_arn
+    input = jsonencode({
+      containerOverrides = [
+        {
+          name = "etl"
+          environment = [
+            {
+              name  = "S3_BUCKET"
+              value = var.runtime_s3_bucket_name
+            }
+          ]
+        }
+      ]
+    })
 
     ecs_parameters {
       task_definition_arn = var.ecs_task_definition_arn

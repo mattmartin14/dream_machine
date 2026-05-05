@@ -1,6 +1,6 @@
 aws_region      = "us-east-1"
 project_name    = "ecs-duckdb-etl"
-environment     = "demo"
+app_name        = "main-etl"
 image_tag       = "latest"
 
 # Optional: set your own globally unique bucket name, else Terraform auto-generates one.

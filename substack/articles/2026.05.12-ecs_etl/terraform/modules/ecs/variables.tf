@@ -3,6 +3,11 @@ variable "name_prefix" {
   type        = string
 }
 
+variable "app_name" {
+  description = "Application/pipeline name used in task definition naming"
+  type        = string
+}
+
 variable "container_cpu" {
   description = "Task CPU units"
   type        = number
@@ -39,7 +44,12 @@ variable "aws_region" {
 }
 
 variable "s3_bucket_name" {
-  description = "S3 bucket name"
+  description = "Default data bucket name for task definition"
+  type        = string
+}
+
+variable "s3_script_bucket_name" {
+  description = "S3 bucket name where ETL scripts are stored"
   type        = string
 }
 

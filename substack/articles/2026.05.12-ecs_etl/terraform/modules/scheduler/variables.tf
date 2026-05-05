@@ -3,6 +3,11 @@ variable "name_prefix" {
   type        = string
 }
 
+variable "app_name" {
+  description = "Application/pipeline name used in scheduler naming"
+  type        = string
+}
+
 variable "schedule_expression" {
   description = "Scheduler expression"
   type        = string
@@ -30,6 +35,11 @@ variable "ecs_task_definition_arn" {
 
 variable "scheduler_role_arn" {
   description = "Scheduler role ARN"
+  type        = string
+}
+
+variable "runtime_s3_bucket_name" {
+  description = "Data bucket passed to ECS task at runtime"
   type        = string
 }
 

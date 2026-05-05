@@ -3,6 +3,26 @@
 This project shows how to build and schedule a Python ETL pipeline on AWS ECS Fargate from start to finish.
 The container is Amazon Linux 2023 with Python 3.13 explicitly installed.
 Python dependencies are pinned to DuckDB 1.5.2 and boto3 1.40.31.
+Terraform uses a runtime environment pivot in `locals.tf` via `environment_rt = "test"`, so generated asset names include `test`.
+Terraform also supports `app_name` for app-specific assets (S3 bucket, ECS task definition, EventBridge schedule) while keeping runner assets (ECR repo, ECS cluster) reusable.
+
+## Reuse and Promotion Model
+
+This project is designed so you can scale to many ETL pipelines without rebuilding core runner infrastructure each time.
+
+- Shared runner assets (reused across pipelines):
+  - ECS cluster
+  - ECR runner image
+- App-specific assets (names include `app_name`):
+  - S3 data bucket (when auto-generated)
+  - ECS task definition family
+  - EventBridge schedule
+
+Environment promotion pivot:
+
+- `locals.tf` contains `environment_rt = "test"`.
+- Changing that to `"prod"` creates a new class of named assets for prod while preserving the reusable runner model.
+- Typical pattern: keep one runner image/cluster, vary `environment_rt` and `app_name` to isolate pipelines by environment and app.
 
 ## What It Builds
 
@@ -54,6 +74,7 @@ flowchart LR
   SR -->|RunTask| CLUSTER
   SR -->|PassRole| ER
   SR -->|PassRole| TR
+  SR -->|Runtime override S3_BUCKET| TASKDEF
 
   CLUSTER --> TASKDEF
   TASKDEF -->|uses role| ER
@@ -98,11 +119,14 @@ It writes to:
 Required task environment variables are provided by Terraform:
 
 - `S3_BUCKET`
+- `S3_SCRIPT_BUCKET`
 - `S3_SCRIPT_KEY`
 - `S3_INPUT_PREFIX`
 - `S3_OUTPUT_PREFIX`
 - `AWS_REGION`
 - `LOG_LEVEL`
+
+`S3_BUCKET` is passed at runtime by EventBridge Scheduler as a container override, so the same task definition can be promoted between environments.
 
 ## Deploy: Step by Step
 
@@ -166,7 +190,7 @@ aws s3 cp ./sample-input.parquet "s3://$BUCKET/raw/sample-input.parquet"
 CLUSTER_ARN=$(terraform -chdir=terraform output -raw ecs_cluster_arn)
 TASK_DEF_ARN=$(terraform -chdir=terraform output -raw ecs_task_definition_arn)
 SUBNET_IDS=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true --query 'Subnets[].SubnetId' --output text)
-SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=*ecs-duckdb-etl-demo-sg* --query 'SecurityGroups[0].GroupId' --output text)
+SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=*ecs-duckdb-etl-test-sg* --query 'SecurityGroups[0].GroupId' --output text)
 
 aws ecs run-task \
   --launch-type FARGATE \
@@ -182,7 +206,7 @@ aws ecs run-task \
 - Confirm scheduler exists and next run time:
 
 ```bash
-aws scheduler get-schedule --name ecs-duckdb-etl-demo-daily
+aws scheduler get-schedule --name ecs-duckdb-etl-test-main-etl-daily
 ```
 
 ## Least-Privilege IAM Notes
@@ -201,8 +225,28 @@ aws scheduler get-schedule --name ecs-duckdb-etl-demo-daily
   - `container_memory`
 - Use a fixed bucket name:
   - `s3_bucket_name`
+- Change app-specific naming:
+  - `app_name`
 - Change script path:
   - `s3_script_key`
+
+## CPU and Memory Sizing
+
+Terraform uses AWS Fargate units:
+
+- `container_cpu` is CPU units (`1024 = 1 vCPU`).
+- `container_memory` is MiB (`1024 = 1 GiB`).
+
+Quick sizing examples:
+
+- Small ETL script: `container_cpu = 1024`, `container_memory = 4096`
+- Medium ETL script: `container_cpu = 2048`, `container_memory = 8192`
+- Heavy ETL script: `container_cpu = 4096`, `container_memory = 16384`
+
+For your example of "about 8 GB RAM and a couple cores", use:
+
+- `container_cpu = 2048`
+- `container_memory = 8192`
 
 ## Cleanup
 

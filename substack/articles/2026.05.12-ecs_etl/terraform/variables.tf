@@ -10,10 +10,10 @@ variable "project_name" {
   default     = "ecs-duckdb-etl"
 }
 
-variable "environment" {
-  description = "Environment name"
+variable "app_name" {
+  description = "Application/pipeline name used for app-specific assets"
   type        = string
-  default     = "demo"
+  default     = "main-etl"
 }
 
 variable "image_tag" {

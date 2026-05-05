@@ -10,7 +10,7 @@ resource "aws_ecs_cluster" "etl" {
 }
 
 resource "aws_ecs_task_definition" "etl" {
-  family                   = "${var.name_prefix}-task"
+  family                   = "${var.name_prefix}-${var.app_name}-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = tostring(var.container_cpu)
@@ -26,6 +26,7 @@ resource "aws_ecs_task_definition" "etl" {
       environment = [
         { name = "AWS_REGION", value = var.aws_region },
         { name = "S3_BUCKET", value = var.s3_bucket_name },
+        { name = "S3_SCRIPT_BUCKET", value = var.s3_script_bucket_name },
         { name = "S3_SCRIPT_KEY", value = var.s3_script_key },
         { name = "S3_INPUT_PREFIX", value = "${var.normalized_input_prefix}/" },
         { name = "S3_OUTPUT_PREFIX", value = "${var.normalized_output_prefix}/" },

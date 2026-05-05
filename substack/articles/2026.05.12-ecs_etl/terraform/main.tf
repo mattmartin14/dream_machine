@@ -4,6 +4,7 @@ module "s3" {
   source = "./modules/s3"
 
   name_prefix = local.name_prefix
+  app_name    = var.app_name
   bucket_name = var.s3_bucket_name
   tags        = local.tags
 }
@@ -37,6 +38,7 @@ module "ecs" {
   source = "./modules/ecs"
 
   name_prefix              = local.name_prefix
+  app_name                 = var.app_name
   container_cpu            = var.container_cpu
   container_memory         = var.container_memory
   execution_role_arn       = module.iam_ecs.execution_role_arn
@@ -45,6 +47,7 @@ module "ecs" {
   image_tag                = var.image_tag
   aws_region               = var.aws_region
   s3_bucket_name           = module.s3.bucket_name
+  s3_script_bucket_name    = module.s3.bucket_name
   s3_script_key            = var.s3_script_key
   normalized_input_prefix  = local.normalized_input_prefix
   normalized_output_prefix = local.normalized_output_prefix
@@ -67,12 +70,14 @@ module "scheduler" {
   source = "./modules/scheduler"
 
   name_prefix                   = local.name_prefix
+  app_name                      = var.app_name
   schedule_expression           = var.schedule_expression
   schedule_timezone             = var.schedule_timezone
   schedule_flexible_window_mode = var.schedule_flexible_window_mode
   ecs_cluster_arn               = module.ecs.cluster_arn
   ecs_task_definition_arn       = module.ecs.task_definition_arn
   scheduler_role_arn            = module.iam_scheduler.role_arn
+  runtime_s3_bucket_name        = module.s3.bucket_name
   subnet_ids                    = module.network.subnet_ids
   security_group_id             = module.network.security_group_id
 }

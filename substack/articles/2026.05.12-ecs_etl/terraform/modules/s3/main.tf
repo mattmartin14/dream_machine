@@ -9,7 +9,7 @@ resource "random_string" "bucket_suffix" {
 }
 
 locals {
-  effective_bucket_name = var.bucket_name != "" ? var.bucket_name : "${var.name_prefix}-${random_string.bucket_suffix[0].result}"
+  effective_bucket_name = var.bucket_name != "" ? var.bucket_name : "${var.name_prefix}-${var.app_name}-${random_string.bucket_suffix[0].result}"
 }
 
 resource "aws_s3_bucket" "etl" {

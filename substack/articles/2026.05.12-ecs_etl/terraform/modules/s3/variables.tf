@@ -3,6 +3,11 @@ variable "name_prefix" {
   type        = string
 }
 
+variable "app_name" {
+  description = "Application/pipeline name used in bucket naming"
+  type        = string
+}
+
 variable "bucket_name" {
   description = "Optional explicit bucket name"
   type        = string
