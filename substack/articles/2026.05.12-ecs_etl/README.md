@@ -190,6 +190,30 @@ Capture output values:
 From project root:
 
 ```bash
+./docker/build_and_push.sh
+```
+
+Use a custom tag:
+
+```bash
+./docker/build_and_push.sh v1.2.3
+```
+
+Force a clean rebuild:
+
+```bash
+./docker/build_and_push.sh latest --no-cache
+```
+
+The script automatically:
+
+- Resolves `ECR_REPO_URL` from Terraform output (`ecr_repository_url`) unless explicitly provided
+- Resolves `AWS_REGION` from environment, then `terraform/terraform.tfvars`, then defaults to `us-east-1`
+- Logs in to ECR, builds from `docker/Dockerfile`, tags, and pushes
+
+Optional manual fallback:
+
+```bash
 AWS_REGION=us-east-1
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
