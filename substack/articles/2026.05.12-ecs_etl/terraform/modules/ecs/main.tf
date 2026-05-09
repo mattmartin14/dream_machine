@@ -4,6 +4,16 @@ resource "aws_cloudwatch_log_group" "etl" {
   tags              = var.tags
 }
 
+locals {
+  container_environment = [
+    { name = "AWS_REGION", value = var.aws_region },
+    { name = "S3_SCRIPT_BUCKET", value = var.s3_script_bucket_name },
+    { name = "S3_SCRIPT_KEY", value = var.s3_script_key },
+    { name = "SLACK_WEBHOOK_SECRET_NAME", value = var.slack_webhook_secret_name },
+    { name = "LOG_LEVEL", value = var.log_level }
+  ]
+}
+
 resource "aws_ecs_cluster" "etl" {
   name = "${var.name_prefix}-cluster"
   tags = var.tags
@@ -20,18 +30,10 @@ resource "aws_ecs_task_definition" "etl" {
 
   container_definitions = jsonencode([
     {
-      name      = "etl"
-      image     = "${var.ecr_repository_url}:${var.image_tag}"
-      essential = true
-      environment = [
-        { name = "AWS_REGION", value = var.aws_region },
-        { name = "S3_BUCKET", value = var.s3_bucket_name },
-        { name = "S3_SCRIPT_BUCKET", value = var.s3_script_bucket_name },
-        { name = "S3_SCRIPT_KEY", value = var.s3_script_key },
-        { name = "S3_INPUT_PREFIX", value = "${var.normalized_input_prefix}/" },
-        { name = "S3_OUTPUT_PREFIX", value = "${var.normalized_output_prefix}/" },
-        { name = "LOG_LEVEL", value = var.log_level }
-      ]
+      name        = "etl"
+      image       = "${var.ecr_repository_url}:${var.image_tag}"
+      essential   = true
+      environment = local.container_environment
       logConfiguration = {
         logDriver = "awslogs"
         options = {

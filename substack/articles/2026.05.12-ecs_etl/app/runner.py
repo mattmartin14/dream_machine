@@ -38,7 +38,7 @@ def main() -> int:
 
     try:
         script_bucket = env("S3_SCRIPT_BUCKET", env("S3_BUCKET"))
-        script_key = env("S3_SCRIPT_KEY", "etl/scripts/main_etl.py")
+        script_key = env("S3_SCRIPT_KEY", "etl/scripts/sales_etl.py")
         local_script_path = env("LOCAL_SCRIPT_PATH", "/tmp/runtime_etl.py")
 
         download_script(script_bucket, script_key, local_script_path)

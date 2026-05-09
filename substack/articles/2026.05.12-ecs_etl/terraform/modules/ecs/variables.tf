@@ -43,9 +43,16 @@ variable "aws_region" {
   type        = string
 }
 
-variable "s3_bucket_name" {
-  description = "Default data bucket name for task definition"
+variable "s3_source_bucket_name" {
+  description = "Deprecated: source bucket name is no longer injected into task env"
   type        = string
+  default     = ""
+}
+
+variable "s3_target_bucket_name" {
+  description = "Deprecated: target bucket name is no longer injected into task env"
+  type        = string
+  default     = ""
 }
 
 variable "s3_script_bucket_name" {
@@ -59,17 +66,24 @@ variable "s3_script_key" {
 }
 
 variable "normalized_input_prefix" {
-  description = "Normalized input prefix"
+  description = "Deprecated: input prefix is only used by IAM module"
   type        = string
+  default     = ""
 }
 
 variable "normalized_output_prefix" {
-  description = "Normalized output prefix"
+  description = "Deprecated: output prefix is only used by IAM module"
   type        = string
+  default     = ""
 }
 
 variable "log_level" {
   description = "Application log level"
+  type        = string
+}
+
+variable "slack_webhook_secret_name" {
+  description = "Secrets Manager secret name used by the app to fetch Slack webhook URL"
   type        = string
 }
 

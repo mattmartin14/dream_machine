@@ -35,7 +35,17 @@ data "aws_iam_policy_document" "ecs_task_s3" {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${var.s3_bucket_arn}/${var.s3_script_key}"]
+    resources = ["${var.s3_script_bucket_arn}/${var.s3_script_key}"]
+  }
+
+  statement {
+    sid    = "ReadSlackWebhookSecret"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue"
+    ]
+    resources = [var.slack_webhook_secret_arn]
   }
 
   statement {
@@ -44,7 +54,7 @@ data "aws_iam_policy_document" "ecs_task_s3" {
     actions = [
       "s3:ListBucket"
     ]
-    resources = [var.s3_bucket_arn]
+    resources = [var.s3_source_bucket_arn]
 
     condition {
       test     = "StringLike"
@@ -62,18 +72,38 @@ data "aws_iam_policy_document" "ecs_task_s3" {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${var.s3_bucket_arn}/${var.normalized_input_prefix}/*"]
+    resources = ["${var.s3_source_bucket_arn}/${var.normalized_input_prefix}/*"]
   }
 
   statement {
-    sid    = "WriteOutputObjects"
+    sid    = "ListOutputPrefix"
     effect = "Allow"
     actions = [
+      "s3:ListBucket"
+    ]
+    resources = [var.s3_target_bucket_arn]
+
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values = [
+        "${var.normalized_output_prefix}/*",
+        var.normalized_output_prefix
+      ]
+    }
+  }
+
+  statement {
+    sid    = "ReadWriteOutputObjects"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
       "s3:PutObject",
+      "s3:DeleteObject",
       "s3:AbortMultipartUpload",
       "s3:ListBucketMultipartUploads"
     ]
-    resources = ["${var.s3_bucket_arn}/${var.normalized_output_prefix}/*"]
+    resources = ["${var.s3_target_bucket_arn}/${var.normalized_output_prefix}/*"]
   }
 }
 

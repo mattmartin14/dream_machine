@@ -34,34 +34,49 @@ variable "container_memory" {
   default     = 1024
 }
 
-variable "s3_bucket_name" {
-  description = "Optional existing or preferred bucket name; leave empty to auto-generate"
+variable "s3_source_bucket_name" {
+  description = "Existing source bucket name containing raw sales data"
   type        = string
-  default     = ""
+}
+
+variable "s3_target_bucket_name" {
+  description = "Existing target bucket name for aggregated sales output"
+  type        = string
+}
+
+variable "s3_script_bucket_name" {
+  description = "Existing bucket name where runtime ETL script is stored"
+  type        = string
 }
 
 variable "s3_input_prefix" {
   description = "Input prefix containing parquet files"
   type        = string
-  default     = "raw/"
+  default     = "tpch/orders_raw/"
 }
 
 variable "s3_output_prefix" {
   description = "Output prefix for transformed parquet files"
   type        = string
-  default     = "processed/"
+  default     = "tpch/cust_agg/"
 }
 
 variable "s3_script_key" {
   description = "S3 key for the ETL script fetched by the runner container"
   type        = string
-  default     = "etl/scripts/main_etl.py"
+  default     = "etl/scripts/sales_etl.py"
 }
 
 variable "log_level" {
   description = "Application log level"
   type        = string
   default     = "INFO"
+}
+
+variable "slack_webhook_secret_name" {
+  description = "AWS Secrets Manager secret name containing the Slack webhook URL"
+  type        = string
+  default     = "slack_webhook_test"
 }
 
 variable "schedule_expression" {

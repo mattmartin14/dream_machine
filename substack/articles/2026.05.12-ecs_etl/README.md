@@ -4,7 +4,7 @@ This project shows how to build and schedule a Python ETL pipeline on AWS ECS Fa
 The container is Amazon Linux 2023 with Python 3.13 explicitly installed.
 Python dependencies are pinned to DuckDB 1.5.2 and boto3 1.40.31.
 Terraform uses a runtime environment pivot in `locals.tf` via `environment_rt = "test"`, so generated asset names include `test`.
-Terraform also supports `app_name` for app-specific assets (S3 bucket, ECS task definition, EventBridge schedule) while keeping runner assets (ECR repo, ECS cluster) reusable.
+Terraform also supports `app_name` for app-specific assets (ECS task definition, EventBridge schedule) while keeping runner assets (ECR repo, ECS cluster) reusable.
 
 ## Reuse and Promotion Model
 
@@ -14,7 +14,6 @@ This project is designed so you can scale to many ETL pipelines without rebuildi
   - ECS cluster
   - ECR runner image
 - App-specific assets (names include `app_name`):
-  - S3 data bucket (when auto-generated)
   - ECS task definition family
   - EventBridge schedule
 
@@ -64,18 +63,16 @@ flowchart LR
   ECR[ECR Repository\netl image]
   LOGS[CloudWatch Logs\n/ecs/<project>-<env>]
 
-  subgraph S3[S3 Bucket]
-    SCRIPT[etl/scripts/main_etl.py]
-    RAW[raw/*.parquet]
-    PROC[processed/run_id=.../data.parquet]
+  subgraph S3[Existing S3 Buckets]
+    SCRIPT[etl/scripts/sales_etl.py]
+    RAW[s3-sales-raw-test/tpch/orders_raw/orders.parquet]
+    PROC[s3-sales-agg-test/tpch/cust_agg/cust_agg.parquet]
   end
 
   SCHED -->|Assume role| SR
   SR -->|RunTask| CLUSTER
   SR -->|PassRole| ER
   SR -->|PassRole| TR
-  SR -->|Runtime override S3_BUCKET| TASKDEF
-
   CLUSTER --> TASKDEF
   TASKDEF -->|uses role| ER
   TASKDEF -->|uses role| TR
@@ -94,7 +91,7 @@ flowchart LR
 ## Project Layout
 
 - `app/runner.py`: container entrypoint that downloads and executes ETL script from S3
-- `scripts/main_etl.py`: ETL script artifact to upload to `s3://<bucket>/etl/scripts/main_etl.py`
+- `scripts/sales_etl.py`: canonical ETL script for local runs and ECS runtime upload
 - `helpers/`: shared Python helper library (copied into container as `/app/helpers`)
 - `docker/Dockerfile`: Amazon Linux 2023 image with Python + dependencies
 - `terraform/`: all infrastructure resources
@@ -106,27 +103,68 @@ flowchart LR
 - Terraform >= 1.5
 - AWS CLI >= 2
 
+## Local Run (Docker-like Python Path)
+
+Use this wrapper to run the ETL locally with `PYTHONPATH` including project root, matching container behavior:
+
+```bash
+./scripts/run_sales_etl_local.sh
+```
+
 ## ETL Contract
 
-The ETL task reads from:
+The ETL task (sales_etl.py) reads from:
 
-- `s3://<bucket>/<S3_INPUT_PREFIX>*.parquet`
+- `s3://s3-sales-raw-test/tpch/orders_raw/orders.parquet`
 
 It writes to:
 
-- `s3://<bucket>/<S3_OUTPUT_PREFIX>run_id=<timestamp>/data.parquet`
+- `s3://s3-sales-agg-test/tpch/cust_agg/cust_agg.parquet`
 
 Required task environment variables are provided by Terraform:
 
-- `S3_BUCKET`
 - `S3_SCRIPT_BUCKET`
 - `S3_SCRIPT_KEY`
-- `S3_INPUT_PREFIX`
-- `S3_OUTPUT_PREFIX`
 - `AWS_REGION`
 - `LOG_LEVEL`
 
-`S3_BUCKET` is passed at runtime by EventBridge Scheduler as a container override, so the same task definition can be promoted between environments.
+Optional notification secret:
+
+- `SLACK_WEBHOOK_SECRET_NAME` (default: `slack_webhook_test`)
+
+Terraform does not create or modify source/target buckets in this setup.
+
+## Secure Slack Webhook Setup
+
+Do not put webhook URLs in `docker/Dockerfile`, Terraform files, or git-tracked source.
+The secure pattern is to store the webhook in AWS Secrets Manager and let the ETL app retrieve it at runtime.
+
+1. Create or update the secret in AWS Secrets Manager:
+
+```bash
+aws secretsmanager create-secret \
+  --name "slack_webhook_test" \
+  --secret-string "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+
+# If the secret already exists:
+aws secretsmanager put-secret-value \
+  --secret-id "slack_webhook_test" \
+  --secret-string "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+```
+
+2. Set this in `terraform/terraform.tfvars`:
+
+```hcl
+slack_webhook_secret_name = "slack_webhook_test"
+```
+
+3. Apply Terraform so ECS task definition is updated:
+
+```bash
+terraform -chdir=terraform apply
+```
+
+After deployment, the ETL code reads `SLACK_WEBHOOK_SECRET_NAME` and fetches the webhook URL from Secrets Manager at runtime.
 
 ## Deploy: Step by Step
 
@@ -143,7 +181,9 @@ terraform apply
 Capture output values:
 
 - `ecr_repository_url`
-- `s3_bucket_name`
+- `s3_source_bucket_name`
+- `s3_target_bucket_name`
+- `s3_script_bucket_name`
 
 ### 2. Build and Push Container Image
 
@@ -164,25 +204,26 @@ docker push "$ECR_REPO_URL:latest"
 
 If you push a non-latest tag, update `image_tag` in `terraform.tfvars` and apply again.
 
-### 3. Upload ETL Script to S3
-
-Upload the runtime ETL script artifact:
+Quick local rebuild helper:
 
 ```bash
-BUCKET=$(terraform -chdir=terraform output -raw s3_bucket_name)
-aws s3 cp ./scripts/main_etl.py "s3://$BUCKET/etl/scripts/main_etl.py"
+./docker/build_local.sh
+./docker/build_local.sh etl:latest --no-cache
 ```
+
+### 3. Upload ETL Script to S3
+
+Terraform uploads `scripts/sales_etl.py` to `s3://<s3_script_bucket_name>/<s3_script_key>` as part of `terraform apply`.
+
+If you change `scripts/sales_etl.py`, rerun `terraform apply` and Terraform will update the uploaded object.
 
 If you use a different key, set `s3_script_key` in `terraform.tfvars` and apply again.
 
 ### 4. Seed Input Data in S3
 
-You need at least one Parquet file in the input prefix:
+Ensure this input exists in the source bucket:
 
-```bash
-BUCKET=$(terraform -chdir=terraform output -raw s3_bucket_name)
-aws s3 cp ./sample-input.parquet "s3://$BUCKET/raw/sample-input.parquet"
-```
+- `s3://s3-sales-raw-test/tpch/orders_raw/orders.parquet`
 
 ### 5. Run a Manual Smoke Test (One-Off)
 
@@ -202,7 +243,7 @@ aws ecs run-task \
 ### 6. Validate Results
 
 - Check CloudWatch log group `/ecs/<project>-<env>`
-- Check output objects in `s3://<bucket>/processed/`
+- Check output objects in `s3://s3-sales-agg-test/tpch/cust_agg/`
 - Confirm scheduler exists and next run time:
 
 ```bash
@@ -211,7 +252,7 @@ aws scheduler get-schedule --name ecs-duckdb-etl-test-main-etl-daily
 
 ## Least-Privilege IAM Notes
 
-- Task role can only read the configured script key, list/read from input prefix, and write to output prefix.
+- Task role can read the configured script key, list/read source input prefix, and read/write/delete output objects in target prefix.
 - Scheduler role can only call `ecs:RunTask` for this task and pass the two ECS roles.
 - Execution role uses the AWS managed ECS execution policy.
 
@@ -223,8 +264,10 @@ aws scheduler get-schedule --name ecs-duckdb-etl-test-main-etl-daily
 - Change ETL capacity:
   - `container_cpu`
   - `container_memory`
-- Use a fixed bucket name:
-  - `s3_bucket_name`
+- Set external bucket names:
+  - `s3_source_bucket_name`
+  - `s3_target_bucket_name`
+  - `s3_script_bucket_name`
 - Change app-specific naming:
   - `app_name`
 - Change script path:
@@ -254,10 +297,4 @@ For your example of "about 8 GB RAM and a couple cores", use:
 terraform -chdir=terraform destroy
 ```
 
-If S3 bucket is not empty, remove objects first:
-
-```bash
-BUCKET=$(terraform -chdir=terraform output -raw s3_bucket_name)
-aws s3 rm "s3://$BUCKET" --recursive
-terraform -chdir=terraform destroy
-```
+No S3 bucket cleanup is required from this Terraform project because buckets are external.

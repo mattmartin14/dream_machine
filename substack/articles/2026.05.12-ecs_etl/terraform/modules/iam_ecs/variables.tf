@@ -3,13 +3,28 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "s3_bucket_arn" {
-  description = "S3 bucket ARN"
+variable "s3_source_bucket_arn" {
+  description = "S3 source bucket ARN"
+  type        = string
+}
+
+variable "s3_target_bucket_arn" {
+  description = "S3 target bucket ARN"
+  type        = string
+}
+
+variable "s3_script_bucket_arn" {
+  description = "S3 bucket ARN where runtime ETL script is stored"
   type        = string
 }
 
 variable "s3_script_key" {
   description = "S3 key for runtime ETL script"
+  type        = string
+}
+
+variable "slack_webhook_secret_arn" {
+  description = "Secrets Manager ARN for Slack webhook secret"
   type        = string
 }
 
