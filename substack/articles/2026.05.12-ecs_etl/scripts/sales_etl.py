@@ -1,6 +1,4 @@
 import logging
-import os
-
 from helpers.common import establish_duckdb_connection, send_slack_notification
 
 def main():
@@ -34,9 +32,17 @@ def main():
 
         logging.info("copied aggregated data to target s3 path %s", s3_target_path)
 
-        #cn.sql(f"from read_parquet('{s3_target_path}') limit 5").show()
+        ## validation check
+        result = cn.execute(f"SELECT count(*) AS record_count FROM read_parquet('{s3_target_path}')").fetchone()
+        record_count = result[0] if result else 0
+        if record_count == 0:
+            send_slack_notification("error", f"Validation check failed: no records found in target path {s3_target_path}")
+            raise ValueError(f"Validation check failed: no records found in target path {s3_target_path}")
+        
+        logging.info("validation check - record count in target path: %d", record_count)
 
         send_slack_notification("info", "Sales Customer Order Aggregate ETL process completed successfully.")
+
         logging.info("Sales ETL process completed successfully.")
     except Exception as exc:
         logging.exception("Sales ETL process failed: %s", str(exc))

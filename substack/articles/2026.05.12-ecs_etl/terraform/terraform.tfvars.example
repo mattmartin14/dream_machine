@@ -1,6 +1,6 @@
 aws_region      = "us-east-1"
 project_name    = "ecs-duckdb-etl"
-app_name        = "main-etl"
+app_name        = "sales-etl"
 image_tag       = "latest"
 
 # Existing buckets used by local and cloud runs.
