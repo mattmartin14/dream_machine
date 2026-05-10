@@ -20,11 +20,33 @@ if [[ ! -f "$TF_DIR/terraform.tfvars" ]]; then
   exit 1
 fi
 
+normalize_region() {
+  local raw="$1"
+  local value="${raw// /}"
+
+  # Accept common mistaken format like: aws_region="us-east-1"
+  if [[ "$value" == aws_region=* ]]; then
+    value="${value#aws_region=}"
+  fi
+
+  # Strip optional wrapping quotes.
+  value="${value%\"}"
+  value="${value#\"}"
+
+  printf '%s' "$value"
+}
+
 AWS_REGION="${AWS_REGION:-$(grep -E '^aws_region' "$TF_DIR/terraform.tfvars" | head -n1 | sed -E 's/.*=\s*"([^"]+)"/\1/') }"
-AWS_REGION="${AWS_REGION// /}"
+AWS_REGION="$(normalize_region "$AWS_REGION")"
 
 if [[ -z "$AWS_REGION" ]]; then
   AWS_REGION="us-east-1"
+fi
+
+if [[ ! "$AWS_REGION" =~ ^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$ ]]; then
+  echo "Error: AWS_REGION is invalid: '$AWS_REGION'" >&2
+  echo "Set AWS_REGION to a value like 'us-east-1'." >&2
+  exit 1
 fi
 
 CLUSTER_ARN="${CLUSTER_ARN:-$(terraform -chdir="$TF_DIR" output -raw ecs_cluster_arn)}"

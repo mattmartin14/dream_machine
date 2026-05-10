@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export AWS_REGION="us-east-1"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 TF_DIR="$PROJECT_ROOT/terraform"
@@ -18,6 +19,7 @@ Examples:
 Environment variables:
   AWS_REGION    Optional. Defaults to region from terraform/terraform.tfvars, then us-east-1.
   ECR_REPO_URL  Optional. Defaults to terraform output ecr_repository_url.
+  DOCKER_PLATFORM Optional. Docker target platform. Defaults to linux/amd64.
 EOF
 }
 
@@ -55,13 +57,36 @@ if [[ ! -d "$TF_DIR" ]]; then
   exit 1
 fi
 
+normalize_region() {
+  local raw="$1"
+  local value="${raw// /}"
+
+  # Accept common mistaken format like: aws_region="us-east-1"
+  if [[ "$value" == aws_region=* ]]; then
+    value="${value#aws_region=}"
+  fi
+
+  # Strip optional wrapping quotes.
+  value="${value%\"}"
+  value="${value#\"}"
+
+  printf '%s' "$value"
+}
+
 AWS_REGION="${AWS_REGION:-}"
+AWS_REGION="$(normalize_region "$AWS_REGION")"
 if [[ -z "$AWS_REGION" && -f "$TF_DIR/terraform.tfvars" ]]; then
   AWS_REGION="$(grep -E '^aws_region' "$TF_DIR/terraform.tfvars" | head -n1 | sed -E 's/.*=\s*"([^"]+)"/\1/')"
-  AWS_REGION="${AWS_REGION// /}"
+  AWS_REGION="$(normalize_region "$AWS_REGION")"
 fi
 if [[ -z "$AWS_REGION" ]]; then
   AWS_REGION="us-east-1"
+fi
+
+if [[ ! "$AWS_REGION" =~ ^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$ ]]; then
+  echo "Error: AWS_REGION is invalid: '$AWS_REGION'" >&2
+  echo "Set AWS_REGION to a value like 'us-east-1'." >&2
+  exit 1
 fi
 
 ECR_REPO_URL="${ECR_REPO_URL:-}"
@@ -78,17 +103,18 @@ ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
 ECR_REGISTRY="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
 LOCAL_IMAGE="etl:$IMAGE_TAG"
 REMOTE_IMAGE="$ECR_REPO_URL:$IMAGE_TAG"
+DOCKER_PLATFORM="${DOCKER_PLATFORM:-linux/amd64}"
 
 echo "Logging in to ECR registry: $ECR_REGISTRY"
 aws ecr get-login-password --region "$AWS_REGION" \
   | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
 if [[ "$NO_CACHE_FLAG" == "--no-cache" ]]; then
-  echo "Building Docker image (no cache): $LOCAL_IMAGE"
-  docker build --no-cache -f "$SCRIPT_DIR/Dockerfile" -t "$LOCAL_IMAGE" "$PROJECT_ROOT"
+  echo "Building Docker image (no cache): $LOCAL_IMAGE (platform=$DOCKER_PLATFORM)"
+  docker build --platform "$DOCKER_PLATFORM" --no-cache -f "$SCRIPT_DIR/Dockerfile" -t "$LOCAL_IMAGE" "$PROJECT_ROOT"
 else
-  echo "Building Docker image: $LOCAL_IMAGE"
-  docker build -f "$SCRIPT_DIR/Dockerfile" -t "$LOCAL_IMAGE" "$PROJECT_ROOT"
+  echo "Building Docker image: $LOCAL_IMAGE (platform=$DOCKER_PLATFORM)"
+  docker build --platform "$DOCKER_PLATFORM" -f "$SCRIPT_DIR/Dockerfile" -t "$LOCAL_IMAGE" "$PROJECT_ROOT"
 fi
 
 echo "Tagging image: $LOCAL_IMAGE -> $REMOTE_IMAGE"

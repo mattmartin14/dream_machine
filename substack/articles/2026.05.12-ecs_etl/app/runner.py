@@ -37,7 +37,10 @@ def main() -> int:
     setup_logging()
 
     try:
-        script_bucket = env("S3_SCRIPT_BUCKET", env("S3_BUCKET"))
+        # Prefer the new variable name but support legacy S3_BUCKET.
+        script_bucket = os.getenv("S3_SCRIPT_BUCKET") or os.getenv("S3_BUCKET")
+        if not script_bucket:
+            raise ValueError("Missing required environment variable: S3_SCRIPT_BUCKET or S3_BUCKET")
         script_key = env("S3_SCRIPT_KEY", "etl/scripts/sales_etl.py")
         local_script_path = env("LOCAL_SCRIPT_PATH", "/tmp/runtime_etl.py")
 
