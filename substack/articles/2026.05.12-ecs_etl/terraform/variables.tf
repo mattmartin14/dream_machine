@@ -34,6 +34,12 @@ variable "container_memory" {
   default     = 1024
 }
 
+variable "task_ephemeral_storage_gib" {
+  description = "Fargate ephemeral storage size in GiB for task local staging"
+  type        = number
+  default     = 50
+}
+
 variable "s3_source_bucket_name" {
   description = "Existing source bucket name containing raw sales data"
   type        = string
@@ -65,6 +71,17 @@ variable "s3_script_key" {
   description = "S3 key for the ETL script fetched by the runner container"
   type        = string
   default     = "etl/scripts/sales_etl.py"
+}
+
+variable "scheduled_script_s3_uri" {
+  description = "S3 URI to execute on scheduled ECS runs"
+  type        = string
+}
+
+variable "runtime_script_allowed_prefixes" {
+  description = "Allowed key prefixes (within script bucket) for runtime script downloads"
+  type        = list(string)
+  default     = ["etl/scripts/"]
 }
 
 variable "log_level" {

@@ -38,12 +38,6 @@ variable "scheduler_role_arn" {
   type        = string
 }
 
-variable "runtime_s3_target_bucket_name" {
-  description = "Deprecated: bucket overrides removed because sales_etl.py uses known bucket paths"
-  type        = string
-  default     = ""
-}
-
 variable "subnet_ids" {
   description = "Subnet IDs for ECS task networking"
   type        = list(string)

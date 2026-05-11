@@ -18,9 +18,9 @@ variable "s3_script_bucket_arn" {
   type        = string
 }
 
-variable "s3_script_key" {
-  description = "S3 key for runtime ETL script"
-  type        = string
+variable "runtime_script_allowed_prefixes" {
+  description = "Allowed script key prefixes under the script bucket"
+  type        = list(string)
 }
 
 variable "slack_webhook_secret_arn" {

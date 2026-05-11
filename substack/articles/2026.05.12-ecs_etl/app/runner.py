@@ -3,6 +3,7 @@ import logging
 import os
 import runpy
 import sys
+from urllib.parse import urlparse
 
 import boto3
 
@@ -21,6 +22,19 @@ def env(name: str, default: str | None = None) -> str:
     return value
 
 
+def parse_s3_uri(s3_uri: str) -> tuple[str, str]:
+    parsed = urlparse(s3_uri)
+    if parsed.scheme != "s3" or not parsed.netloc or not parsed.path or parsed.path == "/":
+        raise ValueError(f"Invalid S3 URI for runtime script: {s3_uri}")
+
+    script_bucket = parsed.netloc
+    script_key = parsed.path.lstrip("/")
+    if not script_key:
+        raise ValueError(f"Invalid S3 URI for runtime script: {s3_uri}")
+
+    return script_bucket, script_key
+
+
 def download_script(script_bucket: str, script_key: str, local_path: str) -> None:
     logging.info(
         "runner_download_start %s",
@@ -37,17 +51,17 @@ def main() -> int:
     setup_logging()
 
     try:
-        # Prefer the new variable name but support legacy S3_BUCKET.
-        script_bucket = os.getenv("S3_SCRIPT_BUCKET") or os.getenv("S3_BUCKET")
-        if not script_bucket:
-            raise ValueError("Missing required environment variable: S3_SCRIPT_BUCKET or S3_BUCKET")
-        script_key = env("S3_SCRIPT_KEY", "etl/scripts/sales_etl.py")
+        if len(sys.argv) < 2 or not sys.argv[1].strip():
+            raise ValueError("Missing required script argument. Usage: runner.py s3://bucket/path/script.py")
+
+        script_s3_uri = sys.argv[1].strip()
+        script_bucket, script_key = parse_s3_uri(script_s3_uri)
         local_script_path = env("LOCAL_SCRIPT_PATH", "/tmp/runtime_etl.py")
 
         download_script(script_bucket, script_key, local_script_path)
         runpy.run_path(local_script_path, run_name="__main__")
 
-        logging.info("runner_complete %s", json.dumps({"script_key": script_key}))
+        logging.info("runner_complete %s", json.dumps({"script_s3_uri": script_s3_uri, "script_key": script_key}))
         return 0
     except Exception as exc:  # noqa: BLE001
         logging.exception("runner_failed %s", json.dumps({"error": str(exc)}))

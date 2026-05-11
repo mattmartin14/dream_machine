@@ -43,38 +43,14 @@ variable "aws_region" {
   type        = string
 }
 
-variable "s3_source_bucket_name" {
-  description = "Deprecated: source bucket name is no longer injected into task env"
-  type        = string
-  default     = ""
-}
-
-variable "s3_target_bucket_name" {
-  description = "Deprecated: target bucket name is no longer injected into task env"
-  type        = string
-  default     = ""
-}
-
-variable "s3_script_bucket_name" {
-  description = "S3 bucket name where ETL scripts are stored"
+variable "default_script_s3_uri" {
+  description = "Default S3 URI argument passed to runner.py in task definition"
   type        = string
 }
 
-variable "s3_script_key" {
-  description = "S3 key for runtime ETL script"
-  type        = string
-}
-
-variable "normalized_input_prefix" {
-  description = "Deprecated: input prefix is only used by IAM module"
-  type        = string
-  default     = ""
-}
-
-variable "normalized_output_prefix" {
-  description = "Deprecated: output prefix is only used by IAM module"
-  type        = string
-  default     = ""
+variable "task_ephemeral_storage_gib" {
+  description = "Ephemeral storage size in GiB for Fargate task scratch space"
+  type        = number
 }
 
 variable "log_level" {

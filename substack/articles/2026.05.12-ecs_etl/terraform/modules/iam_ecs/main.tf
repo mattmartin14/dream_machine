@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "ecs_task_s3" {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${var.s3_script_bucket_arn}/${var.s3_script_key}"]
+    resources = [for prefix in var.runtime_script_allowed_prefixes : "${var.s3_script_bucket_arn}/${trim(prefix, "/")}/*"]
   }
 
   statement {

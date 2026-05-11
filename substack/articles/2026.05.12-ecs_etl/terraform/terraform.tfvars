@@ -1,23 +1,26 @@
-aws_region      = "us-east-1"
-project_name    = "ecs-duckdb-etl"
-app_name        = "sales-etl"
-image_tag       = "latest"
+aws_region   = "us-east-1"
+project_name = "ecs-duckdb-etl"
+app_name     = "sales-etl"
+image_tag    = "latest"
 
 # Existing buckets used by local and cloud runs.
-s3_source_bucket_name = "s3-sales-raw-test"
-s3_target_bucket_name = "s3-sales-agg-test"
-s3_script_bucket_name = "s3-sales-agg-test"
-s3_input_prefix = "tpch/orders_raw/"
-s3_output_prefix = "tpch/cust_agg/"
-s3_script_key   = "etl/scripts/sales_etl.py"
+s3_source_bucket_name           = "s3-sales-raw-test"
+s3_target_bucket_name           = "s3-sales-agg-test"
+s3_script_bucket_name           = "s3-sales-agg-test"
+s3_input_prefix                 = "tpch/orders_raw/"
+s3_output_prefix                = "tpch/cust_agg/"
+s3_script_key                   = "etl/scripts/sales_etl.py"
+scheduled_script_s3_uri         = "s3://s3-sales-agg-test/etl/scripts/sales_etl.py"
+runtime_script_allowed_prefixes = ["etl/scripts/"]
 
 # 05:00 in New York time, every day.
 schedule_expression = "cron(0 5 * * ? *)"
 schedule_timezone   = "America/New_York"
 
-container_cpu    = 512
-container_memory = 1024
-log_level        = "INFO"
+container_cpu              = 512
+container_memory           = 1024
+task_ephemeral_storage_gib = 50
+log_level                  = "INFO"
 
 # Slack webhook secret name in AWS Secrets Manager.
 slack_webhook_secret_name = "slack_webhook_test"

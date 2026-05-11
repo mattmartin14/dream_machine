@@ -52,6 +52,13 @@ fi
 CLUSTER_ARN="${CLUSTER_ARN:-$(terraform -chdir="$TF_DIR" output -raw ecs_cluster_arn)}"
 TASK_DEF_ARN="${TASK_DEF_ARN:-$(terraform -chdir="$TF_DIR" output -raw ecs_task_definition_arn)}"
 TASK_COUNT="${TASK_COUNT:-1}"
+SCRIPT_S3_URI="${SCRIPT_S3_URI:-${1:-}}"
+
+if [[ -z "$SCRIPT_S3_URI" ]]; then
+  echo "Error: SCRIPT_S3_URI is required (example: s3://bucket/path/to/script.py)." >&2
+  echo "Hint: SCRIPT_S3_URI=s3://my-bucket/etl/scripts/job.py ./ecs_manual_run/run_ecs_task.sh" >&2
+  exit 1
+fi
 
 NAME_PREFIX="$(terraform -chdir="$TF_DIR" console <<'EOF' | tr -d '"\r\n'
 local.name_prefix
@@ -104,6 +111,9 @@ echo "  TASK_DEF_ARN=$TASK_DEF_ARN"
 echo "  SG_ID=$SG_ID"
 echo "  SUBNETS_CSV=$SUBNETS_CSV"
 echo "  TASK_COUNT=$TASK_COUNT"
+echo "  SCRIPT_S3_URI=$SCRIPT_S3_URI"
+
+OVERRIDES_JSON="$(printf '{\"containerOverrides\":[{\"name\":\"etl\",\"command\":[\"%s\"]}]}' "$SCRIPT_S3_URI")"
 
 aws ecs run-task \
   --region "$AWS_REGION" \
@@ -111,5 +121,6 @@ aws ecs run-task \
   --task-definition "$TASK_DEF_ARN" \
   --launch-type FARGATE \
   --count "$TASK_COUNT" \
+  --overrides "$OVERRIDES_JSON" \
   --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS_CSV],securityGroups=[$SG_ID],assignPublicIp=ENABLED}" \
   --output json

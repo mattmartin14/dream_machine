@@ -10,6 +10,8 @@ s3_script_bucket_name = "s3-sales-agg-test"
 s3_input_prefix = "tpch/orders_raw/"
 s3_output_prefix = "tpch/cust_agg/"
 s3_script_key   = "etl/scripts/sales_etl.py"
+scheduled_script_s3_uri = "s3://s3-sales-agg-test/etl/scripts/sales_etl.py"
+runtime_script_allowed_prefixes = ["etl/scripts/"]
 
 # 05:00 in New York time, every day.
 schedule_expression = "cron(0 5 * * ? *)"
@@ -17,6 +19,7 @@ schedule_timezone   = "America/New_York"
 
 container_cpu    = 512
 container_memory = 1024
+task_ephemeral_storage_gib = 50
 log_level        = "INFO"
 
 # Slack webhook secret name in AWS Secrets Manager.

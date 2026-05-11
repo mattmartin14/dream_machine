@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+from datetime import datetime, timezone
 from typing import List
 
 import boto3
@@ -8,51 +9,17 @@ import duckdb
 import requests
 from botocore.exceptions import ClientError
 
-
 _SLACK_WEBHOOK_CACHE: str | None = None
 
-
-def _load_or_install_extensions(con: duckdb.DuckDBPyConnection) -> None:
-    try:
-        con.execute("LOAD httpfs;")
-        con.execute("LOAD aws;")
-        return
-    except duckdb.Error:
-        pass
-
-    con.execute("INSTALL httpfs;")
-    con.execute("INSTALL aws;")
-    con.execute("LOAD httpfs;")
-    con.execute("LOAD aws;")
-
-
-def delete_objects_with_prefix(bucket: str, prefix: str) -> int:
-    """Delete all objects under an S3 prefix and return deleted object count."""
+def copy_local_file_to_s3(local_file_path: str, s3_target_path: str) -> None:
     s3 = boto3.client("s3")
-    paginator = s3.get_paginator("list_objects_v2")
-    pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
-
-    keys: List[dict] = []
-    deleted = 0
-
-    for page in pages:
-        for obj in page.get("Contents", []):
-            keys.append({"Key": obj["Key"]})
-            if len(keys) == 1000:
-                s3.delete_objects(Bucket=bucket, Delete={"Objects": keys})
-                deleted += len(keys)
-                keys = []
-
-    if keys:
-        s3.delete_objects(Bucket=bucket, Delete={"Objects": keys})
-        deleted += len(keys)
-
-    return deleted
-
+    bucket_name, key = s3_target_path.replace("s3://", "").split("/", 1)
+    s3.upload_file(local_file_path, bucket_name, key)
 
 def establish_duckdb_connection(aws_region: str, extension_directory: str) -> duckdb.DuckDBPyConnection:
     """Create an in-memory DuckDB connection with robust aws/httpfs extension setup."""
-    con = duckdb.connect(":memory:")
+
+    cn = duckdb.connect()
 
     local_fallback_dir = os.path.join(os.path.expanduser("~"), ".duckdb", "extensions")
     candidate_dirs = [extension_directory]
@@ -64,35 +31,38 @@ def establish_duckdb_connection(aws_region: str, extension_directory: str) -> du
     for candidate_dir in candidate_dirs:
         try:
             os.makedirs(candidate_dir, exist_ok=True)
-            con.execute(f"SET extension_directory='{candidate_dir}';")
-            _load_or_install_extensions(con)
+            cn.execute(f"SET extension_directory='{candidate_dir}';")
+            cn.execute("load httpfs; load aws;")
             initialized = True
             break
         except (duckdb.Error, OSError) as exc:
             attempt_errors.append(f"{candidate_dir}: {str(exc)}")
 
     if not initialized:
-        con.close()
+        cn.close()
         raise RuntimeError(
             "Failed to initialize DuckDB aws/httpfs extensions; attempted directories: "
             + " | ".join(attempt_errors)
         )
 
-    con.execute(f"SET s3_region='{aws_region}';")
-    con.execute("CREATE OR REPLACE SECRET s3_default (TYPE S3, PROVIDER CREDENTIAL_CHAIN);")
-    return con
+    cn.execute(f"SET s3_region='{aws_region}';")
+    cn.execute("CREATE OR REPLACE SECRET s3_default (TYPE S3, PROVIDER CREDENTIAL_CHAIN);")
+    return cn
 
 
-def send_slack_notification(level: str, message: str) -> bool:
+def send_slack_notification(
+    level: str,
+    message: str,
+    title: str | None = None,
+    fields: dict[str, str | int | float] | None = None,
+) -> bool:
     """Send a Slack webhook notification and return whether delivery succeeded."""
     webhook_url = _get_slack_webhook_url()
     if not webhook_url:
         logging.info("slack_notification_skipped missing_webhook_secret")
         return False
 
-    payload = {
-        "text": f"[{level.upper()}] {message}",
-    }
+    payload = _build_slack_payload(level=level, message=message, title=title, fields=fields)
 
     try:
         response = requests.post(webhook_url, json=payload, timeout=10)
@@ -104,14 +74,95 @@ def send_slack_notification(level: str, message: str) -> bool:
         return False
 
 
+def _build_slack_payload(
+    level: str,
+    message: str,
+    title: str | None,
+    fields: dict[str, str | int | float] | None,
+) -> dict:
+    normalized_level = level.strip().lower()
+    level_label = normalized_level.upper()
+
+    emoji_map = {
+        "info": ":large_blue_circle:",
+        "warning": ":warning:",
+        "error": ":red_circle:",
+        "success": ":white_check_mark:",
+    }
+    color_map = {
+        "info": "#2EB67D",
+        "warning": "#ECB22E",
+        "error": "#E01E5A",
+        "success": "#2EB67D",
+    }
+    emoji = emoji_map.get(normalized_level, ":speech_balloon:")
+    color = color_map.get(normalized_level, "#1D9BD1")
+
+    card_title = title or "ETL Notification"
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    blocks: list[dict] = [
+        {
+            "type": "header",
+            "text": {
+                "type": "plain_text",
+                "text": f"{emoji} {card_title}",
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {"type": "mrkdwn", "text": f"*Severity*\n{level_label}"},
+                {"type": "mrkdwn", "text": f"*Timestamp*\n{now_iso}"},
+            ],
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*Details*\n{message}",
+            },
+        },
+    ]
+
+    if fields:
+        field_entries = []
+        for key, value in fields.items():
+            field_entries.append(
+                {
+                    "type": "mrkdwn",
+                    "text": f"*{key}*\n{value}",
+                }
+            )
+
+        for start_idx in range(0, len(field_entries), 10):
+            blocks.append(
+                {
+                    "type": "section",
+                    "fields": field_entries[start_idx : start_idx + 10],
+                }
+            )
+
+    return {
+        # Keep plain text fallback for clients/surfaces that do not render blocks.
+        "text": f"[{level_label}] {card_title}: {message}",
+        "attachments": [
+            {
+                "color": color,
+                "fallback": f"[{level_label}] {card_title}: {message}",
+                "blocks": blocks,
+            }
+        ],
+    }
+
+
 def _get_slack_webhook_url() -> str | None:
     global _SLACK_WEBHOOK_CACHE
     if _SLACK_WEBHOOK_CACHE:
         return _SLACK_WEBHOOK_CACHE
 
-    secret_name = os.getenv("SLACK_WEBHOOK_SECRET_NAME", "slack_webhook_test")
-    region_name = os.getenv("AWS_REGION", os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
-
+    secret_name = "slack_webhook_test"
+    region_name = "us-east-1"
     session = boto3.session.Session()
     client = session.client(service_name="secretsmanager", region_name=region_name)
 
@@ -134,12 +185,8 @@ def _get_slack_webhook_url() -> str | None:
             logging.warning("slack_webhook_secret_json_decode_failed %s", secret_name)
             return None
 
-        webhook_url = (
-            secret_payload.get("SLACK_WEBHOOK")
-            or secret_payload.get("slack_webhook")
-            or secret_payload.get("webhook_url")
-            or secret_payload.get("url")
-        )
+        webhook_url = secret_payload.get("slack_webhook")
+      
     else:
         webhook_url = secret_string
 

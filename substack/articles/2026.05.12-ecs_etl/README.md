@@ -121,10 +121,12 @@ It writes to:
 
 - `s3://s3-sales-agg-test/tpch/cust_agg/cust_agg.parquet`
 
+Runtime script selection is passed as a task argument to `runner.py` via ECS task definition command:
+
+- `s3://...` script URI argument (default from `scheduled_script_s3_uri`)
+
 Required task environment variables are provided by Terraform:
 
-- `S3_SCRIPT_BUCKET`
-- `S3_SCRIPT_KEY`
 - `AWS_REGION`
 - `LOG_LEVEL`
 
@@ -243,6 +245,8 @@ If you change `scripts/sales_etl.py`, rerun `terraform apply` and Terraform will
 
 If you use a different key, set `s3_script_key` in `terraform.tfvars` and apply again.
 
+For scheduled runs, set `scheduled_script_s3_uri` in `terraform.tfvars` to the exact script object URI.
+
 ### 4. Seed Input Data in S3
 
 Ensure this input exists in the source bucket:
@@ -251,16 +255,26 @@ Ensure this input exists in the source bucket:
 
 ### 5. Run a Manual Smoke Test (One-Off)
 
+Preferred one-liner wrapper (passes runtime script URI override):
+
+```bash
+SCRIPT_S3_URI="s3://s3-sales-agg-test/etl/scripts/sales_etl.py" ./ecs_manual_run/run_ecs_task.sh
+```
+
+Manual AWS CLI example:
+
 ```bash
 CLUSTER_ARN=$(terraform -chdir=terraform output -raw ecs_cluster_arn)
 TASK_DEF_ARN=$(terraform -chdir=terraform output -raw ecs_task_definition_arn)
 SUBNET_IDS=$(aws ec2 describe-subnets --filters Name=default-for-az,Values=true --query 'Subnets[].SubnetId' --output text)
 SG_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=*ecs-duckdb-etl-test-sg* --query 'SecurityGroups[0].GroupId' --output text)
+SCRIPT_S3_URI="s3://s3-sales-agg-test/etl/scripts/sales_etl.py"
 
 aws ecs run-task \
   --launch-type FARGATE \
   --cluster "$CLUSTER_ARN" \
   --task-definition "$TASK_DEF_ARN" \
+  --overrides "$(printf '{\"containerOverrides\":[{\"name\":\"etl\",\"command\":[\"%s\"]}]}' \"$SCRIPT_S3_URI\")" \
   --network-configuration "awsvpcConfiguration={subnets=[$(echo $SUBNET_IDS | sed 's/ /,/g')],securityGroups=[$SG_ID],assignPublicIp=ENABLED}"
 ```
 
@@ -276,7 +290,7 @@ aws scheduler get-schedule --name ecs-duckdb-etl-test-main-etl-daily
 
 ## Least-Privilege IAM Notes
 
-- Task role can read the configured script key, list/read source input prefix, and read/write/delete output objects in target prefix.
+- Task role can read runtime scripts only from configured allowed script prefixes, list/read source input prefix, and read/write/delete output objects in target prefix.
 - Scheduler role can only call `ecs:RunTask` for this task and pass the two ECS roles.
 - Execution role uses the AWS managed ECS execution policy.
 
@@ -288,14 +302,19 @@ aws scheduler get-schedule --name ecs-duckdb-etl-test-main-etl-daily
 - Change ETL capacity:
   - `container_cpu`
   - `container_memory`
+  - `task_ephemeral_storage_gib`
 - Set external bucket names:
   - `s3_source_bucket_name`
   - `s3_target_bucket_name`
   - `s3_script_bucket_name`
 - Change app-specific naming:
   - `app_name`
-- Change script path:
+- Change uploaded canonical script key:
   - `s3_script_key`
+- Change scheduled runtime script:
+  - `scheduled_script_s3_uri`
+- Change runtime script IAM policy scope:
+  - `runtime_script_allowed_prefixes`
 
 ## CPU and Memory Sizing
 
@@ -303,6 +322,7 @@ Terraform uses AWS Fargate units:
 
 - `container_cpu` is CPU units (`1024 = 1 vCPU`).
 - `container_memory` is MiB (`1024 = 1 GiB`).
+- `task_ephemeral_storage_gib` is local scratch disk for staging files.
 
 Quick sizing examples:
 
