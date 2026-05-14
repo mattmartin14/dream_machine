@@ -5,6 +5,8 @@
 
 ```bash
 duckdb
+
+install quack from core_nightly;
 load quack;
 create table data (id int);
 call quack_serve('quack:localhost',token='yolo');
