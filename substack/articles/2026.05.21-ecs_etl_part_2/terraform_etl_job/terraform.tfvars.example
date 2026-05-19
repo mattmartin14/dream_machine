@@ -1,0 +1,21 @@
+aws_region   = "us-east-1"
+project_name = "ecs-duckdb-etl"
+etl_job_name = "sales-etl"
+image_tag    = "latest"
+
+local_script_path = "scripts/sales_etl.py"
+script_s3_uri     = "s3://s3-sales-agg-test/etl/scripts/sales_etl.py"
+
+schedule_expression = "cron(0 5 * * ? *)"
+schedule_timezone   = "America/New_York"
+
+container_cpu              = 512
+container_memory           = 1024
+task_ephemeral_storage_gib = 50
+log_level                  = "INFO"
+
+slack_webhook_secret_name = "slack_webhook_test"
+
+tags = {
+  Owner = "your-name"
+}

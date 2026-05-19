@@ -1,0 +1,16 @@
+aws_region   = "us-east-1"
+project_name = "ecs-duckdb-etl"
+
+s3_source_bucket_name           = "s3-sales-raw-test"
+s3_target_bucket_name           = "s3-sales-agg-test"
+s3_input_prefix                 = "tpch/orders_raw/"
+s3_output_prefix                = "tpch/cust_agg/"
+runtime_script_allowed_prefixes = ["scripts/", "etl/scripts/"]
+
+# Secret name and value for Slack notifications.
+slack_webhook_secret_name = "slack_webhook_test"
+slack_webhook             = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+
+tags = {
+  Owner = "your-name"
+}
