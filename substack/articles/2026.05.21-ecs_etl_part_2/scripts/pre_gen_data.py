@@ -22,7 +22,17 @@ def main():
         ) TO 's3://{raw_bucket_name}/tpch/orders_raw/orders.parquet'       
     """)
 
-    cn.sql(f"from read_parquet('s3://{raw_bucket_name}/tpch/orders_raw/orders.parquet') select *").show()
+    cn.execute(f"""
+        COPY (
+            select *
+            from customer
+            limit 100
+        ) TO 's3://{raw_bucket_name}/tpch/customer_raw/customer.parquet'
+    """)
+
+
+    cn.sql(f"from read_parquet('s3://{raw_bucket_name}/tpch/orders_raw/orders.parquet')").show()
+    cn.sql(f"from read_parquet('s3://{raw_bucket_name}/tpch/customer_raw/customer.parquet')").show()
 
 if __name__ == "__main__":
     main()

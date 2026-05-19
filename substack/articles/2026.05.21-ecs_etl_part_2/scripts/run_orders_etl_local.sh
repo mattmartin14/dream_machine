@@ -8,4 +8,4 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 export PYTHONPATH="$PROJECT_ROOT${PYTHONPATH:+:$PYTHONPATH}"
 
 cd "$SCRIPT_DIR"
-uv run sales_etl.py
+uv run orders_etl.py

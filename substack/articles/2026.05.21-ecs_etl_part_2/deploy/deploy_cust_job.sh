@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -6,10 +5,10 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DEPLOY_GENERIC_SCRIPT="$PROJECT_ROOT/deploy/deploy_etl_job.sh"
 
 "$DEPLOY_GENERIC_SCRIPT" \
-  --etl-job-name "sales-etl" \
-  --local-script-path "scripts/sales_etl.py" \
-  --script-s3-uri "s3://s3-sales-agg-test/scripts/sales_etl.py" \
+  --etl-job-name "cust-etl" \
+  --local-script-path "scripts/cust_etl.py" \
+  --script-s3-uri "s3://s3-sales-agg-test/scripts/cust_etl.py" \
   --container-cpu "2048" \
   --container-memory "4096" \
-  --schedule-expression 'cron(0 5 * * ? *)' \
+  --schedule-expression 'cron(0 4 * * ? *)' \
   --auto-approve

@@ -182,6 +182,44 @@ if [[ -n "$SCHEDULE_FLEXIBLE_WINDOW_MODE" ]]; then
 fi
 
 terraform -chdir="$ETL_JOB_DIR" init
+
+# Keep each ETL job in its own Terraform workspace/state to avoid replacing other jobs.
+if terraform -chdir="$ETL_JOB_DIR" workspace list | sed 's/*//g' | tr -d ' ' | grep -Fxq "$ETL_JOB_NAME"; then
+  terraform -chdir="$ETL_JOB_DIR" workspace select "$ETL_JOB_NAME" >/dev/null
+else
+  terraform -chdir="$ETL_JOB_DIR" workspace new "$ETL_JOB_NAME" >/dev/null
+fi
+
+# If scheduler IAM resources already exist in AWS but are missing from state,
+# import them to avoid EntityAlreadyExists errors on reruns.
+PROJECT_NAME_EFFECTIVE="${TF_VAR_project_name:-ecs-duckdb-etl}"
+NAME_PREFIX="${PROJECT_NAME_EFFECTIVE}-test-${ETL_JOB_NAME}"
+SCHEDULER_ROLE_NAME="${NAME_PREFIX}-scheduler-role"
+SCHEDULER_POLICY_NAME="${NAME_PREFIX}-scheduler-invoke"
+ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true)"
+SCHEDULER_POLICY_ARN="arn:aws:iam::${ACCOUNT_ID}:policy/${SCHEDULER_POLICY_NAME}"
+
+if ! terraform -chdir="$ETL_JOB_DIR" state list | grep -Fxq "module.iam_scheduler.aws_iam_role.scheduler_invoke"; then
+  if aws iam get-role --role-name "$SCHEDULER_ROLE_NAME" >/dev/null 2>&1; then
+    echo "Importing existing IAM role into Terraform state: $SCHEDULER_ROLE_NAME"
+    terraform -chdir="$ETL_JOB_DIR" import module.iam_scheduler.aws_iam_role.scheduler_invoke "$SCHEDULER_ROLE_NAME" >/dev/null
+  fi
+fi
+
+if ! terraform -chdir="$ETL_JOB_DIR" state list | grep -Fxq "module.iam_scheduler.aws_iam_policy.scheduler_invoke"; then
+  if [[ -n "$ACCOUNT_ID" && "$ACCOUNT_ID" != "None" ]] && aws iam get-policy --policy-arn "$SCHEDULER_POLICY_ARN" >/dev/null 2>&1; then
+    echo "Importing existing IAM policy into Terraform state: $SCHEDULER_POLICY_ARN"
+    terraform -chdir="$ETL_JOB_DIR" import module.iam_scheduler.aws_iam_policy.scheduler_invoke "$SCHEDULER_POLICY_ARN" >/dev/null
+  fi
+fi
+
+if ! terraform -chdir="$ETL_JOB_DIR" state list | grep -Fxq "module.iam_scheduler.aws_iam_role_policy_attachment.scheduler_invoke"; then
+  if aws iam get-role --role-name "$SCHEDULER_ROLE_NAME" >/dev/null 2>&1 && [[ -n "$ACCOUNT_ID" && "$ACCOUNT_ID" != "None" ]] && aws iam get-policy --policy-arn "$SCHEDULER_POLICY_ARN" >/dev/null 2>&1; then
+    echo "Importing existing IAM role policy attachment into Terraform state: ${SCHEDULER_ROLE_NAME}/${SCHEDULER_POLICY_ARN}"
+    terraform -chdir="$ETL_JOB_DIR" import module.iam_scheduler.aws_iam_role_policy_attachment.scheduler_invoke "${SCHEDULER_ROLE_NAME}/${SCHEDULER_POLICY_ARN}" >/dev/null
+  fi
+fi
+
 terraform -chdir="$ETL_JOB_DIR" plan "${TF_ARGS[@]}"
 
 if [[ "$AUTO_APPROVE" == "true" ]]; then

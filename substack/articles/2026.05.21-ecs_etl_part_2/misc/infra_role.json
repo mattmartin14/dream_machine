@@ -14,6 +14,8 @@
                 "ecs:DescribeClusters",
                 "ecs:DescribeTaskDefinition",
                 "ecr:DescribeRepositories",
+                "ecr:DescribeImages",
+                "ecr:ListImages",
                 "logs:DescribeLogGroups",
                 "scheduler:GetSchedule",
                 "scheduler:ListSchedules",
@@ -25,9 +27,9 @@
                 "iam:ListPolicyVersions",
                 "iam:ListInstanceProfilesForRole",
                 "s3:ListAllMyBuckets",
-                "s3:GetBucket*",
+                "s3:Get*",
                 "secretsmanager:DescribeSecret",
-                "secretsmanager:GetSecretValue",
+                "secretsmanager:Get*",
                 "secretsmanager:ListSecretVersionIds"
             ],
             "Resource": "*"

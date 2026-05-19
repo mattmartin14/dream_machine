@@ -1,12 +1,12 @@
 resource "aws_s3_bucket" "source" {
   bucket        = var.source_bucket_name
-  force_destroy = false
+  force_destroy = true
   tags          = var.tags
 }
 
 resource "aws_s3_bucket" "target" {
   bucket        = var.target_bucket_name
-  force_destroy = false
+  force_destroy = true
   tags          = var.tags
 }
 
