@@ -14,7 +14,7 @@ container_memory           = 1024
 task_ephemeral_storage_gib = 50
 log_level                  = "INFO"
 
-slack_webhook_secret_name = "slack_webhook_test"
+slack_webhook_secret_name = "slack_webhook_v1"
 
 tags = {
   Owner = "your-name"

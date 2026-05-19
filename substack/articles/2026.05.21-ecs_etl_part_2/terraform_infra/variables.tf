@@ -43,7 +43,7 @@ variable "runtime_script_allowed_prefixes" {
 variable "slack_webhook_secret_name" {
   description = "AWS Secrets Manager secret name containing Slack webhook payload"
   type        = string
-  default     = "slack_webhook_test"
+  default     = "slack_webhook_v1"
 }
 
 variable "slack_webhook" {

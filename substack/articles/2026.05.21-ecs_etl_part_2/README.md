@@ -46,7 +46,7 @@ Note: Local script upload is intentionally **not** done in Terraform. It is done
 Set this in `terraform_infra/terraform.tfvars` (or via env var `TF_VAR_slack_webhook`):
 
 ```hcl
-slack_webhook_secret_name = "slack_webhook_test"
+slack_webhook_secret_name = "slack_webhook_v1"
 slack_webhook             = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
 ```
 

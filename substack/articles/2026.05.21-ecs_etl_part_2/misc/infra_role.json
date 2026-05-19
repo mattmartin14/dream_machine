@@ -25,11 +25,7 @@
                 "iam:ListPolicyVersions",
                 "iam:ListInstanceProfilesForRole",
                 "s3:ListAllMyBuckets",
-                "s3:GetBucketLocation",
-                "s3:GetBucketVersioning",
-                "s3:GetBucketTagging",
-                "s3:GetEncryptionConfiguration",
-                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucket*",
                 "secretsmanager:DescribeSecret",
                 "secretsmanager:GetSecretValue",
                 "secretsmanager:ListSecretVersionIds"
@@ -46,7 +42,7 @@
                 "ecr:UntagResource",
                 "ecr:ListTagsForResource"
             ],
-            "Resource": "arn:aws:ecr:us-east-1:<aws-acct-id>:repository/ecs-duckdb-etl-test-repo"
+            "Resource": "*"
         },
         {
             "Sid": "ManageCloudWatchLogGroup",
@@ -63,7 +59,7 @@
                 "logs:ListTagsForResource",
                 "logs:ListTagsLogGroup"
             ],
-            "Resource": "arn:aws:logs:us-east-1:<aws-acct-id>:log-group:/ecs/ecs-duckdb-etl-test*"
+            "Resource": "*"
         },
         {
             "Sid": "ManageEcsResources",
@@ -90,7 +86,7 @@
                 "scheduler:UntagResource",
                 "scheduler:ListTagsForResource"
             ],
-            "Resource": "arn:aws:scheduler:us-east-1:<aws-acct-id>:schedule/default/ecs-duckdb-etl-test-*"
+            "Resource": "*"
         },
         {
             "Sid": "ManageSecurityGroup",
@@ -116,10 +112,15 @@
                 "s3:PutEncryptionConfiguration",
                 "s3:PutBucketPublicAccessBlock"
             ],
-            "Resource": [
-                "arn:aws:s3:::s3-sales-raw-test",
-                "arn:aws:s3:::s3-sales-agg-test"
-            ]
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Sid": "ReadS3BucketsForTerraformWaiters",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::*"
         },
         {
             "Sid": "ManageSecretsManagerForStack",
@@ -136,7 +137,7 @@
                 "secretsmanager:GetSecretValue",
                 "secretsmanager:ListSecretVersionIds"
             ],
-            "Resource": "arn:aws:secretsmanager:us-east-1:<aws-acct-id>:secret:slack_webhook_test*"
+            "Resource": "*"
         },
         {
             "Sid": "ManageIamRolesAndPoliciesForStack",
@@ -157,20 +158,13 @@
                 "iam:AttachRolePolicy",
                 "iam:DetachRolePolicy"
             ],
-            "Resource": [
-                "arn:aws:iam::<aws-acct-id>:role/ecs-duckdb-etl-test-*",
-                "arn:aws:iam::<aws-acct-id>:policy/ecs-duckdb-etl-test-*"
-            ]
+            "Resource": "*"
         },
         {
             "Sid": "PassOnlyStackRolesToRequiredServices",
             "Effect": "Allow",
             "Action": "iam:PassRole",
-            "Resource": [
-                "arn:aws:iam::<aws-acct-id>:role/ecs-duckdb-etl-test-execution-role",
-                "arn:aws:iam::<aws-acct-id>:role/ecs-duckdb-etl-test-task-role",
-                "arn:aws:iam::<aws-acct-id>:role/ecs-duckdb-etl-test-*-scheduler-role"
-            ],
+            "Resource": "arn:aws:iam::*:role/*",
             "Condition": {
                 "StringEquals": {
                     "iam:PassedToService": [
@@ -213,7 +207,7 @@
                 "ecr:UploadLayerPart",
                 "ecr:BatchGetImage"
             ],
-            "Resource": "arn:aws:ecr:us-east-1:<aws-acct-id>:repository/ecs-duckdb-etl-test-repo"
+            "Resource": "*"
         },
         {
             "Sid": "AllowScriptUploadViaAwsCli",
@@ -221,7 +215,7 @@
             "Action": [
                 "s3:ListBucket"
             ],
-            "Resource": "arn:aws:s3:::s3-sales-agg-test",
+            "Resource": "arn:aws:s3:::*",
             "Condition": {
                 "StringLike": {
                     "s3:prefix": [
@@ -248,10 +242,7 @@
                 "s3:PutObjectTagging",
                 "s3:DeleteObjectTagging"
             ],
-            "Resource": [
-                "arn:aws:s3:::s3-sales-agg-test/scripts/*",
-                "arn:aws:s3:::s3-sales-agg-test/etl/scripts/*"
-            ]
+            "Resource": "arn:aws:s3:::*/*"
         }
     ]
 }

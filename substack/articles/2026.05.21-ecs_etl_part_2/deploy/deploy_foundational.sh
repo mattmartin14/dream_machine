@@ -20,6 +20,7 @@ Notes:
   - Runs Terraform init/plan/apply for terraform_infra.
   - Then delegates container build/push to docker/build_and_push.sh.
   - Passes image_tag and --no-cache through to docker/build_and_push.sh.
+  - Reads Slack webhook from TF_VAR_slack_webhook or SLACK_WEBHOOK environment variables.
 EOF
 }
 
@@ -55,7 +56,41 @@ if [[ ! -x "$BUILD_AND_PUSH_SCRIPT" ]]; then
   exit 1
 fi
 
+if ! command -v aws >/dev/null 2>&1; then
+  echo "Error: required command not found: aws" >&2
+  exit 1
+fi
+
+# terraform_infra requires variable "slack_webhook"; map SLACK_WEBHOOK automatically.
+if [[ -z "${TF_VAR_slack_webhook:-}" ]]; then
+  if [[ -n "${SLACK_WEBHOOK:-}" ]]; then
+    export TF_VAR_slack_webhook="$SLACK_WEBHOOK"
+  else
+    echo "Error: set SLACK_WEBHOOK (or TF_VAR_slack_webhook) before running deploy_foundational.sh" >&2
+    exit 1
+  fi
+fi
+
+# If the target secret is pending deletion, restore it before Terraform apply.
+SLACK_SECRET_NAME="${TF_VAR_slack_webhook_secret_name:-slack_webhook_v1}"
+DELETED_DATE="$(aws secretsmanager describe-secret --secret-id "$SLACK_SECRET_NAME" --query 'DeletedDate' --output text 2>/dev/null || true)"
+if [[ -n "$DELETED_DATE" && "$DELETED_DATE" != "None" ]]; then
+  echo "Secret '$SLACK_SECRET_NAME' is scheduled for deletion; restoring it now..."
+  aws secretsmanager restore-secret --secret-id "$SLACK_SECRET_NAME" >/dev/null
+fi
+
 terraform -chdir="$FOUNDATION_DIR" init
+
+# If the secret already exists but is not in Terraform state, import it.
+if aws secretsmanager describe-secret --secret-id "$SLACK_SECRET_NAME" >/dev/null 2>&1; then
+  if ! terraform -chdir="$FOUNDATION_DIR" state list | grep -Fxq "module.slack_secret.aws_secretsmanager_secret.slack_webhook"; then
+    echo "Importing existing secret '$SLACK_SECRET_NAME' into Terraform state..."
+    terraform -chdir="$FOUNDATION_DIR" import \
+      module.slack_secret.aws_secretsmanager_secret.slack_webhook \
+      "$SLACK_SECRET_NAME"
+  fi
+fi
+
 terraform -chdir="$FOUNDATION_DIR" plan
 
 if [[ "$AUTO_APPROVE" == "true" ]]; then

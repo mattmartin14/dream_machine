@@ -8,7 +8,7 @@ s3_output_prefix                = "tpch/cust_agg/"
 runtime_script_allowed_prefixes = ["scripts/", "etl/scripts/"]
 
 # Secret name and value for Slack notifications.
-slack_webhook_secret_name = "slack_webhook_test"
+slack_webhook_secret_name = "slack_webhook_v1"
 slack_webhook             = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
 
 tags = {

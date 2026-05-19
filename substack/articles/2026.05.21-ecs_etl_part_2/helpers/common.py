@@ -161,7 +161,7 @@ def _get_slack_webhook_url() -> str | None:
     if _SLACK_WEBHOOK_CACHE:
         return _SLACK_WEBHOOK_CACHE
 
-    secret_name = os.getenv("SLACK_WEBHOOK_SECRET_NAME", "slack_webhook_test")
+    secret_name = os.getenv("SLACK_WEBHOOK_SECRET_NAME", "slack_webhook_v1")
     region_name = os.getenv("AWS_REGION", "us-east-1")
     session = boto3.session.Session()
     client = session.client(service_name="secretsmanager", region_name=region_name)

@@ -55,7 +55,7 @@ variable "script_s3_uri" {
 variable "slack_webhook_secret_name" {
   description = "AWS Secrets Manager secret name containing the Slack webhook URL"
   type        = string
-  default     = "slack_webhook_test"
+  default     = "slack_webhook_v1"
 }
 
 variable "log_level" {
