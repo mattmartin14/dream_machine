@@ -112,7 +112,6 @@
                 "s3:CreateBucket",
                 "s3:DeleteBucket",
                 "s3:PutBucketTagging",
-                "s3:DeleteBucketTagging",
                 "s3:PutBucketVersioning",
                 "s3:PutEncryptionConfiguration",
                 "s3:PutBucketPublicAccessBlock"
