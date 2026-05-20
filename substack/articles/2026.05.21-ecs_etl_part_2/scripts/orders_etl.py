@@ -18,7 +18,7 @@ def main():
         agg_bucket_name = 's3-sales-agg-test'
 
         s3_raw_path = f"s3://{raw_bucket_name}/tpch/orders_raw/orders.parquet"
-        s3_target_path = f"s3://{agg_bucket_name}/tpch/cust_agg/cust_agg.parquet"
+        s3_target_path = f"s3://{agg_bucket_name}/tpch/orders_agg/orders_agg.parquet"
         
         ### aggregate to local file
         cn.execute(
@@ -41,7 +41,7 @@ def main():
             send_slack_notification(
                 "error",
                 "Validation check failed: no records found in local file data.parquet",
-                title="Sales ETL Validation Failed",
+                title="Sales Order ETL Validation Failed",
                 fields={
                     "Stage": "QA Gate",
                     "Check": "record_count > 0",
@@ -59,7 +59,7 @@ def main():
             send_slack_notification(
                 "error",
                 f"Validation check failed: found {null_custkey_count} records with null o_custkey in local file data.parquet",
-                title="Sales ETL Validation Failed",
+                title="Sales Order ETL Validation Failed",
                 fields={
                     "Stage": "QA Gate",
                     "Check": "o_custkey IS NOT NULL",
@@ -77,7 +77,7 @@ def main():
             send_slack_notification(
                 "error",
                 f"Validation check failed: found {low_total_price_count} records with total_price < 100 in local file data.parquet",
-                title="Sales ETL Validation Failed",
+                title="Sales Order ETL Validation Failed",
                 fields={
                     "Stage": "QA Gate",
                     "Check": "total_price >= 100",
@@ -97,8 +97,8 @@ def main():
 
         send_slack_notification(
             "success",
-            "Sales Customer Order Aggregate ETL process completed successfully.",
-            title="Sales ETL Completed",
+            "Sales Order Aggregate ETL process completed successfully.",
+            title="Sales Order ETL Completed",
             fields={
                 "Stage": "Publish",
                 "Output": s3_target_path,
@@ -110,11 +110,11 @@ def main():
 
         logging.info("Sales ETL process completed successfully.")
     except Exception as exc:
-        logging.exception("Sales ETL process failed: %s", str(exc))
+        logging.exception("Sales Order ETL process failed: %s", str(exc))
         send_slack_notification(
             "error",
-            f"Sales Customer Order Aggregate ETL process failed: {str(exc)}",
-            title="Sales ETL Failed",
+            f"Sales Order Aggregate ETL process failed: {str(exc)}",
+            title="Sales Order ETL Failed",
             fields={
                 "Stage": "Execution",
                 "Error Type": type(exc).__name__,
