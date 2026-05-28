@@ -1,0 +1,7 @@
+links to ecs fargate
+- why it makes sense over spark
+
+
+data modeling
+
+orchestration
