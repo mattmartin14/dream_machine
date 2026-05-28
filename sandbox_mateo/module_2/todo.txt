@@ -1,7 +1,8 @@
-links to ecs fargate
-- why it makes sense over spark
-
 
 data modeling
-
+- validate the data modeling output
 orchestration
+- need to build
+- a simple orch that has a main calling "build header", "build detail" "build agg report"
+- maybe it does multi-process to process several parquet files in parallel
+
