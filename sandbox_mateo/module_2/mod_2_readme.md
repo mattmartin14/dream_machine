@@ -7,11 +7,19 @@ ecs fargate
 - can reference the 2 articles i just put out
 
 
-Spark Examples
-- local iceberg
-- local Delta
-- pros/cons of each
-- local dev for cloud deployments of spark is very involved; best served using a cloud managed spark environment for dev like aws glue notebooks or databricks
+Spark and Lakehouses
+- the 2 predominate lakehouses out there are Delta and Iceberg
+- Delta is pretty much backed by databricks
+- Iceberg is backed by everyone else
+- both are pretty much feature complete at this point
+- both support all the expected SQL DML ops such as INSERT/UPDATE/DELETE/MERGE
+- neither reall have a competitive advantage over the other; it really boils down to vendor support
+
+- for local spark with iceberg and delta, its pretty easy at this point
+- for cloud development though, you are best served developing in a cloud IDE vs. local
+-- to much engineering to do local dev for cloud spark managed platforms like aws glue
+- wrote an article once showcasing just how involved this is: https://performancede.substack.com/p/spark-config-madness
+
 
 Data Modeling
 - how to handle journaled records; begin_ts, end_ts after the keys
