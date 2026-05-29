@@ -1,6 +1,0 @@
-
-orchestration
-- need one more orch process
-- it has a main function, calls separate sub functions serially
-
-

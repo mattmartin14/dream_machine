@@ -7,6 +7,12 @@ To secure creds locally, I save them off in a non-git enabled local file as a js
 }
 ```
 
+Next, open the zshrc file as follows in terminal:
+
+```bash
+open ~/.zshrc
+```
+
 Then, in the .zshrc file, we can export environ vars that read this like so:
 
 ```bash
@@ -14,7 +20,13 @@ export AWS_KEY="$(jq -r '.aws_key' ~/misc/aws.json)"
 export AWS_KEY="$(jq -r '.private_key' ~/misc/aws.json)"
 ```
 
-Once this is done, any terminal or python code can read the environ var such as:
+After making the adjustment, save the zshrc file and then reload it so the updated environ vars are available to the terminal window you are working in. To reload the zshrc file, run this command:
+
+```bash
+source ~/.zshrc
+```
+
+Once this is done, any reloaded or new terminal or python code can read the environ var such as:
 
 ```python
 import os
