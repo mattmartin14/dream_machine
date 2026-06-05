@@ -1,0 +1,17 @@
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Airflow runtime artifacts
+logs/
+
+# Terraform local state and cache
+**/.terraform/
+**/.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.*
+
+# Python cache
+**/__pycache__/
+**/*.pyc

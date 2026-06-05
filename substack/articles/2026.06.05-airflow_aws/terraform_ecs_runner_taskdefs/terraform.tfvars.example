@@ -1,0 +1,13 @@
+aws_region = "us-east-1"
+
+project_name = "ecs-duckdb-etl"
+environment  = "test"
+image_tag    = "latest"
+
+default_script_s3_uri     = "s3://s3-sales-agg-test/scripts/orders_etl.py"
+slack_webhook_secret_name = "slack_webhook_v1"
+log_level                 = "INFO"
+
+# Set true if you want Terraform to create the IAM policy. You still need to
+# attach it to the role/user/profile used by local Airflow.
+create_airflow_runner_policy = false
