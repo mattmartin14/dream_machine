@@ -84,6 +84,22 @@ Outputs:
 
 ## Deploy and Run
 
+### One-Command Launch
+
+If you want a single command that performs full bootstrap (infra + image + taskdefs + uploads + .env render + Airflow start):
+
+```bash
+aws_auth
+export SLACK_WEBHOOK=<your-slack-webhook-url>
+export AWS_ACCT_ID=<your-12-digit-account-id>
+./launch.sh --image-tag latest
+```
+
+Optional:
+
+- Add `--no-cache` to force Docker rebuild.
+- Add `--create-airflow-runner-policy` to create the optional local-Airflow IAM policy.
+
 1. Authenticate (role + MFA):
 
 ```bash
@@ -93,6 +109,7 @@ aws_auth
 2. Deploy foundational infrastructure and build/push runner image:
 
 ```bash
+export SLACK_WEBHOOK=<your-slack-webhook-url>
 ./deploy/deploy_foundational.sh latest --auto-approve
 ```
 
@@ -156,7 +173,7 @@ This repository now includes explicit teardown scripts.
 ./deploy/destroy_all.sh --auto-approve
 ```
 
-Order matters. The all-in-one script destroys runner task definitions first, then foundational infrastructure.
+Order matters. The all-in-one script destroys runner task definitions first, then foundational infrastructure, and finally runs `docker compose down --volumes --remove-orphans` when local services are present.
 
 ## Important Notes
 
