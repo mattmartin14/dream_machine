@@ -12,13 +12,31 @@ else
 	default_season_year=$today_year
 fi
 
-# Use explicit argument if provided, otherwise fall back to default.
-SEASON_YEAR="${1:-$default_season_year}"
+# Parse arguments: accept either a bare year (2026) or --season-year 2026.
+SEASON_YEAR=""
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--season-year)
+			SEASON_YEAR="$2"
+			shift 2
+			;;
+		--season-year=*)
+			SEASON_YEAR="${1#*=}"
+			shift
+			;;
+		*)
+			SEASON_YEAR="$1"
+			shift
+			;;
+	esac
+done
+SEASON_YEAR="${SEASON_YEAR:-$default_season_year}"
 
 echo "Running data refresh for Concept2 season year: $SEASON_YEAR"
 
 uv run "$SCRIPT_PATH" --season-year "$SEASON_YEAR"
 
 # Examples:
-#   ./refresh_c2_data.sh          # uses computed default season year
-#   ./refresh_c2_data.sh 2026     # overrides with explicit year
+#   ./refresh_c2_data.sh                  # uses computed default season year
+#   ./refresh_c2_data.sh 2026             # positional year
+#   ./refresh_c2_data.sh --season-year 2026  # named flag
