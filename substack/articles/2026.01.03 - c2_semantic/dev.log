@@ -1,0 +1,11 @@
+INFO:     Started server process [74013]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [05/Jul/2026 06:47:54] "GET / HTTP/1.1" 200 -
+::1 - - [05/Jul/2026 06:47:55] code 404, message File not found
+::1 - - [05/Jul/2026 06:47:55] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [05/Jul/2026 06:47:55] code 404, message File not found
+::1 - - [05/Jul/2026 06:47:55] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [05/Jul/2026 06:47:55] code 404, message File not found
+::1 - - [05/Jul/2026 06:47:55] "GET /favicon.ico HTTP/1.1" 404 -
