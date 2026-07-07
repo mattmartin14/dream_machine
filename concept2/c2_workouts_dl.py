@@ -147,13 +147,33 @@ def main():
         password = os.getenv("C2_LOG_PASSWORD")
 
         print("\nLogging in...")
-        login_payload = {"username": username, "password": password}
-        
+
+        # Use browser-like headers to avoid server-side bot rejection.
+        browser_headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            ),
+        }
+        session.headers.update(browser_headers)
+
         try:
-            response = session.post(LOGIN_URL, data=login_payload)
+            # Fetch the login page first to obtain the CSRF token required by the form.
+            login_page = session.get(LOGIN_URL)
+            login_page.raise_for_status()
+            soup_login = BeautifulSoup(login_page.content, "html.parser")
+            csrf_input = soup_login.find("input", {"name": "_token"})
+            csrf_token = csrf_input["value"] if csrf_input else ""
+
+            login_payload = {"username": username, "password": password, "_token": csrf_token}
+            response = session.post(LOGIN_URL, data=login_payload,
+                                    headers={"Referer": LOGIN_URL})
             response.raise_for_status()
 
-            if "The username or password you entered is incorrect" in response.text:
+            if "The username or password you entered is incorrect" in response.text \
+                    or "Incorrect username/password combination" in response.text \
+                    or response.url == LOGIN_URL:
                 print("Login failed. Please check your username and password.")
                 return
             print("Login successful.")

@@ -1,0 +1,587 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 1432, in <module>
+    test(
+    ~~~~^
+        HandlerClass=handler_class,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+        tls_password=tls_key_password,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 1348, in test
+    server = ServerClass(addr, HandlerClass)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 457, in __init__
+    self.server_bind()
+    ~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 1419, in server_bind
+    return super().server_bind()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 148, in server_bind
+    socketserver.TCPServer.server_bind(self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 478, in server_bind
+    self.socket.bind(self.server_address)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 48] Address already in use
+Started web on http://localhost:8080
+Started API on http://127.0.0.1:8000
+Process exited with code 1; shutting down...
+INFO:     Started server process [9221]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+Started web on http://localhost:8080
+Started API on http://127.0.0.1:8000
+Process exited with code 3; shutting down...
+INFO:     Started server process [10385]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [07/Jul/2026 09:32:30] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62128 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 12
+when serializing dict item 'data'
+INFO:     127.0.0.1:62130 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62130 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 6
+when serializing dict item 'data'
+INFO:     127.0.0.1:62132 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62132 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62132 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62133 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 6
+when serializing dict item 'data'
+INFO:     127.0.0.1:62134 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62134 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 12
+when serializing dict item 'data'
+INFO:     127.0.0.1:62136 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62136 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62141 - "GET /api/session_detail?date=2026-07-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62141 - "GET /api/session_summary?date=2026-07-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62144 - "GET /api/daily_metrics?machine=rowerg&start=2024-05-01&end=2025-05-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62145 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62145 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62156 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62156 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62161 - "GET /api/daily_metrics?machine=RowErg HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 2
+when serializing dict item 'data'
+INFO:     127.0.0.1:62162 - "GET /api/ping HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62165 - "GET /api/daily_metrics?machine=RowErg HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 2683, in app
+    await route.handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 1266, in handle
+    await super().handle(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 150, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 136, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 731, in app
+    response = actual_response_class(content, **response_args)
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 192, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 45, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "/Users/matthewmartin/dream_machine/concept2/.venv/lib/python3.14/site-packages/starlette/responses.py", line 195, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 242, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 202, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py", line 263, in iterencode
+    return _iterencode(o, 0)
+ValueError: Out of range float values are not JSON compliant: nan
+when serializing dict item 'avg_spm'
+when serializing list item 2
+when serializing dict item 'data'
+INFO:     127.0.0.1:62166 - "GET /api/daily_metrics?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10385]
+Started web on http://localhost:8080
+Started API on http://127.0.0.1:8000
+Process exited with code -15; shutting down...
+INFO:     Started server process [15510]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [07/Jul/2026 09:37:14] "GET / HTTP/1.1" 304 -
+INFO:     127.0.0.1:62192 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62192 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62192 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62192 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62194 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62194 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/daily_metrics?machine=SkiErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62195 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62197 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62197 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /api/session_detail?date=2026-07-02&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /api/session_summary?log_id=118113803 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /api/session_detail?date=2026-07-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /api/session_summary?log_id=118262847 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62204 - "GET /api/session_detail?date=2026-04-16&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62204 - "GET /api/session_summary?log_id=115472631 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62204 - "GET /api/session_detail?date=2026-04-06&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62204 - "GET /api/session_summary?log_id=115067919 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/session_detail?date=2026-07-05&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/session_summary?log_id=118199619 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/session_detail?date=2026-06-28&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62206 - "GET /api/session_summary?log_id=117984169 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62208 - "GET /api/session_detail?date=2026-06-14&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62208 - "GET /api/session_summary?log_id=117547205 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/session_detail?date=2026-07-05&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/session_summary?log_id=118199619 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/daily_metrics?machine=SkiErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62209 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
