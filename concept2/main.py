@@ -142,8 +142,8 @@ _SESSION_SELECT = f"""
         {_PACE_CASE_SQL}                                                                       AS avg_pace_seconds,
         AVG(TRY_CAST("Avg Watts" AS DOUBLE))                                                   AS avg_watts,
         SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE)) / 60.0                                  AS total_session_minutes,
-        SUM(TRY_CAST("Stroke Count" AS DOUBLE))
-            / NULLIF(SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE)) / 60.0, 0)                AS avg_spm
+        SUM(TRY_CAST("Stroke Rate/Cadence" AS DOUBLE) * TRY_CAST("Work Time (Seconds)" AS DOUBLE))
+            / NULLIF(SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE)), 0)                      AS avg_spm
     FROM read_csv_auto('{SUMMARY_GLOB}')
 """
 
@@ -232,8 +232,8 @@ def daily_metrics(
         SELECT
             strftime(TRY_CAST("Date" AS DATE), '%Y-%m-%d')                                    AS workout_date,
             AVG(TRY_CAST("Avg Watts" AS DOUBLE))                                               AS avg_watts,
-            SUM(TRY_CAST("Stroke Count" AS DOUBLE))
-                / NULLIF(SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE)) / 60.0, 0)            AS avg_spm,
+            SUM(TRY_CAST("Stroke Rate/Cadence" AS DOUBLE) * TRY_CAST("Work Time (Seconds)" AS DOUBLE))
+                / NULLIF(SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE)), 0)                  AS avg_spm,
             SUM(TRY_CAST("Work Time (Seconds)" AS DOUBLE))
                 / NULLIF(SUM(TRY_CAST("Work Distance" AS DOUBLE)) / {pace_divisor}, 0)        AS avg_pace_seconds,
             AVG(TRY_CAST("Work Time (Seconds)" AS DOUBLE))                                     AS avg_session_duration_seconds,
