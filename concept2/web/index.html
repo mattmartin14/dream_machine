@@ -163,7 +163,13 @@
               <div id="session-duration" class="kpi-value">—</div>
             </div>
           </div>
-          <div class="kpi-subtitle" style="margin-top: 8px;">KPIs for the clicked session from the semantic layer.</div>
+          <div class="kpi-row" style="margin-top: 10px;">
+            <div>
+              <div id="session-efficiency-label" class="kpi-label">W per Stroke</div>
+              <div id="session-efficiency" class="kpi-value">—</div>
+            </div>
+          </div>
+          <div class="kpi-subtitle" style="margin-top: 8px;">KPIs for the clicked session from the detail strokes and semantic layer.</div>
         </div>
       </div>
       <div>
@@ -292,6 +298,11 @@
 
         const sessionCadenceLabel = document.getElementById('session-cadence-label');
         if (sessionCadenceLabel) sessionCadenceLabel.textContent = `Avg ${cadence}`;
+
+        const sessionEfficiencyLabel = document.getElementById('session-efficiency-label');
+        if (sessionEfficiencyLabel) {
+          sessionEfficiencyLabel.textContent = isBikeErg(machine) ? 'W per RPM' : 'W per Stroke';
+        }
 
         const latestPaceLabel = document.getElementById('latest-pace-label');
         if (latestPaceLabel) latestPaceLabel.textContent = `Avg Pace (${paceSplitLabel(machine)})`;
@@ -1414,6 +1425,17 @@
         const points = (payload?.points || []).slice(SKIP_INITIAL_STROKES);
         const labels = points.map(p => (p.x ?? p.stroke_number));
         const watts = points.map(p => (p.y ?? p.watts));
+        
+        // Compute true watts per stroke from detail strokes
+        const validWatts = watts.filter(w => isFinite(w));
+        const trueWattsPerStroke = validWatts.length > 0 
+          ? validWatts.reduce((a, b) => a + b, 0) / validWatts.length
+          : null;
+        const efficiencyEl = document.getElementById('session-efficiency');
+        if (efficiencyEl) {
+          efficiencyEl.textContent = trueWattsPerStroke !== null ? trueWattsPerStroke.toFixed(2) : '—';
+        }
+        
         // Derive pace in seconds by prioritizing the formatted string column
         const paceSecondsSeries = points.map(p => {
           if (p && typeof p.pace_mm_ss_ff === 'string' && p.pace_mm_ss_ff.trim()) {
@@ -1560,7 +1582,7 @@
         const unit = cadenceUnit(machineSel);
         if (!r || r.error) {
           setText('session-date', '—'); setText('session-distance-km', '—'); setText('session-pace', '—');
-          setText('session-watts', '—'); setText('session-spm', '—'); setText('session-duration', '—');
+          setText('session-watts', '—'); setText('session-spm', '—'); setText('session-duration', '—'); setText('session-efficiency', '—');
           return;
         }
         const distKm      = r.total_distance_km;
