@@ -676,3 +676,226 @@ INFO:     127.0.0.1:50214 - "GET /api/monthly_distance HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50214 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50214 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50214 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13377]
+INFO:     Started server process [51696]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [12/Jul/2026 06:44:52] "GET / HTTP/1.1" 200 -
+::1 - - [12/Jul/2026 06:44:52] code 404, message File not found
+::1 - - [12/Jul/2026 06:44:52] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [12/Jul/2026 06:44:52] code 404, message File not found
+::1 - - [12/Jul/2026 06:44:52] code 404, message File not found
+::1 - - [12/Jul/2026 06:44:52] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [12/Jul/2026 06:44:52] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:55321 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55327 - "GET /api/session_detail?date=2026-03-01&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55327 - "GET /api/session_summary?log_id=113527920 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55329 - "GET /api/session_detail?date=2026-02-23&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55329 - "GET /api/session_summary?log_id=113245657 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55330 - "GET /api/session_detail?date=2026-03-01&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55330 - "GET /api/session_summary?log_id=113527920 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55336 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55336 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/daily_metrics?machine=SkiErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55341 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55342 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55342 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55343 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55343 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [51696]
+INFO:     Started server process [53493]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Jul/2026 06:27:16] "GET / HTTP/1.1" 304 -
+::1 - - [14/Jul/2026 06:27:16] code 404, message File not found
+::1 - - [14/Jul/2026 06:27:16] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 06:27:16] code 404, message File not found
+::1 - - [14/Jul/2026 06:27:16] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 06:27:16] code 404, message File not found
+::1 - - [14/Jul/2026 06:27:16] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:63650 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63650 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63650 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63650 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63655 - "GET /api/session_detail?date=2026-04-19&machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63655 - "GET /api/session_summary?log_id=115570905 HTTP/1.1" 200 OK
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ("'¢ìz\\x18\\x17%^\\x00*JJ\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À")
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03\x81Éf)\x87\x17µMß\x1c­w©ÂÍåóm]\x91p<\x18s\x0c>êú\x8dÒ×ò ë­Y¹t½r\x8a¹mËÇî-e\x05d²\x94\x17ûÄ¶\x1c'¢ìz\x18\x17%^\x00*JJ\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('èÍ\\x00*\\x9a\\x9a\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03U\x81\x80Û\x8fYï\x14á\x97yXBK°õ^ÇºX\x0e\x0eÐß8SL¸\x99\x19\x89` |pÏã®\x94«@ÙG\x04Z1¢\x1c÷\x89\x14\x94YÑq\x0c\x9a\x1d8æ\x8b`\x0bèÍ\x00*\x9a\x9a\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('ú\\x86©Õ´²i\\x17\\x94Ô®eúð!y!#\\x90î]\\x8f\\x87p5\\x17\\x03,\\x00*\\x1a\\x1a\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03ÓT\x93|½6PË¤yu`\x17\x9bR\x85\x99Ý\x9f)\x1e\x80\x9fe=Ç\x92j;êvø [§\x18\x1dú\x86©Õ´²i\x17\x94Ô®eúð!y!#\x90î]\x8f\x87p5\x17\x03,\x00*\x1a\x1a\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('\\\\j\\x00|N\\x83r÷i½A\\x0e¥\\x0e¿&ÓØß\\x98\\x00¹7Ô\\x8ar\\x08\\x91â\\x1aÃK\\x00*ªª\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03\x07\x9flÇ\x99â \x86\x1b±d²\x12\x0f\x9fË`+\x82?\x8f\x01ª,\x8dyZj\x14F¥Ì \\j\x00|N\x83r÷i½A\x0e¥\x0e¿&ÓØß\x98\x00¹7Ô\x8ar\x08\x91â\x1aÃK\x00*ªª\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('\\x00ÑLR\\x00*JJ\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03jð\x15\x7fã\x95®\x99{mm"¨F³ÑJ\x0e|L\x80R6qv"\x94T­\x13 , óÌk\x1fC\\¹D\x1cÓº\x82FBS('Ê\x93d¹p\x8fò0q\x10\x1c\x00ÑLR\x00*JJ\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('\\x16;Ì\\x90ä×Y$}a-:\\x97\\x00*\\x9a\\x9a\\x13\\x02\\x13\\x03\\x13\\x01À,À+Ì©À0À/Ì¨À')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03\x9aÏÞ\x8f ×qÅ»Åê5ËC³A\x12\x80\x14\x85¢Õ\x85ùQ\x93ð\x882¾ã» \x81|Nm¯\x80\x8fjR?³gQÇÉ\x07\x03&\x09\x16;Ì\x90ä×Y$}a-:\x97\x00*\x9a\x9a\x13\x02\x13\x03\x13\x01À,À+Ì©À0À/Ì¨À" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request version ('ê³\\x89d£¨í\\x00*')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03\x8f\x1aú>X\x11\x16\x14å\x9dbM¡öQ\x7f9pór!\x8dÿ.\x17\x10ãµ£(\\á «­ìºÌUÆ±[\x8fLG\\C4nðÛì©\x7f\x9dú¦\x85ê³\x89d£¨í\x00*" 400 -
+::1 - - [14/Jul/2026 06:27:32] code 400, message Bad request syntax ('\\x16\\x03\\x01\\x05÷\\x01\\x00\\x05ó\\x03\\x03I\\x97T\\x8bv_©.L¹ñ\\x89é÷\\x0f¤¤ª\\x12W2ÏRiù\\x9f*k\\x96÷')
+::1 - - [14/Jul/2026 06:27:32] "\x16\x03\x01\x05÷\x01\x00\x05ó\x03\x03I\x97T\x8bv_©.L¹ñ\x89é÷\x0f¤¤ª\x12W2ÏRiù\x9f*k\x96÷" 400 -
+INFO:     127.0.0.1:63669 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63669 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63671 - "GET /api/session_detail?date=2026-07-14&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63671 - "GET /api/session_summary?log_id=118478654 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [53493]
+INFO:     Started server process [59568]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Jul/2026 08:28:49] code 404, message File not found
+::1 - - [14/Jul/2026 08:28:49] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 08:28:49] code 404, message File not found
+::1 - - [14/Jul/2026 08:28:49] code 404, message File not found
+::1 - - [14/Jul/2026 08:28:49] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 08:28:49] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+INFO:     127.0.0.1:63923 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63923 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63924 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63924 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63942 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63943 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63942 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63943 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64770 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64830 - "GET /api/session_detail?date=2026-01-19&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64830 - "GET /api/session_summary?log_id=111482135 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64833 - "GET /api/session_detail?date=2026-01-24&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64833 - "GET /api/session_summary?log_id=111767607 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64833 - "GET /api/session_detail?date=2026-01-19&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64833 - "GET /api/session_summary?log_id=111482135 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [59568]
+INFO:     Started server process [65725]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Jul/2026 17:19:01] "GET / HTTP/1.1" 200 -
+::1 - - [14/Jul/2026 17:19:01] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:01] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:01] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:01] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:01] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:01] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:01] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:01] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:01] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:01] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:02] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:02] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Jul/2026 17:19:02] code 404, message File not found
+::1 - - [14/Jul/2026 17:19:02] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:64899 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64899 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64904 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64904 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64904 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64904 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64905 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64905 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64909 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64909 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64910 - "GET /api/session_detail?date=2026-02-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64910 - "GET /api/session_summary?log_id=112746035 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64910 - "GET /api/session_detail?date=2026-02-23&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64910 - "GET /api/session_summary?log_id=113245657 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64911 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64911 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64945 - "GET /api/session_detail?date=2026-01-19&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64945 - "GET /api/session_summary?log_id=111482135 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64945 - "GET /api/session_detail?date=2026-02-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64945 - "GET /api/session_summary?log_id=112746035 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-02-23&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=113245657 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-03-02&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=113566001 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-06-25&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=117903013 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-06-21&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=117774608 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64946 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=SkiErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=BikeErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64971 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64979 - "GET /api/session_detail?date=2025-11-06&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64979 - "GET /api/session_summary?log_id=108097718 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64985 - "GET /api/session_detail?date=2026-02-02&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64985 - "GET /api/session_summary?log_id=112241654 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64985 - "GET /api/session_detail?date=2025-11-06&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64985 - "GET /api/session_summary?log_id=108097718 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64986 - "GET /api/session_detail?date=2026-07-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64986 - "GET /api/session_summary?log_id=118417398 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [65725]
+INFO:     Started server process [52454]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [15/Jul/2026 06:19:35] "GET / HTTP/1.1" 304 -
+::1 - - [15/Jul/2026 06:19:36] code 404, message File not found
+::1 - - [15/Jul/2026 06:19:36] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [15/Jul/2026 06:19:36] code 404, message File not found
+::1 - - [15/Jul/2026 06:19:36] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [15/Jul/2026 06:19:36] code 404, message File not found
+::1 - - [15/Jul/2026 06:19:36] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+INFO:     127.0.0.1:50561 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50561 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [52454]

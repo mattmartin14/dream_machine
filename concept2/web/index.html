@@ -193,6 +193,11 @@
             <div class="chart-container"><canvas id="durationDaily"></canvas></div>
             <div class="hint">Tip: Click a point to load that day's session detail on the left.</div>
           </div>
+          <div class="card">
+            <h2 id="efficiency-daily-title">Stroke Efficiency — W per Stroke</h2>
+            <div class="chart-container"><canvas id="efficiencyDaily"></canvas></div>
+            <div class="hint">Avg Watts ÷ Avg SPM. Higher = more power per individual stroke. Click to load session detail.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -309,6 +314,13 @@
 
         const paceDailyTitle = document.getElementById('pace-daily-title');
         if (paceDailyTitle) paceDailyTitle.textContent = paceTitle;
+
+        const efficiencyTitle = document.getElementById('efficiency-daily-title');
+        if (efficiencyTitle) {
+          efficiencyTitle.textContent = isBikeErg(machine)
+            ? 'Pedal Efficiency — W per RPM'
+            : 'Stroke Efficiency — W per Stroke';
+        }
       }
 
       function getStartDateEnabled() {
@@ -1064,11 +1076,19 @@
           const dailyRes = await fetch(`http://127.0.0.1:8000/api/daily_metrics?${params}`).then(r => r.json());
           const rows = dailyRes.data || [];
 
-          const spmDaily      = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_spm) };
-          const wattsDaily    = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_watts) };
-          const paceDaily     = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_pace_seconds) };
-          const durationDaily = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_session_duration_seconds) };
-          const distDaily     = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.total_distance_km) };
+          const spmDaily        = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_spm) };
+          const wattsDaily      = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_watts) };
+          const paceDaily       = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_pace_seconds) };
+          const durationDaily   = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.avg_session_duration_seconds) };
+          const distDaily       = { labels: rows.map(r => r.workout_date), values: rows.map(r => r.total_distance_km) };
+          const efficiencyDaily = {
+            labels: rows.map(r => r.workout_date),
+            values: rows.map(r => {
+              const w = r.avg_watts;
+              const s = r.avg_spm;
+              return (isFinite(w) && isFinite(s) && s > 0) ? w / s : null;
+            })
+          };
 
           // Build SPM bucketed watts series for color-encoded progress over time
           const spmVals = spmDaily.values || [];
@@ -1269,8 +1289,27 @@
                 borderDash: [6, 6],
               }]
             );
+          const efficiencyUnit = isBikeErg(machine) ? 'W/rpm' : 'W/stroke';
+          const efficiencyChart = makeLineChart(
+              document.getElementById('efficiencyDaily'),
+              efficiencyDaily,
+              '#a78bfa',
+              `Stroke Efficiency (${efficiencyUnit})`,
+              (v) => (isFinite(v) ? v.toFixed(2) : '—'),
+              computeNumericAxisOptions(efficiencyDaily.values.filter(v => v !== null)),
+              [{
+                label: 'Stroke Efficiency Trend',
+                data: computeLinearTrend(efficiencyDaily.values),
+                borderColor: '#c4b5fd',
+                backgroundColor: '#c4b5fd',
+                tension: 0,
+                fill: false,
+                pointRadius: 0,
+                borderDash: [6, 6],
+              }]
+            );
 
-          window.__charts.push(spmChart, wattsDailyChart, paceChart, durationChart);
+          window.__charts.push(spmChart, wattsDailyChart, paceChart, durationChart, efficiencyChart);
           if (wattsSpmBucketsChart) {
             window.__charts.push(wattsSpmBucketsChart);
           }
@@ -1330,6 +1369,14 @@
             const idx = getNearestIndex(durationChart, evt);
             if (idx == null) return;
             const dateLabel = durationDaily.labels[idx];
+            const machineSel = getMachine();
+            setSelectedDate(dateLabel);
+            await loadSessionDetailForDate(dateLabel, machineSel);
+          };
+          efficiencyChart.canvas.onclick = async (evt) => {
+            const idx = getNearestIndex(efficiencyChart, evt);
+            if (idx == null) return;
+            const dateLabel = efficiencyDaily.labels[idx];
             const machineSel = getMachine();
             setSelectedDate(dateLabel);
             await loadSessionDetailForDate(dateLabel, machineSel);
