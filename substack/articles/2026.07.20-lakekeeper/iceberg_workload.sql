@@ -11,8 +11,8 @@ CREATE TABLE stg_orders AS SELECT * FROM tpch.orders ORDER BY o_orderkey DESC LI
 
 .print 'testing merge';
 MERGE INTO iceberg_cat.demo_ns.orders AS target
-USING stg_orders AS source
-ON target.o_orderkey = source.o_orderkey
+    USING stg_orders AS source
+        ON target.o_orderkey = source.o_orderkey
     WHEN MATCHED THEN UPDATE 
     WHEN NOT MATCHED THEN INSERT
 ;
