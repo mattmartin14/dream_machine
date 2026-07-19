@@ -1,32 +1,41 @@
-ATTACH 'tpch.duckdb' as tpch;
+
+
+
+-- Aggregate the orders data to a temp duckdb table
+CREATE TABLE tmp_orders_agg AS
+    SELECT o_orderkey, sum(o_totalprice) as total_price, count(*) as order_count
+    FROM read_csv_auto('s3://' || getenv('BUCKET') || '/tpch/orders.csv')
+    GROUP BY o_orderkey;
 
 CREATE SCHEMA IF NOT EXISTS iceberg_cat.demo_ns;
 
-DROP TABLE IF EXISTS iceberg_cat.demo_ns.orders;
-CREATE TABLE iceberg_cat.demo_ns.orders AS SELECT * FROM tpch.orders ORDER BY o_orderkey LIMIT 100;
+DROP TABLE IF EXISTS iceberg_cat.demo_ns.orders_agg;
+
+CREATE TABLE iceberg_cat.demo_ns.orders_agg AS
+SELECT * FROM tmp_orders_agg ORDER BY o_orderkey LIMIT 5;
 .print 'iceberg orders table created'
 
-DROP TABLE IF EXISTS stg_orders;
-CREATE TABLE stg_orders AS SELECT * FROM tpch.orders ORDER BY o_orderkey DESC LIMIT 100;
+DROP TABLE IF EXISTS stg_orders_agg;
+CREATE TABLE stg_orders_agg AS SELECT * FROM tmp_orders_agg ORDER BY o_orderkey DESC LIMIT 10;
 
 .print 'testing merge';
-MERGE INTO iceberg_cat.demo_ns.orders AS target
-    USING stg_orders AS source
+MERGE INTO iceberg_cat.demo_ns.orders_agg AS target
+    USING stg_orders_agg AS source
         ON target.o_orderkey = source.o_orderkey
     WHEN MATCHED THEN UPDATE 
     WHEN NOT MATCHED THEN INSERT
 ;
 
 .print 'testing delete';
-DELETE FROM iceberg_cat.demo_ns.orders WHERE o_orderkey < 50;
+DELETE FROM iceberg_cat.demo_ns.orders_agg WHERE o_orderkey < 50;
 
 .print 'testing update';
-UPDATE iceberg_cat.demo_ns.orders SET o_orderstatus = 'F' WHERE o_orderkey between 50 and 75;
+UPDATE iceberg_cat.demo_ns.orders_agg SET total_price = total_price * 1.1 WHERE o_orderkey between 50 and 75;
 
 .print 'testing insert';
-INSERT INTO iceberg_cat.demo_ns.orders SELECT * FROM stg_orders limit 10;
+INSERT INTO iceberg_cat.demo_ns.orders_agg SELECT * FROM stg_orders_agg limit 10;
 
-SELECT COUNT(*) FROM iceberg_cat.demo_ns.orders;
+SELECT COUNT(*) FROM iceberg_cat.demo_ns.orders_agg;
 
 
 

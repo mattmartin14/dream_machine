@@ -7,6 +7,11 @@ cd "$ROOT_DIR"
 MODE="${1:-dev}"
 WORKLOAD_FILE="${2:-iceberg_workload.sql}"
 
+export BUCKET="matt-sbx-bucket-1-us-east-1"
+if [[ "$MODE" == "dev" ]]; then
+    BUCKET="warehouse-rest"
+fi
+
 usage() {
     cat <<'EOF'
 Usage:
