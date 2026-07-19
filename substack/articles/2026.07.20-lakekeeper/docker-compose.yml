@@ -1,0 +1,143 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 2s
+      timeout: 10s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - iceberg_net
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 2s
+      timeout: 10s
+      retries: 10
+    volumes:
+      #- minio_data:/data
+      - ./minio_data:/data
+    networks:
+      - iceberg_net
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minio minio12345 &&
+      mc mb -p local/warehouse-rest || true
+      "
+    networks:
+      - iceberg_net
+
+  migrate:
+    image: quay.io/lakekeeper/catalog:latest
+    command: ["migrate"]
+    environment:
+      LAKEKEEPER__PG_ENCRYPTION_KEY: "This-is-NOT-Secure!"
+      LAKEKEEPER__PG_DATABASE_URL_READ: "postgresql://postgres:postgres@db:5432/postgres"
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: "postgresql://postgres:postgres@db:5432/postgres"
+      LAKEKEEPER__AUTHZ_BACKEND: "allowall"
+      RUST_LOG: "info"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - iceberg_net
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:latest
+    command: ["serve"]
+    environment:
+      LAKEKEEPER__PG_ENCRYPTION_KEY: "This-is-NOT-Secure!"
+      LAKEKEEPER__PG_DATABASE_URL_READ: "postgresql://postgres:postgres@db:5432/postgres"
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: "postgresql://postgres:postgres@db:5432/postgres"
+      LAKEKEEPER__AUTHZ_BACKEND: "allowall"
+      LAKEKEEPER__BASE_URI: "http://lakekeeper:8181"
+      RUST_LOG: "info"
+    ports:
+      - "8181:8181"
+    healthcheck:
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
+      interval: 2s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    networks:
+      - iceberg_net
+
+  bootstrap:
+    image: curlimages/curl:latest
+    depends_on:
+      lakekeeper:
+        condition: service_healthy
+    command: >
+      curl -X POST http://lakekeeper:8181/management/v1/bootstrap
+      -H "Content-Type: application/json"
+      --data '{"accept-terms-of-use": true}'
+    networks:
+      - iceberg_net
+
+  initialwarehouse:
+    image: curlimages/curl:latest
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    command: >
+      curl -X POST http://lakekeeper:8181/management/v1/warehouse
+      -H "Content-Type: application/json"
+      --data '{
+        "warehouse-name": "demo",
+        "project-id": "00000000-0000-0000-0000-000000000000",
+        "storage-profile": {
+          "type": "s3",
+          "bucket": "warehouse-rest",
+          "key-prefix": "",
+          "endpoint": "http://minio:9000",
+          "region": "us-east-1",
+          "path-style-access": true,
+          "flavor": "minio",
+          "sts-enabled": false
+        },
+        "storage-credential": {
+          "type": "s3",
+          "credential-type": "access-key",
+          "aws-access-key-id": "minio",
+          "aws-secret-access-key": "minio12345"
+        }
+      }'
+    networks:
+      - iceberg_net
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  iceberg_net:
+    driver: bridge
