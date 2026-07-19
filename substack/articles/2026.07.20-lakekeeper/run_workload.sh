@@ -7,9 +7,6 @@ cd "$ROOT_DIR"
 MODE="${1:-dev}"
 WORKLOAD_FILE="${2:-iceberg_workload.sql}"
 
-AWS_REGION="${AWS_REGION:-us-east-1}"
-S3TABLES_BUCKET="${S3TABLES_BUCKET:-icehouse-tbl-bucket1}"
-
 usage() {
     cat <<'EOF'
 Usage:
@@ -87,7 +84,7 @@ LOAD ICEBERG;
 
 CREATE OR REPLACE SECRET aws_secret (TYPE S3, PROVIDER CREDENTIAL_CHAIN);
 
-ATTACH 'arn:aws:s3tables:${AWS_REGION}:${AWS_ACCT_ID}:bucket/${S3TABLES_BUCKET}' AS iceberg_cat (
+ATTACH 'arn:aws:s3tables:us-east-1:${AWS_ACCT_ID}:bucket/icehouse-tbl-bucket1' AS iceberg_cat (
     TYPE iceberg,
     endpoint_type s3_tables
 );

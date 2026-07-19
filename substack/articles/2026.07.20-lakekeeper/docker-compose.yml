@@ -30,7 +30,6 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      #- minio_data:/data
       - ./minio_data:/data
     networks:
       - iceberg_net
