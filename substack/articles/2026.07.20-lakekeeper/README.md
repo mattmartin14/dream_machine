@@ -1,5 +1,16 @@
 # Lakekeeper Raw-to-Iceberg Demo
 
+## Configuration
+
+Bucket names are defined once in `.env`:
+
+```bash
+MINIO_BUCKET_NAME="matt-sbx-bucket-minio"
+AWS_BUCKET_NAME="matt-sbx-bucket-1-us-east-1"
+```
+
+All scripts (`run_raw_load.sh`, `run_workload.sh`) and Docker Compose consume these values.
+
 ## Start Local Stack
 
 ```bash

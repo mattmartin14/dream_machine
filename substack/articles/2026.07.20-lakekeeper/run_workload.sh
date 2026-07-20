@@ -4,13 +4,11 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
+source "$ROOT_DIR/env_config.sh"
+load_project_env "$ROOT_DIR"
+
 MODE="${1:-dev}"
 WORKLOAD_FILE="${2:-iceberg_workload.sql}"
-
-export BUCKET="matt-sbx-bucket-1-us-east-1"
-if [[ "$MODE" == "dev" ]]; then
-    BUCKET="warehouse-rest"
-fi
 
 usage() {
     cat <<'EOF'
@@ -33,6 +31,9 @@ if [[ "$MODE" != "dev" && "$MODE" != "prod" ]]; then
     usage
     exit 1
 fi
+
+# sets the target bucket for the given mode (dev or prod) and exports it as BUCKET
+resolve_bucket_for_mode "$MODE"
 
 if [[ ! -f "$WORKLOAD_FILE" ]]; then
     echo "Workload file not found: $WORKLOAD_FILE" >&2
