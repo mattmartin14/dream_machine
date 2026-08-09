@@ -1,0 +1,219 @@
+{
+  "mode": "duckdb_baseline",
+  "run_date": "2026-08-08",
+  "bucket": "matt-sbx-bucket-1-us-east-1",
+  "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+  "generated_at": "2026-08-09T01:07:08.688752+00:00",
+  "timing_seconds": {
+    "read": 18.299183916009497,
+    "transform": 0.008111040981020778,
+    "total": 18.30729812500067
+  },
+  "counts": {
+    "transcripts": 1000,
+    "messages": 131100,
+    "result_rows": 25
+  },
+  "top_aggregates_preview": [
+    {
+      "store_id": "store-031",
+      "return_reason_code": "missing_parts",
+      "message_count": 9422,
+      "orders_touched": 23,
+      "avg_sentiment": 0.007663765654850339,
+      "refund_mentions": 3841
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "changed_mind",
+      "message_count": 9332,
+      "orders_touched": 23,
+      "avg_sentiment": 0.0042482854693527555,
+      "refund_mentions": 3761
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "changed_mind",
+      "message_count": 9309,
+      "orders_touched": 18,
+      "avg_sentiment": -0.010734235685895368,
+      "refund_mentions": 3733
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "other",
+      "message_count": 9300,
+      "orders_touched": 18,
+      "avg_sentiment": 0.0025739784946236513,
+      "refund_mentions": 3723
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "damaged",
+      "message_count": 9289,
+      "orders_touched": 18,
+      "avg_sentiment": 0.0073089675960813835,
+      "refund_mentions": 3752
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "damaged",
+      "message_count": 9288,
+      "orders_touched": 23,
+      "avg_sentiment": -0.003821382428940577,
+      "refund_mentions": 3734
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "missing_parts",
+      "message_count": 9256,
+      "orders_touched": 18,
+      "avg_sentiment": 0.004776577355229022,
+      "refund_mentions": 3701
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "other",
+      "message_count": 9255,
+      "orders_touched": 23,
+      "avg_sentiment": -0.006496380334954063,
+      "refund_mentions": 3708
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "wrong_item",
+      "message_count": 9253,
+      "orders_touched": 23,
+      "avg_sentiment": -0.0015400410677618099,
+      "refund_mentions": 3657
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "wrong_item",
+      "message_count": 9116,
+      "orders_touched": 18,
+      "avg_sentiment": -0.0003694602896007032,
+      "refund_mentions": 3686
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "missing_parts",
+      "message_count": 266,
+      "orders_touched": 28,
+      "avg_sentiment": -0.02570676691729323,
+      "refund_mentions": 110
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "damaged",
+      "message_count": 260,
+      "orders_touched": 28,
+      "avg_sentiment": -0.05824999999999997,
+      "refund_mentions": 99
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "other",
+      "message_count": 258,
+      "orders_touched": 28,
+      "avg_sentiment": -0.019186046511627922,
+      "refund_mentions": 109
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "wrong_item",
+      "message_count": 248,
+      "orders_touched": 28,
+      "avg_sentiment": 0.05679435483870967,
+      "refund_mentions": 117
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "changed_mind",
+      "message_count": 248,
+      "orders_touched": 28,
+      "avg_sentiment": 0.010794354838709684,
+      "refund_mentions": 103
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "damaged",
+      "message_count": 241,
+      "orders_touched": 26,
+      "avg_sentiment": 0.00691701244813278,
+      "refund_mentions": 110
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "wrong_item",
+      "message_count": 239,
+      "orders_touched": 27,
+      "avg_sentiment": -0.03961924686192469,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "wrong_item",
+      "message_count": 226,
+      "orders_touched": 27,
+      "avg_sentiment": -0.03874778761061948,
+      "refund_mentions": 86
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "changed_mind",
+      "message_count": 225,
+      "orders_touched": 27,
+      "avg_sentiment": -0.027986666666666684,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "missing_parts",
+      "message_count": 225,
+      "orders_touched": 27,
+      "avg_sentiment": 0.045964444444444426,
+      "refund_mentions": 98
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "wrong_item",
+      "message_count": 225,
+      "orders_touched": 26,
+      "avg_sentiment": -0.01391111111111112,
+      "refund_mentions": 93
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "missing_parts",
+      "message_count": 224,
+      "orders_touched": 22,
+      "avg_sentiment": 0.010602678571428565,
+      "refund_mentions": 78
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "changed_mind",
+      "message_count": 221,
+      "orders_touched": 26,
+      "avg_sentiment": 0.03509049773755657,
+      "refund_mentions": 90
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "other",
+      "message_count": 221,
+      "orders_touched": 25,
+      "avg_sentiment": 0.014999999999999984,
+      "refund_mentions": 82
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "other",
+      "message_count": 218,
+      "orders_touched": 26,
+      "avg_sentiment": -0.056100917431192644,
+      "refund_mentions": 77
+    }
+  ]
+}

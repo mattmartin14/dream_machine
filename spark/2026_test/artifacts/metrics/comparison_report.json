@@ -1,0 +1,18 @@
+{
+  "baseline_metrics": "artifacts/metrics/baseline_metrics.json",
+  "optimized_metrics": "artifacts/metrics/optimized_metrics.json",
+  "runtime_seconds": {
+    "baseline_total": 295.31404837500304,
+    "optimized_total": 286.75826924998546,
+    "speedup_factor": 1.0298362071559268
+  },
+  "task_skew": {
+    "baseline_max_over_median": 1401.04,
+    "optimized_max_over_median": 1262.029702970297,
+    "absolute_reduction": 139.010297029703
+  },
+  "partition_skew": {
+    "baseline_largest_over_median": 71.765625,
+    "optimized_largest_over_median": 6.3203125
+  }
+}

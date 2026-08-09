@@ -1,0 +1,29 @@
+[project]
+name = "spark-json-skew-demo"
+version = "0.1.0"
+description = "PySpark 4.0 demo of JSON file-size skew on S3 and mitigation patterns"
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "boto3>=1.35.0,<2.0.0",
+  "duckdb>=1.1.3,<2.0.0",
+  "pyspark==4.0.0",
+  "zstandard>=0.24.0,<1.0.0",
+]
+
+[project.scripts]
+skew-generate = "skew_demo.generate_data:main"
+skew-baseline = "skew_demo.baseline_job:main"
+skew-optimized = "skew_demo.optimized_job:main"
+skew-report = "skew_demo.report:main"
+duckdb-baseline = "skew_demo.duckdb_baseline_job:main"
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/skew_demo"]
