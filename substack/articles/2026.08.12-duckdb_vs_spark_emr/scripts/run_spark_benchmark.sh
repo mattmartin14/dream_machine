@@ -15,6 +15,9 @@ DATASET_PREFIX="${DATASET_PREFIX:-$(cd "$TF_DIR" && terraform output -raw datase
 SCRIPT_PREFIX="${SCRIPT_PREFIX:-$(cd "$TF_DIR" && terraform output -raw script_prefix)}"
 RUN_DATE="${RUN_DATE:-$(date +%F)}"
 BENCHMARK_ID="${BENCHMARK_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
+PROJECT_NAME="${PROJECT_NAME:-duckdb-vs-spark-emr}"
+MANAGED_BY="${MANAGED_BY:-terraform}"
+BENCHMARK_TAG="${BENCHMARK_TAG:-duckdb-vs-spark}"
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || {
@@ -71,6 +74,7 @@ SPARK_JOB_RUN_ID="$(aws emr-serverless start-job-run \
   --client-token "$BENCHMARK_ID-spark" \
   --job-driver "file://$SPARK_JOB_DRIVER_FILE" \
   --configuration-overrides "file://$SPARK_OVERRIDES_FILE" \
+  --tags "Project=$PROJECT_NAME,ManagedBy=$MANAGED_BY,Benchmark=$BENCHMARK_TAG,BenchmarkId=$BENCHMARK_ID" \
   --execution-timeout-minutes 60 \
   --query 'jobRunId' \
   --output text)"

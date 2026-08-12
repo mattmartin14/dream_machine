@@ -14,6 +14,9 @@ ROOT_PREFIX="${ROOT_PREFIX:-$(cd "$TF_DIR" && terraform output -raw root_prefix)
 DATASET_PREFIX="${DATASET_PREFIX:-$(cd "$TF_DIR" && terraform output -raw dataset_prefix)}"
 RUN_DATE="${RUN_DATE:-$(date +%F)}"
 BENCHMARK_ID="${BENCHMARK_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
+PROJECT_NAME="${PROJECT_NAME:-duckdb-vs-spark-emr}"
+MANAGED_BY="${MANAGED_BY:-terraform}"
+BENCHMARK_TAG="${BENCHMARK_TAG:-duckdb-vs-spark}"
 
 require_cmd() {
   command -v "$1" >/dev/null 2>&1 || {
@@ -75,6 +78,7 @@ DUCKDB_TASK_ARN="$(aws ecs run-task \
   --task-definition "$(ecs_task_definition_arn)" \
   --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS_CSV],securityGroups=[$(ecs_security_group_id)],assignPublicIp=$PUBLIC_IP_VALUE}" \
   --overrides "file://$DUCKDB_OVERRIDES_FILE" \
+  --tags "key=Project,value=$PROJECT_NAME" "key=ManagedBy,value=$MANAGED_BY" "key=Benchmark,value=$BENCHMARK_TAG" "key=BenchmarkId,value=$BENCHMARK_ID" \
   --query 'tasks[0].taskArn' \
   --output text)"
 duckdb_submit_finished_at="$(date +%s)"
