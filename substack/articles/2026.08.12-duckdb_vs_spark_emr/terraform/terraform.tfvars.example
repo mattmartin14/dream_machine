@@ -1,0 +1,7 @@
+aws_region      = "us-east-1"
+bucket_name     = "matt-sbx-bucket-1-us-east-1"
+root_prefix     = "etl-skew-demo"
+dataset_prefix  = "raw/returns_chat"
+script_prefix   = "etl/scripts/duckdb-vs-spark-emr"
+project_name    = "duckdb-vs-spark-emr"
+duckdb_image_uri = "123456789012.dkr.ecr.us-east-1.amazonaws.com/duckdb-vs-spark-emr:latest"

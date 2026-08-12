@@ -1,0 +1,8 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "task_arn": "arn:aws:ecs:us-east-1:772434294110:task/duckdb-vs-spark-emr/aa0d7a6d580248548fba58e19116522e",
+  "submit_api_seconds": 3,
+  "provision_to_running_seconds": 23,
+  "run_to_stop_seconds": 65,
+  "control_plane_wall_seconds": 88
+}

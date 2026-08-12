@@ -1,0 +1,211 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "run_date": "2026-08-08",
+  "engines": {
+    "duckdb": {
+      "in_job_elapsed_seconds": 40.909704,
+      "counts": {
+        "transcripts": 1000,
+        "messages": 131100,
+        "result_rows": 250
+      },
+      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=duckdb/aggregate_results.json",
+      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=duckdb/benchmark_result.json",
+      "control_plane": {
+        "benchmark_id": "20260812T141148Z",
+        "task_arn": "arn:aws:ecs:us-east-1:772434294110:task/duckdb-vs-spark-emr/aa0d7a6d580248548fba58e19116522e",
+        "submit_api_seconds": 3,
+        "provision_to_running_seconds": 23,
+        "run_to_stop_seconds": 65,
+        "control_plane_wall_seconds": 88
+      }
+    },
+    "spark": {
+      "in_job_elapsed_seconds": 156.123358,
+      "counts": {
+        "transcripts": 1000,
+        "messages": 131100,
+        "result_rows": 250
+      },
+      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=spark/aggregate_results/",
+      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=spark/benchmark_result.json",
+      "control_plane": {
+        "benchmark_id": "20260812T141148Z",
+        "job_run_id": "00g7ufjavonpr80b",
+        "submit_api_seconds": 1,
+        "provision_to_running_seconds": 110,
+        "running_to_finish_seconds": 307,
+        "control_plane_wall_seconds": 417
+      },
+      "runtime_diagnostics": {
+        "benchmark_id": "20260812T141148Z",
+        "job_run_id": "00g7ufjavonpr80b",
+        "state": "SUCCESS",
+        "state_details": "",
+        "attempt": 1,
+        "queued_duration_milliseconds": null,
+        "total_execution_duration_seconds": 305,
+        "total_resource_utilization": {
+          "vCPUHour": 0.406,
+          "memoryGBHour": 1.219,
+          "storageGBHour": 8.128
+        },
+        "billed_resource_utilization": {
+          "vCPUHour": 0.42,
+          "memoryGBHour": 1.261,
+          "storageGBHour": 0.0
+        },
+        "monitoring_configuration": {
+          "s3MonitoringConfiguration": {
+            "logUri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/logs/emr-serverless/"
+          },
+          "managedPersistenceMonitoringConfiguration": {
+            "enabled": true
+          }
+        },
+        "observed_executor_ids": [
+          "1",
+          "11",
+          "119",
+          "121",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "observed_executor_count": 9
+      },
+      "skew_analysis": {
+        "benchmark_id": "20260812T141148Z",
+        "engine": "spark",
+        "run_date": "2026-08-08",
+        "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+        "file_count": 1000,
+        "size_bytes": {
+          "total": 71934030,
+          "average": 71934.03,
+          "min": 15370,
+          "p50": 15650.0,
+          "p90": 15759.0,
+          "p95": 15788.0,
+          "p99": 28200058.0,
+          "max": 28200058,
+          "max_to_p50_ratio": 1801.921
+        },
+        "transcript_rows_per_file": {
+          "p50": 1.0,
+          "p95": 1.0,
+          "p99": 1.0
+        },
+        "possible_size_skew": true,
+        "largest_files": [
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000029/chat_003_large.json",
+            "size_bytes": 28200058,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000164/chat_003_large.json",
+            "size_bytes": 28114612,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000102/chat_004_small.json",
+            "size_bytes": 15959,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000122/chat_002_small.json",
+            "size_bytes": 15943,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000236/chat_004_small.json",
+            "size_bytes": 15922,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000010/chat_002_small.json",
+            "size_bytes": 15902,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000154/chat_002_small.json",
+            "size_bytes": 15880,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000097/chat_001_small.json",
+            "size_bytes": 15878,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000191/chat_001_small.json",
+            "size_bytes": 15863,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000237/chat_002_small.json",
+            "size_bytes": 15860,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000113/chat_004_small.json",
+            "size_bytes": 15859,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000015/chat_001_small.json",
+            "size_bytes": 15857,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000216/chat_003_small.json",
+            "size_bytes": 15855,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000045/chat_002_small.json",
+            "size_bytes": 15850,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000218/chat_001_small.json",
+            "size_bytes": 15850,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000239/chat_001_small.json",
+            "size_bytes": 15850,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000007/chat_002_small.json",
+            "size_bytes": 15843,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000004/chat_002_small.json",
+            "size_bytes": 15840,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000167/chat_004_small.json",
+            "size_bytes": 15839,
+            "transcript_rows": 1
+          },
+          {
+            "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000057/chat_002_small.json",
+            "size_bytes": 15834,
+            "transcript_rows": 1
+          }
+        ]
+      }
+    }
+  },
+  "comparison": {
+    "spark_vs_duckdb_in_job_ratio": 3.816292,
+    "in_job_elapsed_delta_seconds": 115.213654
+  }
+}

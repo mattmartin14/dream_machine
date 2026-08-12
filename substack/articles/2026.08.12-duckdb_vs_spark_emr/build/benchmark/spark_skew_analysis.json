@@ -1,0 +1,126 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "engine": "spark",
+  "run_date": "2026-08-08",
+  "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+  "file_count": 1000,
+  "size_bytes": {
+    "total": 71934030,
+    "average": 71934.03,
+    "min": 15370,
+    "p50": 15650.0,
+    "p90": 15759.0,
+    "p95": 15788.0,
+    "p99": 28200058.0,
+    "max": 28200058,
+    "max_to_p50_ratio": 1801.921
+  },
+  "transcript_rows_per_file": {
+    "p50": 1.0,
+    "p95": 1.0,
+    "p99": 1.0
+  },
+  "possible_size_skew": true,
+  "largest_files": [
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000029/chat_003_large.json",
+      "size_bytes": 28200058,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000164/chat_003_large.json",
+      "size_bytes": 28114612,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000102/chat_004_small.json",
+      "size_bytes": 15959,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000122/chat_002_small.json",
+      "size_bytes": 15943,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000236/chat_004_small.json",
+      "size_bytes": 15922,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000010/chat_002_small.json",
+      "size_bytes": 15902,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000154/chat_002_small.json",
+      "size_bytes": 15880,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000097/chat_001_small.json",
+      "size_bytes": 15878,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000191/chat_001_small.json",
+      "size_bytes": 15863,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000237/chat_002_small.json",
+      "size_bytes": 15860,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000113/chat_004_small.json",
+      "size_bytes": 15859,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000015/chat_001_small.json",
+      "size_bytes": 15857,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000216/chat_003_small.json",
+      "size_bytes": 15855,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000045/chat_002_small.json",
+      "size_bytes": 15850,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000218/chat_001_small.json",
+      "size_bytes": 15850,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000239/chat_001_small.json",
+      "size_bytes": 15850,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000007/chat_002_small.json",
+      "size_bytes": 15843,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000004/chat_002_small.json",
+      "size_bytes": 15840,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000167/chat_004_small.json",
+      "size_bytes": 15839,
+      "transcript_rows": 1
+    },
+    {
+      "file_path": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/order_id=order-000057/chat_002_small.json",
+      "size_bytes": 15834,
+      "transcript_rows": 1
+    }
+  ]
+}

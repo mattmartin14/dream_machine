@@ -1,0 +1,39 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "job_run_id": "00g7ufjavonpr80b",
+  "state": "SUCCESS",
+  "state_details": "",
+  "attempt": 1,
+  "queued_duration_milliseconds": null,
+  "total_execution_duration_seconds": 305,
+  "total_resource_utilization": {
+    "vCPUHour": 0.406,
+    "memoryGBHour": 1.219,
+    "storageGBHour": 8.128
+  },
+  "billed_resource_utilization": {
+    "vCPUHour": 0.42,
+    "memoryGBHour": 1.261,
+    "storageGBHour": 0.0
+  },
+  "monitoring_configuration": {
+    "s3MonitoringConfiguration": {
+      "logUri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/logs/emr-serverless/"
+    },
+    "managedPersistenceMonitoringConfiguration": {
+      "enabled": true
+    }
+  },
+  "observed_executor_ids": [
+    "1",
+    "11",
+    "119",
+    "121",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "observed_executor_count": 9
+}

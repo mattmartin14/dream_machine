@@ -1,0 +1,7 @@
+{
+  "monitoringConfiguration": {
+    "s3MonitoringConfiguration": {
+      "logUri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/logs/emr-serverless/"
+    }
+  }
+}

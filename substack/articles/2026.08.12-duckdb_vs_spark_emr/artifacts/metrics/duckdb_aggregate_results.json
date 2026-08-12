@@ -1,0 +1,2008 @@
+{
+  "benchmark_id": "local-verify",
+  "engine": "duckdb",
+  "run_date": "2026-08-08",
+  "input_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+  "rows": [
+    {
+      "store_id": "store-031",
+      "return_reason_code": "missing_parts",
+      "message_count": 9422,
+      "orders_touched": 23,
+      "avg_sentiment": 0.007663765654850339,
+      "refund_mentions": 3841
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "changed_mind",
+      "message_count": 9332,
+      "orders_touched": 23,
+      "avg_sentiment": 0.0042482854693527555,
+      "refund_mentions": 3761
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "changed_mind",
+      "message_count": 9309,
+      "orders_touched": 18,
+      "avg_sentiment": -0.010734235685895368,
+      "refund_mentions": 3733
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "other",
+      "message_count": 9300,
+      "orders_touched": 18,
+      "avg_sentiment": 0.0025739784946236513,
+      "refund_mentions": 3723
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "damaged",
+      "message_count": 9289,
+      "orders_touched": 18,
+      "avg_sentiment": 0.0073089675960813835,
+      "refund_mentions": 3752
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "damaged",
+      "message_count": 9288,
+      "orders_touched": 23,
+      "avg_sentiment": -0.003821382428940577,
+      "refund_mentions": 3734
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "missing_parts",
+      "message_count": 9256,
+      "orders_touched": 18,
+      "avg_sentiment": 0.004776577355229022,
+      "refund_mentions": 3701
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "other",
+      "message_count": 9255,
+      "orders_touched": 23,
+      "avg_sentiment": -0.006496380334954063,
+      "refund_mentions": 3708
+    },
+    {
+      "store_id": "store-031",
+      "return_reason_code": "wrong_item",
+      "message_count": 9253,
+      "orders_touched": 23,
+      "avg_sentiment": -0.0015400410677618099,
+      "refund_mentions": 3657
+    },
+    {
+      "store_id": "store-020",
+      "return_reason_code": "wrong_item",
+      "message_count": 9116,
+      "orders_touched": 18,
+      "avg_sentiment": -0.0003694602896007032,
+      "refund_mentions": 3686
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "missing_parts",
+      "message_count": 266,
+      "orders_touched": 28,
+      "avg_sentiment": -0.02570676691729323,
+      "refund_mentions": 110
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "damaged",
+      "message_count": 260,
+      "orders_touched": 28,
+      "avg_sentiment": -0.05824999999999997,
+      "refund_mentions": 99
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "other",
+      "message_count": 258,
+      "orders_touched": 28,
+      "avg_sentiment": -0.019186046511627922,
+      "refund_mentions": 109
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "wrong_item",
+      "message_count": 248,
+      "orders_touched": 28,
+      "avg_sentiment": 0.05679435483870967,
+      "refund_mentions": 117
+    },
+    {
+      "store_id": "store-005",
+      "return_reason_code": "changed_mind",
+      "message_count": 248,
+      "orders_touched": 28,
+      "avg_sentiment": 0.010794354838709684,
+      "refund_mentions": 103
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "damaged",
+      "message_count": 241,
+      "orders_touched": 26,
+      "avg_sentiment": 0.00691701244813278,
+      "refund_mentions": 110
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "wrong_item",
+      "message_count": 239,
+      "orders_touched": 27,
+      "avg_sentiment": -0.03961924686192469,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "wrong_item",
+      "message_count": 226,
+      "orders_touched": 27,
+      "avg_sentiment": -0.03874778761061948,
+      "refund_mentions": 86
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "wrong_item",
+      "message_count": 225,
+      "orders_touched": 26,
+      "avg_sentiment": -0.01391111111111112,
+      "refund_mentions": 93
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "changed_mind",
+      "message_count": 225,
+      "orders_touched": 27,
+      "avg_sentiment": -0.027986666666666684,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "missing_parts",
+      "message_count": 225,
+      "orders_touched": 27,
+      "avg_sentiment": 0.045964444444444426,
+      "refund_mentions": 98
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "missing_parts",
+      "message_count": 224,
+      "orders_touched": 22,
+      "avg_sentiment": 0.010602678571428565,
+      "refund_mentions": 78
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "other",
+      "message_count": 221,
+      "orders_touched": 25,
+      "avg_sentiment": 0.014999999999999984,
+      "refund_mentions": 82
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "changed_mind",
+      "message_count": 221,
+      "orders_touched": 26,
+      "avg_sentiment": 0.03509049773755657,
+      "refund_mentions": 90
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "other",
+      "message_count": 218,
+      "orders_touched": 26,
+      "avg_sentiment": -0.056100917431192644,
+      "refund_mentions": 77
+    },
+    {
+      "store_id": "store-013",
+      "return_reason_code": "missing_parts",
+      "message_count": 218,
+      "orders_touched": 23,
+      "avg_sentiment": -0.029738532110091746,
+      "refund_mentions": 96
+    },
+    {
+      "store_id": "store-011",
+      "return_reason_code": "wrong_item",
+      "message_count": 218,
+      "orders_touched": 22,
+      "avg_sentiment": 0.05221559633027523,
+      "refund_mentions": 88
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "damaged",
+      "message_count": 214,
+      "orders_touched": 27,
+      "avg_sentiment": -0.0043364485981308345,
+      "refund_mentions": 90
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "other",
+      "message_count": 212,
+      "orders_touched": 27,
+      "avg_sentiment": -0.04756603773584902,
+      "refund_mentions": 80
+    },
+    {
+      "store_id": "store-018",
+      "return_reason_code": "other",
+      "message_count": 210,
+      "orders_touched": 23,
+      "avg_sentiment": -0.00468571428571429,
+      "refund_mentions": 73
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "other",
+      "message_count": 209,
+      "orders_touched": 27,
+      "avg_sentiment": 0.07262679425837319,
+      "refund_mentions": 83
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "missing_parts",
+      "message_count": 206,
+      "orders_touched": 27,
+      "avg_sentiment": -0.024548543689320343,
+      "refund_mentions": 83
+    },
+    {
+      "store_id": "store-032",
+      "return_reason_code": "changed_mind",
+      "message_count": 206,
+      "orders_touched": 27,
+      "avg_sentiment": 0.03304368932038836,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "changed_mind",
+      "message_count": 202,
+      "orders_touched": 25,
+      "avg_sentiment": 0.006727722772277224,
+      "refund_mentions": 90
+    },
+    {
+      "store_id": "store-019",
+      "return_reason_code": "other",
+      "message_count": 200,
+      "orders_touched": 22,
+      "avg_sentiment": 0.015239999999999991,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-011",
+      "return_reason_code": "other",
+      "message_count": 199,
+      "orders_touched": 22,
+      "avg_sentiment": 0.03242211055276382,
+      "refund_mentions": 71
+    },
+    {
+      "store_id": "store-018",
+      "return_reason_code": "damaged",
+      "message_count": 198,
+      "orders_touched": 23,
+      "avg_sentiment": -0.012540404040404034,
+      "refund_mentions": 80
+    },
+    {
+      "store_id": "store-036",
+      "return_reason_code": "damaged",
+      "message_count": 198,
+      "orders_touched": 27,
+      "avg_sentiment": -0.012959595959595968,
+      "refund_mentions": 73
+    },
+    {
+      "store_id": "store-011",
+      "return_reason_code": "missing_parts",
+      "message_count": 197,
+      "orders_touched": 22,
+      "avg_sentiment": 0.007629441624365467,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-037",
+      "return_reason_code": "wrong_item",
+      "message_count": 197,
+      "orders_touched": 22,
+      "avg_sentiment": 0.02132994923857868,
+      "refund_mentions": 83
+    },
+    {
+      "store_id": "store-013",
+      "return_reason_code": "wrong_item",
+      "message_count": 197,
+      "orders_touched": 23,
+      "avg_sentiment": 0.010949238578680211,
+      "refund_mentions": 94
+    },
+    {
+      "store_id": "store-011",
+      "return_reason_code": "damaged",
+      "message_count": 196,
+      "orders_touched": 22,
+      "avg_sentiment": 0.03505102040816327,
+      "refund_mentions": 77
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "damaged",
+      "message_count": 196,
+      "orders_touched": 25,
+      "avg_sentiment": 0.004637755102040815,
+      "refund_mentions": 87
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "wrong_item",
+      "message_count": 193,
+      "orders_touched": 25,
+      "avg_sentiment": 0.0653056994818653,
+      "refund_mentions": 82
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "damaged",
+      "message_count": 193,
+      "orders_touched": 22,
+      "avg_sentiment": -0.06564248704663217,
+      "refund_mentions": 74
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "wrong_item",
+      "message_count": 192,
+      "orders_touched": 22,
+      "avg_sentiment": 0.03419270833333332,
+      "refund_mentions": 77
+    },
+    {
+      "store_id": "store-025",
+      "return_reason_code": "changed_mind",
+      "message_count": 192,
+      "orders_touched": 21,
+      "avg_sentiment": -0.04066145833333333,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-018",
+      "return_reason_code": "wrong_item",
+      "message_count": 191,
+      "orders_touched": 23,
+      "avg_sentiment": 0.011806282722513115,
+      "refund_mentions": 76
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "changed_mind",
+      "message_count": 190,
+      "orders_touched": 22,
+      "avg_sentiment": -0.014757894736842097,
+      "refund_mentions": 78
+    },
+    {
+      "store_id": "store-019",
+      "return_reason_code": "changed_mind",
+      "message_count": 190,
+      "orders_touched": 22,
+      "avg_sentiment": -0.05589999999999999,
+      "refund_mentions": 70
+    },
+    {
+      "store_id": "store-021",
+      "return_reason_code": "missing_parts",
+      "message_count": 190,
+      "orders_touched": 19,
+      "avg_sentiment": -0.06414736842105266,
+      "refund_mentions": 74
+    },
+    {
+      "store_id": "store-011",
+      "return_reason_code": "changed_mind",
+      "message_count": 190,
+      "orders_touched": 22,
+      "avg_sentiment": -0.016510526315789482,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-015",
+      "return_reason_code": "missing_parts",
+      "message_count": 188,
+      "orders_touched": 25,
+      "avg_sentiment": 0.023622340425531917,
+      "refund_mentions": 86
+    },
+    {
+      "store_id": "store-050",
+      "return_reason_code": "changed_mind",
+      "message_count": 187,
+      "orders_touched": 20,
+      "avg_sentiment": 0.02771122994652407,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-010",
+      "return_reason_code": "changed_mind",
+      "message_count": 186,
+      "orders_touched": 22,
+      "avg_sentiment": 0.0023870967741935483,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-019",
+      "return_reason_code": "wrong_item",
+      "message_count": 185,
+      "orders_touched": 22,
+      "avg_sentiment": 0.0563783783783784,
+      "refund_mentions": 79
+    },
+    {
+      "store_id": "store-010",
+      "return_reason_code": "other",
+      "message_count": 184,
+      "orders_touched": 22,
+      "avg_sentiment": -0.07000543478260869,
+      "refund_mentions": 74
+    },
+    {
+      "store_id": "store-013",
+      "return_reason_code": "damaged",
+      "message_count": 184,
+      "orders_touched": 23,
+      "avg_sentiment": 0.006266304347826075,
+      "refund_mentions": 78
+    },
+    {
+      "store_id": "store-013",
+      "return_reason_code": "changed_mind",
+      "message_count": 183,
+      "orders_touched": 23,
+      "avg_sentiment": -0.009278688524590146,
+      "refund_mentions": 70
+    },
+    {
+      "store_id": "store-037",
+      "return_reason_code": "damaged",
+      "message_count": 182,
+      "orders_touched": 22,
+      "avg_sentiment": -0.008659340659340674,
+      "refund_mentions": 72
+    },
+    {
+      "store_id": "store-018",
+      "return_reason_code": "missing_parts",
+      "message_count": 182,
+      "orders_touched": 23,
+      "avg_sentiment": 0.014478021978021964,
+      "refund_mentions": 71
+    },
+    {
+      "store_id": "store-017",
+      "return_reason_code": "missing_parts",
+      "message_count": 180,
+      "orders_touched": 21,
+      "avg_sentiment": 0.06668333333333336,
+      "refund_mentions": 72
+    },
+    {
+      "store_id": "store-037",
+      "return_reason_code": "missing_parts",
+      "message_count": 180,
+      "orders_touched": 22,
+      "avg_sentiment": 0.022811111111111112,
+      "refund_mentions": 82
+    },
+    {
+      "store_id": "store-029",
+      "return_reason_code": "changed_mind",
+      "message_count": 179,
+      "orders_touched": 20,
+      "avg_sentiment": 0.05848044692737428,
+      "refund_mentions": 80
+    },
+    {
+      "store_id": "store-018",
+      "return_reason_code": "changed_mind",
+      "message_count": 179,
+      "orders_touched": 23,
+      "avg_sentiment": 0.022223463687150818,
+      "refund_mentions": 78
+    },
+    {
+      "store_id": "store-003",
+      "return_reason_code": "missing_parts",
+      "message_count": 179,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0010782122905027682,
+      "refund_mentions": 74
+    },
+    {
+      "store_id": "store-039",
+      "return_reason_code": "changed_mind",
+      "message_count": 178,
+      "orders_touched": 20,
+      "avg_sentiment": -0.03941573033707865,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-003",
+      "return_reason_code": "other",
+      "message_count": 178,
+      "orders_touched": 20,
+      "avg_sentiment": -0.02723595505617978,
+      "refund_mentions": 72
+    },
+    {
+      "store_id": "store-013",
+      "return_reason_code": "other",
+      "message_count": 178,
+      "orders_touched": 23,
+      "avg_sentiment": -0.034073033707865144,
+      "refund_mentions": 81
+    },
+    {
+      "store_id": "store-010",
+      "return_reason_code": "wrong_item",
+      "message_count": 177,
+      "orders_touched": 22,
+      "avg_sentiment": 0.030661016949152534,
+      "refund_mentions": 79
+    },
+    {
+      "store_id": "store-022",
+      "return_reason_code": "changed_mind",
+      "message_count": 177,
+      "orders_touched": 20,
+      "avg_sentiment": -0.002909604519774012,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-022",
+      "return_reason_code": "wrong_item",
+      "message_count": 176,
+      "orders_touched": 20,
+      "avg_sentiment": 0.05230681818181819,
+      "refund_mentions": 72
+    },
+    {
+      "store_id": "store-017",
+      "return_reason_code": "other",
+      "message_count": 176,
+      "orders_touched": 21,
+      "avg_sentiment": 0.03996022727272728,
+      "refund_mentions": 71
+    },
+    {
+      "store_id": "store-050",
+      "return_reason_code": "other",
+      "message_count": 176,
+      "orders_touched": 20,
+      "avg_sentiment": -0.018738636363636377,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-039",
+      "return_reason_code": "damaged",
+      "message_count": 175,
+      "orders_touched": 20,
+      "avg_sentiment": -0.0035314285714285985,
+      "refund_mentions": 75
+    },
+    {
+      "store_id": "store-041",
+      "return_reason_code": "missing_parts",
+      "message_count": 175,
+      "orders_touched": 26,
+      "avg_sentiment": -0.05746285714285715,
+      "refund_mentions": 73
+    },
+    {
+      "store_id": "store-022",
+      "return_reason_code": "damaged",
+      "message_count": 175,
+      "orders_touched": 20,
+      "avg_sentiment": -0.029571428571428575,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-019",
+      "return_reason_code": "missing_parts",
+      "message_count": 175,
+      "orders_touched": 22,
+      "avg_sentiment": 0.021068571428571426,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-024",
+      "return_reason_code": "missing_parts",
+      "message_count": 174,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0432183908045977,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-004",
+      "return_reason_code": "changed_mind",
+      "message_count": 174,
+      "orders_touched": 19,
+      "avg_sentiment": -0.0166551724137931,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-042",
+      "return_reason_code": "wrong_item",
+      "message_count": 173,
+      "orders_touched": 18,
+      "avg_sentiment": 0.006017341040462409,
+      "refund_mentions": 75
+    },
+    {
+      "store_id": "store-024",
+      "return_reason_code": "other",
+      "message_count": 173,
+      "orders_touched": 20,
+      "avg_sentiment": -0.03175144508670518,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-038",
+      "return_reason_code": "other",
+      "message_count": 173,
+      "orders_touched": 20,
+      "avg_sentiment": -0.0007919075144508902,
+      "refund_mentions": 81
+    },
+    {
+      "store_id": "store-049",
+      "return_reason_code": "missing_parts",
+      "message_count": 172,
+      "orders_touched": 19,
+      "avg_sentiment": -0.13811046511627903,
+      "refund_mentions": 73
+    },
+    {
+      "store_id": "store-001",
+      "return_reason_code": "damaged",
+      "message_count": 172,
+      "orders_touched": 18,
+      "avg_sentiment": -0.08319186046511627,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-039",
+      "return_reason_code": "missing_parts",
+      "message_count": 172,
+      "orders_touched": 20,
+      "avg_sentiment": 0.04150581395348843,
+      "refund_mentions": 74
+    },
+    {
+      "store_id": "store-007",
+      "return_reason_code": "other",
+      "message_count": 171,
+      "orders_touched": 20,
+      "avg_sentiment": 0.049649122807017526,
+      "refund_mentions": 75
+    },
+    {
+      "store_id": "store-038",
+      "return_reason_code": "damaged",
+      "message_count": 171,
+      "orders_touched": 20,
+      "avg_sentiment": -0.027473684210526338,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-019",
+      "return_reason_code": "damaged",
+      "message_count": 170,
+      "orders_touched": 22,
+      "avg_sentiment": -0.09982941176470589,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-009",
+      "return_reason_code": "damaged",
+      "message_count": 170,
+      "orders_touched": 18,
+      "avg_sentiment": -0.05051764705882354,
+      "refund_mentions": 84
+    },
+    {
+      "store_id": "store-050",
+      "return_reason_code": "missing_parts",
+      "message_count": 169,
+      "orders_touched": 20,
+      "avg_sentiment": -0.05834911242603553,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-008",
+      "return_reason_code": "missing_parts",
+      "message_count": 169,
+      "orders_touched": 20,
+      "avg_sentiment": 0.000266272189349112,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-049",
+      "return_reason_code": "wrong_item",
+      "message_count": 169,
+      "orders_touched": 19,
+      "avg_sentiment": 0.0027573964497041433,
+      "refund_mentions": 71
+    },
+    {
+      "store_id": "store-010",
+      "return_reason_code": "missing_parts",
+      "message_count": 169,
+      "orders_touched": 22,
+      "avg_sentiment": -0.032479289940828396,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-049",
+      "return_reason_code": "other",
+      "message_count": 168,
+      "orders_touched": 19,
+      "avg_sentiment": 0.07329166666666664,
+      "refund_mentions": 69
+    },
+    {
+      "store_id": "store-021",
+      "return_reason_code": "wrong_item",
+      "message_count": 167,
+      "orders_touched": 19,
+      "avg_sentiment": 0.007814371257485032,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-029",
+      "return_reason_code": "damaged",
+      "message_count": 167,
+      "orders_touched": 20,
+      "avg_sentiment": -0.021125748502994004,
+      "refund_mentions": 60
+    },
+    {
+      "store_id": "store-003",
+      "return_reason_code": "damaged",
+      "message_count": 166,
+      "orders_touched": 20,
+      "avg_sentiment": 0.00677710843373494,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-008",
+      "return_reason_code": "damaged",
+      "message_count": 166,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0849036144578313,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-025",
+      "return_reason_code": "other",
+      "message_count": 166,
+      "orders_touched": 21,
+      "avg_sentiment": 0.0572289156626506,
+      "refund_mentions": 81
+    },
+    {
+      "store_id": "store-008",
+      "return_reason_code": "changed_mind",
+      "message_count": 166,
+      "orders_touched": 20,
+      "avg_sentiment": -0.040222891566265066,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-027",
+      "return_reason_code": "other",
+      "message_count": 165,
+      "orders_touched": 19,
+      "avg_sentiment": -0.10981212121212121,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-022",
+      "return_reason_code": "other",
+      "message_count": 164,
+      "orders_touched": 20,
+      "avg_sentiment": -0.021567073170731713,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-021",
+      "return_reason_code": "damaged",
+      "message_count": 164,
+      "orders_touched": 19,
+      "avg_sentiment": -0.06633536585365854,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-043",
+      "return_reason_code": "other",
+      "message_count": 164,
+      "orders_touched": 19,
+      "avg_sentiment": -0.02579268292682926,
+      "refund_mentions": 80
+    },
+    {
+      "store_id": "store-042",
+      "return_reason_code": "changed_mind",
+      "message_count": 164,
+      "orders_touched": 18,
+      "avg_sentiment": 0.010128048780487795,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-010",
+      "return_reason_code": "damaged",
+      "message_count": 164,
+      "orders_touched": 22,
+      "avg_sentiment": -0.05803658536585368,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-025",
+      "return_reason_code": "wrong_item",
+      "message_count": 163,
+      "orders_touched": 21,
+      "avg_sentiment": 0.08566871165644172,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-007",
+      "return_reason_code": "missing_parts",
+      "message_count": 163,
+      "orders_touched": 20,
+      "avg_sentiment": 0.050337423312883434,
+      "refund_mentions": 77
+    },
+    {
+      "store_id": "store-027",
+      "return_reason_code": "damaged",
+      "message_count": 163,
+      "orders_touched": 19,
+      "avg_sentiment": 0.008159509202453992,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-037",
+      "return_reason_code": "changed_mind",
+      "message_count": 163,
+      "orders_touched": 22,
+      "avg_sentiment": -0.026380368098159492,
+      "refund_mentions": 60
+    },
+    {
+      "store_id": "store-017",
+      "return_reason_code": "changed_mind",
+      "message_count": 162,
+      "orders_touched": 21,
+      "avg_sentiment": 0.057302469135802496,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-001",
+      "return_reason_code": "missing_parts",
+      "message_count": 162,
+      "orders_touched": 18,
+      "avg_sentiment": 0.0020802469135802674,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-025",
+      "return_reason_code": "damaged",
+      "message_count": 162,
+      "orders_touched": 21,
+      "avg_sentiment": 0.0008888888888888773,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-001",
+      "return_reason_code": "wrong_item",
+      "message_count": 162,
+      "orders_touched": 18,
+      "avg_sentiment": 0.05974691358024692,
+      "refund_mentions": 68
+    },
+    {
+      "store_id": "store-024",
+      "return_reason_code": "damaged",
+      "message_count": 161,
+      "orders_touched": 20,
+      "avg_sentiment": -0.023944099378881978,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-030",
+      "return_reason_code": "other",
+      "message_count": 161,
+      "orders_touched": 22,
+      "avg_sentiment": -0.0013354037267080668,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-017",
+      "return_reason_code": "wrong_item",
+      "message_count": 161,
+      "orders_touched": 21,
+      "avg_sentiment": -0.0602422360248447,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-017",
+      "return_reason_code": "damaged",
+      "message_count": 161,
+      "orders_touched": 21,
+      "avg_sentiment": -0.06687577639751557,
+      "refund_mentions": 69
+    },
+    {
+      "store_id": "store-003",
+      "return_reason_code": "changed_mind",
+      "message_count": 160,
+      "orders_touched": 20,
+      "avg_sentiment": 0.004237500000000005,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-021",
+      "return_reason_code": "changed_mind",
+      "message_count": 160,
+      "orders_touched": 19,
+      "avg_sentiment": 0.05539375,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-004",
+      "return_reason_code": "other",
+      "message_count": 160,
+      "orders_touched": 19,
+      "avg_sentiment": -0.06685625,
+      "refund_mentions": 71
+    },
+    {
+      "store_id": "store-039",
+      "return_reason_code": "wrong_item",
+      "message_count": 160,
+      "orders_touched": 20,
+      "avg_sentiment": -0.06351875000000004,
+      "refund_mentions": 70
+    },
+    {
+      "store_id": "store-027",
+      "return_reason_code": "wrong_item",
+      "message_count": 159,
+      "orders_touched": 19,
+      "avg_sentiment": -0.09450314465408803,
+      "refund_mentions": 67
+    },
+    {
+      "store_id": "store-021",
+      "return_reason_code": "other",
+      "message_count": 159,
+      "orders_touched": 19,
+      "avg_sentiment": 0.04715723270440253,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-029",
+      "return_reason_code": "missing_parts",
+      "message_count": 159,
+      "orders_touched": 20,
+      "avg_sentiment": 0.058540880503144696,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-007",
+      "return_reason_code": "damaged",
+      "message_count": 159,
+      "orders_touched": 20,
+      "avg_sentiment": 0.04102515723270438,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-034",
+      "return_reason_code": "changed_mind",
+      "message_count": 159,
+      "orders_touched": 16,
+      "avg_sentiment": 0.01230817610062893,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-049",
+      "return_reason_code": "changed_mind",
+      "message_count": 159,
+      "orders_touched": 19,
+      "avg_sentiment": -0.09815723270440252,
+      "refund_mentions": 70
+    },
+    {
+      "store_id": "store-038",
+      "return_reason_code": "missing_parts",
+      "message_count": 158,
+      "orders_touched": 20,
+      "avg_sentiment": -0.01912025316455695,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-037",
+      "return_reason_code": "other",
+      "message_count": 158,
+      "orders_touched": 22,
+      "avg_sentiment": -0.01385443037974683,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-050",
+      "return_reason_code": "damaged",
+      "message_count": 158,
+      "orders_touched": 20,
+      "avg_sentiment": -0.05864556962025318,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-007",
+      "return_reason_code": "changed_mind",
+      "message_count": 158,
+      "orders_touched": 20,
+      "avg_sentiment": -0.0009873417721519024,
+      "refund_mentions": 69
+    },
+    {
+      "store_id": "store-025",
+      "return_reason_code": "missing_parts",
+      "message_count": 157,
+      "orders_touched": 21,
+      "avg_sentiment": 0.05554777070063697,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-003",
+      "return_reason_code": "wrong_item",
+      "message_count": 157,
+      "orders_touched": 20,
+      "avg_sentiment": -0.01710191082802546,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-047",
+      "return_reason_code": "missing_parts",
+      "message_count": 156,
+      "orders_touched": 15,
+      "avg_sentiment": -0.006955128205128202,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-043",
+      "return_reason_code": "missing_parts",
+      "message_count": 155,
+      "orders_touched": 19,
+      "avg_sentiment": -0.04000645161290324,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-039",
+      "return_reason_code": "other",
+      "message_count": 155,
+      "orders_touched": 20,
+      "avg_sentiment": -0.041141935483870976,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-043",
+      "return_reason_code": "changed_mind",
+      "message_count": 154,
+      "orders_touched": 19,
+      "avg_sentiment": 0.0221948051948052,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-001",
+      "return_reason_code": "changed_mind",
+      "message_count": 152,
+      "orders_touched": 18,
+      "avg_sentiment": -0.033401315789473654,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-029",
+      "return_reason_code": "other",
+      "message_count": 152,
+      "orders_touched": 20,
+      "avg_sentiment": 0.09962500000000003,
+      "refund_mentions": 54
+    },
+    {
+      "store_id": "store-038",
+      "return_reason_code": "wrong_item",
+      "message_count": 152,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0633421052631579,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-001",
+      "return_reason_code": "other",
+      "message_count": 152,
+      "orders_touched": 18,
+      "avg_sentiment": -0.02679605263157895,
+      "refund_mentions": 64
+    },
+    {
+      "store_id": "store-046",
+      "return_reason_code": "changed_mind",
+      "message_count": 150,
+      "orders_touched": 18,
+      "avg_sentiment": 0.06777333333333341,
+      "refund_mentions": 60
+    },
+    {
+      "store_id": "store-009",
+      "return_reason_code": "missing_parts",
+      "message_count": 150,
+      "orders_touched": 18,
+      "avg_sentiment": 0.044766666666666594,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-050",
+      "return_reason_code": "wrong_item",
+      "message_count": 150,
+      "orders_touched": 20,
+      "avg_sentiment": -0.03556,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-008",
+      "return_reason_code": "other",
+      "message_count": 150,
+      "orders_touched": 20,
+      "avg_sentiment": 0.035820000000000005,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-014",
+      "return_reason_code": "missing_parts",
+      "message_count": 149,
+      "orders_touched": 18,
+      "avg_sentiment": 0.01390604026845637,
+      "refund_mentions": 65
+    },
+    {
+      "store_id": "store-007",
+      "return_reason_code": "wrong_item",
+      "message_count": 149,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0036241610738254916,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-046",
+      "return_reason_code": "missing_parts",
+      "message_count": 149,
+      "orders_touched": 18,
+      "avg_sentiment": -0.01589261744966444,
+      "refund_mentions": 65
+    },
+    {
+      "store_id": "store-024",
+      "return_reason_code": "wrong_item",
+      "message_count": 149,
+      "orders_touched": 20,
+      "avg_sentiment": 0.1154563758389261,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-008",
+      "return_reason_code": "wrong_item",
+      "message_count": 149,
+      "orders_touched": 20,
+      "avg_sentiment": -0.06467785234899329,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-034",
+      "return_reason_code": "other",
+      "message_count": 148,
+      "orders_touched": 16,
+      "avg_sentiment": -0.014054054054054054,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-022",
+      "return_reason_code": "missing_parts",
+      "message_count": 148,
+      "orders_touched": 20,
+      "avg_sentiment": -0.020452702702702705,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-035",
+      "return_reason_code": "missing_parts",
+      "message_count": 147,
+      "orders_touched": 16,
+      "avg_sentiment": 0.00042857142857143424,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-042",
+      "return_reason_code": "damaged",
+      "message_count": 147,
+      "orders_touched": 18,
+      "avg_sentiment": -0.05801360544217685,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-044",
+      "return_reason_code": "missing_parts",
+      "message_count": 147,
+      "orders_touched": 15,
+      "avg_sentiment": -0.0011428571428571432,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-043",
+      "return_reason_code": "damaged",
+      "message_count": 147,
+      "orders_touched": 19,
+      "avg_sentiment": 0.0076870748299319724,
+      "refund_mentions": 62
+    },
+    {
+      "store_id": "store-006",
+      "return_reason_code": "changed_mind",
+      "message_count": 147,
+      "orders_touched": 16,
+      "avg_sentiment": 0.033734693877551,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-004",
+      "return_reason_code": "missing_parts",
+      "message_count": 146,
+      "orders_touched": 19,
+      "avg_sentiment": 0.016924657534246577,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-046",
+      "return_reason_code": "other",
+      "message_count": 146,
+      "orders_touched": 18,
+      "avg_sentiment": 0.043431506849315064,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-014",
+      "return_reason_code": "wrong_item",
+      "message_count": 146,
+      "orders_touched": 18,
+      "avg_sentiment": -0.02030136986301371,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-016",
+      "return_reason_code": "damaged",
+      "message_count": 146,
+      "orders_touched": 17,
+      "avg_sentiment": 0.039616438356164387,
+      "refund_mentions": 54
+    },
+    {
+      "store_id": "store-046",
+      "return_reason_code": "damaged",
+      "message_count": 146,
+      "orders_touched": 18,
+      "avg_sentiment": 0.06947945205479449,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-027",
+      "return_reason_code": "missing_parts",
+      "message_count": 146,
+      "orders_touched": 19,
+      "avg_sentiment": -0.05939041095890412,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-038",
+      "return_reason_code": "changed_mind",
+      "message_count": 146,
+      "orders_touched": 20,
+      "avg_sentiment": -0.1013287671232877,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-014",
+      "return_reason_code": "other",
+      "message_count": 145,
+      "orders_touched": 18,
+      "avg_sentiment": -0.04022068965517243,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-048",
+      "return_reason_code": "missing_parts",
+      "message_count": 145,
+      "orders_touched": 16,
+      "avg_sentiment": -0.08768275862068965,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-006",
+      "return_reason_code": "damaged",
+      "message_count": 145,
+      "orders_touched": 16,
+      "avg_sentiment": -0.004041379310344845,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-040",
+      "return_reason_code": "damaged",
+      "message_count": 145,
+      "orders_touched": 17,
+      "avg_sentiment": -0.00548965517241382,
+      "refund_mentions": 66
+    },
+    {
+      "store_id": "store-002",
+      "return_reason_code": "damaged",
+      "message_count": 145,
+      "orders_touched": 15,
+      "avg_sentiment": 0.0030482758620689514,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-042",
+      "return_reason_code": "missing_parts",
+      "message_count": 144,
+      "orders_touched": 18,
+      "avg_sentiment": 0.04829861111111111,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-004",
+      "return_reason_code": "wrong_item",
+      "message_count": 144,
+      "orders_touched": 19,
+      "avg_sentiment": -0.027326388888888883,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-028",
+      "return_reason_code": "wrong_item",
+      "message_count": 143,
+      "orders_touched": 17,
+      "avg_sentiment": -0.026559440559440567,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-029",
+      "return_reason_code": "wrong_item",
+      "message_count": 143,
+      "orders_touched": 20,
+      "avg_sentiment": -0.04750349650349653,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-044",
+      "return_reason_code": "changed_mind",
+      "message_count": 143,
+      "orders_touched": 15,
+      "avg_sentiment": 0.007874125874125861,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-024",
+      "return_reason_code": "changed_mind",
+      "message_count": 143,
+      "orders_touched": 20,
+      "avg_sentiment": 0.0009440559440559457,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-048",
+      "return_reason_code": "wrong_item",
+      "message_count": 142,
+      "orders_touched": 16,
+      "avg_sentiment": -0.001760563380281684,
+      "refund_mentions": 69
+    },
+    {
+      "store_id": "store-047",
+      "return_reason_code": "damaged",
+      "message_count": 142,
+      "orders_touched": 15,
+      "avg_sentiment": -0.013964788732394373,
+      "refund_mentions": 50
+    },
+    {
+      "store_id": "store-040",
+      "return_reason_code": "missing_parts",
+      "message_count": 141,
+      "orders_touched": 17,
+      "avg_sentiment": -0.03085815602836878,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-014",
+      "return_reason_code": "damaged",
+      "message_count": 141,
+      "orders_touched": 18,
+      "avg_sentiment": -0.0051914893617021176,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-047",
+      "return_reason_code": "other",
+      "message_count": 140,
+      "orders_touched": 15,
+      "avg_sentiment": -0.042050000000000004,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-040",
+      "return_reason_code": "wrong_item",
+      "message_count": 140,
+      "orders_touched": 17,
+      "avg_sentiment": -0.06064285714285713,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-034",
+      "return_reason_code": "wrong_item",
+      "message_count": 140,
+      "orders_touched": 16,
+      "avg_sentiment": -0.054507142857142844,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-009",
+      "return_reason_code": "changed_mind",
+      "message_count": 140,
+      "orders_touched": 18,
+      "avg_sentiment": -0.030364285714285698,
+      "refund_mentions": 63
+    },
+    {
+      "store_id": "store-043",
+      "return_reason_code": "wrong_item",
+      "message_count": 140,
+      "orders_touched": 19,
+      "avg_sentiment": -0.0050714285714285705,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-016",
+      "return_reason_code": "other",
+      "message_count": 139,
+      "orders_touched": 17,
+      "avg_sentiment": 0.03164748201438848,
+      "refund_mentions": 61
+    },
+    {
+      "store_id": "store-014",
+      "return_reason_code": "changed_mind",
+      "message_count": 139,
+      "orders_touched": 18,
+      "avg_sentiment": -0.001129496402877698,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-028",
+      "return_reason_code": "damaged",
+      "message_count": 139,
+      "orders_touched": 17,
+      "avg_sentiment": -0.021215827338129482,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-006",
+      "return_reason_code": "other",
+      "message_count": 139,
+      "orders_touched": 16,
+      "avg_sentiment": -0.002841726618705043,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-028",
+      "return_reason_code": "other",
+      "message_count": 138,
+      "orders_touched": 17,
+      "avg_sentiment": 0.043543478260869566,
+      "refund_mentions": 47
+    },
+    {
+      "store_id": "store-035",
+      "return_reason_code": "wrong_item",
+      "message_count": 138,
+      "orders_touched": 16,
+      "avg_sentiment": -0.005637681159420306,
+      "refund_mentions": 48
+    },
+    {
+      "store_id": "store-034",
+      "return_reason_code": "damaged",
+      "message_count": 137,
+      "orders_touched": 16,
+      "avg_sentiment": -0.01954744525547445,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-034",
+      "return_reason_code": "missing_parts",
+      "message_count": 136,
+      "orders_touched": 16,
+      "avg_sentiment": 0.020727941176470602,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-045",
+      "return_reason_code": "damaged",
+      "message_count": 136,
+      "orders_touched": 15,
+      "avg_sentiment": 0.06691176470588235,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-016",
+      "return_reason_code": "wrong_item",
+      "message_count": 136,
+      "orders_touched": 17,
+      "avg_sentiment": -0.04264705882352944,
+      "refund_mentions": 54
+    },
+    {
+      "store_id": "store-004",
+      "return_reason_code": "damaged",
+      "message_count": 136,
+      "orders_touched": 19,
+      "avg_sentiment": 0.05194117647058824,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-026",
+      "return_reason_code": "other",
+      "message_count": 135,
+      "orders_touched": 16,
+      "avg_sentiment": -0.022533333333333332,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-044",
+      "return_reason_code": "wrong_item",
+      "message_count": 135,
+      "orders_touched": 15,
+      "avg_sentiment": -0.13644444444444445,
+      "refund_mentions": 53
+    },
+    {
+      "store_id": "store-048",
+      "return_reason_code": "changed_mind",
+      "message_count": 135,
+      "orders_touched": 16,
+      "avg_sentiment": -0.021474074074074083,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-026",
+      "return_reason_code": "missing_parts",
+      "message_count": 134,
+      "orders_touched": 16,
+      "avg_sentiment": -0.015514925373134314,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-028",
+      "return_reason_code": "missing_parts",
+      "message_count": 134,
+      "orders_touched": 17,
+      "avg_sentiment": 0.028380597014925367,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-035",
+      "return_reason_code": "other",
+      "message_count": 134,
+      "orders_touched": 16,
+      "avg_sentiment": -0.0236044776119403,
+      "refund_mentions": 49
+    },
+    {
+      "store_id": "store-016",
+      "return_reason_code": "missing_parts",
+      "message_count": 133,
+      "orders_touched": 17,
+      "avg_sentiment": -0.019172932330827078,
+      "refund_mentions": 47
+    },
+    {
+      "store_id": "store-035",
+      "return_reason_code": "damaged",
+      "message_count": 132,
+      "orders_touched": 16,
+      "avg_sentiment": -0.07426515151515152,
+      "refund_mentions": 58
+    },
+    {
+      "store_id": "store-049",
+      "return_reason_code": "damaged",
+      "message_count": 132,
+      "orders_touched": 19,
+      "avg_sentiment": 0.029492424242424254,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-044",
+      "return_reason_code": "damaged",
+      "message_count": 132,
+      "orders_touched": 15,
+      "avg_sentiment": 0.0283939393939394,
+      "refund_mentions": 54
+    },
+    {
+      "store_id": "store-042",
+      "return_reason_code": "other",
+      "message_count": 132,
+      "orders_touched": 18,
+      "avg_sentiment": 0.04254545454545455,
+      "refund_mentions": 59
+    },
+    {
+      "store_id": "store-040",
+      "return_reason_code": "changed_mind",
+      "message_count": 131,
+      "orders_touched": 17,
+      "avg_sentiment": 0.07200763358778628,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-048",
+      "return_reason_code": "damaged",
+      "message_count": 131,
+      "orders_touched": 16,
+      "avg_sentiment": 0.06061068702290077,
+      "refund_mentions": 52
+    },
+    {
+      "store_id": "store-009",
+      "return_reason_code": "other",
+      "message_count": 130,
+      "orders_touched": 18,
+      "avg_sentiment": 0.00736923076923077,
+      "refund_mentions": 42
+    },
+    {
+      "store_id": "store-009",
+      "return_reason_code": "wrong_item",
+      "message_count": 130,
+      "orders_touched": 18,
+      "avg_sentiment": 0.02466923076923077,
+      "refund_mentions": 51
+    },
+    {
+      "store_id": "store-046",
+      "return_reason_code": "wrong_item",
+      "message_count": 129,
+      "orders_touched": 18,
+      "avg_sentiment": -0.061720930232558126,
+      "refund_mentions": 50
+    },
+    {
+      "store_id": "store-026",
+      "return_reason_code": "changed_mind",
+      "message_count": 129,
+      "orders_touched": 16,
+      "avg_sentiment": 0.03691472868217055,
+      "refund_mentions": 50
+    },
+    {
+      "store_id": "store-035",
+      "return_reason_code": "changed_mind",
+      "message_count": 129,
+      "orders_touched": 16,
+      "avg_sentiment": 0.08495348837209302,
+      "refund_mentions": 55
+    },
+    {
+      "store_id": "store-026",
+      "return_reason_code": "wrong_item",
+      "message_count": 128,
+      "orders_touched": 16,
+      "avg_sentiment": 0.016070312499999982,
+      "refund_mentions": 43
+    },
+    {
+      "store_id": "store-027",
+      "return_reason_code": "changed_mind",
+      "message_count": 127,
+      "orders_touched": 19,
+      "avg_sentiment": 0.06944094488188977,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-048",
+      "return_reason_code": "other",
+      "message_count": 127,
+      "orders_touched": 16,
+      "avg_sentiment": -0.0381496062992126,
+      "refund_mentions": 45
+    },
+    {
+      "store_id": "store-028",
+      "return_reason_code": "changed_mind",
+      "message_count": 126,
+      "orders_touched": 17,
+      "avg_sentiment": 0.04244444444444444,
+      "refund_mentions": 43
+    },
+    {
+      "store_id": "store-006",
+      "return_reason_code": "missing_parts",
+      "message_count": 126,
+      "orders_touched": 16,
+      "avg_sentiment": -0.031738095238095246,
+      "refund_mentions": 52
+    },
+    {
+      "store_id": "store-016",
+      "return_reason_code": "changed_mind",
+      "message_count": 126,
+      "orders_touched": 17,
+      "avg_sentiment": 0.1049126984126984,
+      "refund_mentions": 57
+    },
+    {
+      "store_id": "store-047",
+      "return_reason_code": "wrong_item",
+      "message_count": 124,
+      "orders_touched": 15,
+      "avg_sentiment": 0.05037903225806449,
+      "refund_mentions": 52
+    },
+    {
+      "store_id": "store-044",
+      "return_reason_code": "other",
+      "message_count": 123,
+      "orders_touched": 15,
+      "avg_sentiment": -0.018292682926829253,
+      "refund_mentions": 52
+    },
+    {
+      "store_id": "store-040",
+      "return_reason_code": "other",
+      "message_count": 123,
+      "orders_touched": 17,
+      "avg_sentiment": -0.029447154471544706,
+      "refund_mentions": 41
+    },
+    {
+      "store_id": "store-006",
+      "return_reason_code": "wrong_item",
+      "message_count": 123,
+      "orders_touched": 16,
+      "avg_sentiment": 0.025796747967479685,
+      "refund_mentions": 51
+    },
+    {
+      "store_id": "store-002",
+      "return_reason_code": "other",
+      "message_count": 122,
+      "orders_touched": 15,
+      "avg_sentiment": -0.082483606557377,
+      "refund_mentions": 39
+    },
+    {
+      "store_id": "store-045",
+      "return_reason_code": "wrong_item",
+      "message_count": 121,
+      "orders_touched": 15,
+      "avg_sentiment": -0.0034462809917355534,
+      "refund_mentions": 46
+    },
+    {
+      "store_id": "store-002",
+      "return_reason_code": "changed_mind",
+      "message_count": 119,
+      "orders_touched": 15,
+      "avg_sentiment": -0.04285714285714284,
+      "refund_mentions": 47
+    },
+    {
+      "store_id": "store-033",
+      "return_reason_code": "missing_parts",
+      "message_count": 119,
+      "orders_touched": 13,
+      "avg_sentiment": 0.07245378151260502,
+      "refund_mentions": 38
+    },
+    {
+      "store_id": "store-047",
+      "return_reason_code": "changed_mind",
+      "message_count": 118,
+      "orders_touched": 15,
+      "avg_sentiment": 0.027889830508474576,
+      "refund_mentions": 50
+    },
+    {
+      "store_id": "store-045",
+      "return_reason_code": "missing_parts",
+      "message_count": 118,
+      "orders_touched": 15,
+      "avg_sentiment": 0.0352457627118644,
+      "refund_mentions": 33
+    },
+    {
+      "store_id": "store-033",
+      "return_reason_code": "wrong_item",
+      "message_count": 117,
+      "orders_touched": 13,
+      "avg_sentiment": -0.00017094017094019482,
+      "refund_mentions": 56
+    },
+    {
+      "store_id": "store-033",
+      "return_reason_code": "other",
+      "message_count": 116,
+      "orders_touched": 13,
+      "avg_sentiment": -0.007499999999999997,
+      "refund_mentions": 47
+    },
+    {
+      "store_id": "store-045",
+      "return_reason_code": "other",
+      "message_count": 115,
+      "orders_touched": 15,
+      "avg_sentiment": 0.12808695652173915,
+      "refund_mentions": 40
+    },
+    {
+      "store_id": "store-026",
+      "return_reason_code": "damaged",
+      "message_count": 114,
+      "orders_touched": 16,
+      "avg_sentiment": 0.03857017543859647,
+      "refund_mentions": 47
+    },
+    {
+      "store_id": "store-012",
+      "return_reason_code": "changed_mind",
+      "message_count": 111,
+      "orders_touched": 13,
+      "avg_sentiment": -0.05065765765765766,
+      "refund_mentions": 50
+    },
+    {
+      "store_id": "store-002",
+      "return_reason_code": "wrong_item",
+      "message_count": 110,
+      "orders_touched": 15,
+      "avg_sentiment": 0.0017818181818181976,
+      "refund_mentions": 43
+    },
+    {
+      "store_id": "store-045",
+      "return_reason_code": "changed_mind",
+      "message_count": 110,
+      "orders_touched": 15,
+      "avg_sentiment": 0.016736363636363643,
+      "refund_mentions": 41
+    },
+    {
+      "store_id": "store-012",
+      "return_reason_code": "missing_parts",
+      "message_count": 109,
+      "orders_touched": 13,
+      "avg_sentiment": 0.0671651376146789,
+      "refund_mentions": 42
+    },
+    {
+      "store_id": "store-012",
+      "return_reason_code": "damaged",
+      "message_count": 109,
+      "orders_touched": 13,
+      "avg_sentiment": 0.04835779816513761,
+      "refund_mentions": 44
+    },
+    {
+      "store_id": "store-033",
+      "return_reason_code": "changed_mind",
+      "message_count": 108,
+      "orders_touched": 13,
+      "avg_sentiment": -0.01769444444444445,
+      "refund_mentions": 40
+    },
+    {
+      "store_id": "store-002",
+      "return_reason_code": "missing_parts",
+      "message_count": 104,
+      "orders_touched": 15,
+      "avg_sentiment": 0.042288461538461546,
+      "refund_mentions": 42
+    },
+    {
+      "store_id": "store-023",
+      "return_reason_code": "missing_parts",
+      "message_count": 103,
+      "orders_touched": 11,
+      "avg_sentiment": -0.028349514563106765,
+      "refund_mentions": 35
+    },
+    {
+      "store_id": "store-033",
+      "return_reason_code": "damaged",
+      "message_count": 100,
+      "orders_touched": 13,
+      "avg_sentiment": 0.06491999999999999,
+      "refund_mentions": 34
+    },
+    {
+      "store_id": "store-012",
+      "return_reason_code": "wrong_item",
+      "message_count": 98,
+      "orders_touched": 13,
+      "avg_sentiment": 0.13040816326530608,
+      "refund_mentions": 32
+    },
+    {
+      "store_id": "store-012",
+      "return_reason_code": "other",
+      "message_count": 93,
+      "orders_touched": 13,
+      "avg_sentiment": -0.029505376344086037,
+      "refund_mentions": 33
+    },
+    {
+      "store_id": "store-023",
+      "return_reason_code": "damaged",
+      "message_count": 89,
+      "orders_touched": 11,
+      "avg_sentiment": 0.005168539325842694,
+      "refund_mentions": 43
+    },
+    {
+      "store_id": "store-023",
+      "return_reason_code": "changed_mind",
+      "message_count": 86,
+      "orders_touched": 11,
+      "avg_sentiment": 0.021720930232558132,
+      "refund_mentions": 29
+    },
+    {
+      "store_id": "store-023",
+      "return_reason_code": "other",
+      "message_count": 82,
+      "orders_touched": 11,
+      "avg_sentiment": -0.09645121951219512,
+      "refund_mentions": 29
+    },
+    {
+      "store_id": "store-023",
+      "return_reason_code": "wrong_item",
+      "message_count": 80,
+      "orders_touched": 11,
+      "avg_sentiment": -0.03903749999999999,
+      "refund_mentions": 37
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "job_run_id": "00g7ufjavonpr80b",
+  "submit_api_seconds": 1,
+  "provision_to_running_seconds": 110,
+  "running_to_finish_seconds": 307,
+  "control_plane_wall_seconds": 417
+}

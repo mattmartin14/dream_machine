@@ -1,0 +1,28 @@
+{
+  "benchmark_id": "20260812T141148Z",
+  "engine": "spark",
+  "status": "succeeded",
+  "run_date": "2026-08-08",
+  "bucket": "matt-sbx-bucket-1-us-east-1",
+  "input_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+  "logical_start_time": "2026-08-12T14:15:50.352829+00:00",
+  "logical_end_time": "2026-08-12T14:18:26.476188+00:00",
+  "elapsed_seconds": 156.123358,
+  "counts": {
+    "transcripts": 1000,
+    "messages": 131100,
+    "result_rows": 250
+  },
+  "stage_timings": {
+    "read": 124.080291,
+    "transform": 0.613219,
+    "write": 31.429817,
+    "total": 156.123358
+  },
+  "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=spark/aggregate_results/",
+  "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=spark/benchmark_result.json",
+  "emitted_at": "2026-08-12T14:20:05.121394+00:00",
+  "extra": {
+    "skew_analysis_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260812T141148Z/engine=spark/skew_analysis.json"
+  }
+}
