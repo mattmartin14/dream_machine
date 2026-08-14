@@ -1,0 +1,171 @@
+{
+  "benchmark_id": "20260813T164750Z-r3",
+  "run_date": "2026-08-08",
+  "region": "us-east-1",
+  "generated_at_utc": "2026-08-14T12:33:14.317178+00:00",
+  "runtime_estimate_usd": {
+    "duckdb_ecs_fargate": {
+      "estimated_total_usd": 0.00153597,
+      "cpu_component_usd": 0.00125933,
+      "memory_component_usd": 0.00027664,
+      "assumptions": {
+        "task_vcpu": 2.0,
+        "task_memory_gb": 4.0,
+        "billable_seconds_used": 56.0,
+        "fargate_vcpu_price_per_second": 1.1244e-05,
+        "fargate_memory_price_per_gb_second": 1.235e-06
+      }
+    },
+    "spark_emr_serverless": {
+      "estimated_total_usd": 0.02882331,
+      "vcpu_component_usd": 0.02168109,
+      "memory_component_usd": 0.00714223,
+      "assumptions": {
+        "billed_vcpu_hours": 0.412,
+        "billed_memory_gb_hours": 1.236,
+        "emr_serverless_vcpu_hour_price": 0.052624,
+        "emr_serverless_memory_gb_hour_price": 0.0057785
+      }
+    },
+    "spark_vs_duckdb_ratio": 18.765569
+  },
+  "cost_explorer": {
+    "service_breakdown_query": {
+      "ok": true,
+      "data": {
+        "GroupDefinitions": [
+          {
+            "Type": "DIMENSION",
+            "Key": "SERVICE"
+          }
+        ],
+        "ResultsByTime": [
+          {
+            "TimePeriod": {
+              "Start": "2026-08-08",
+              "End": "2026-08-09"
+            },
+            "Total": {},
+            "Groups": [
+              {
+                "Keys": [
+                  "AWS Glue"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0",
+                    "Unit": "USD"
+                  }
+                }
+              },
+              {
+                "Keys": [
+                  "Amazon Simple Storage Service"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0.0000391059",
+                    "Unit": "USD"
+                  }
+                }
+              },
+              {
+                "Keys": [
+                  "AmazonCloudWatch"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0",
+                    "Unit": "USD"
+                  }
+                }
+              }
+            ],
+            "Estimated": true
+          },
+          {
+            "TimePeriod": {
+              "Start": "2026-08-09",
+              "End": "2026-08-10"
+            },
+            "Total": {},
+            "Groups": [
+              {
+                "Keys": [
+                  "AWS Glue"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0",
+                    "Unit": "USD"
+                  }
+                }
+              },
+              {
+                "Keys": [
+                  "Amazon Simple Storage Service"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0.0322050607",
+                    "Unit": "USD"
+                  }
+                }
+              },
+              {
+                "Keys": [
+                  "AmazonCloudWatch"
+                ],
+                "Metrics": {
+                  "UnblendedCost": {
+                    "Amount": "0",
+                    "Unit": "USD"
+                  }
+                }
+              }
+            ],
+            "Estimated": true
+          }
+        ],
+        "DimensionValueAttributes": []
+      }
+    },
+    "tag_visibility": {
+      "Project": {
+        "ok": true,
+        "data": {
+          "Tags": [
+            ""
+          ],
+          "ReturnSize": 1,
+          "TotalSize": 1
+        }
+      },
+      "ManagedBy": {
+        "ok": true,
+        "data": {
+          "Tags": [
+            ""
+          ],
+          "ReturnSize": 1,
+          "TotalSize": 1
+        }
+      },
+      "Benchmark": {
+        "ok": true,
+        "data": {
+          "Tags": [
+            ""
+          ],
+          "ReturnSize": 1,
+          "TotalSize": 1
+        }
+      }
+    },
+    "notes": [
+      "Cost Explorer data can lag by 24h or longer.",
+      "Tag-based attribution requires activated cost allocation tags and post-activation usage.",
+      "Runtime estimates are benchmark-specific and available immediately."
+    ]
+  }
+}

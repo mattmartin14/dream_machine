@@ -1,0 +1,411 @@
+{
+  "transcript_id": "9e5d8461-12f5-47bd-8e67-2ce46f641d21",
+  "order_id": "order-000001",
+  "customer_id": "cust-380150",
+  "store_id": "store-001",
+  "created_at": "2026-08-09T00:34:36.426338+00:00",
+  "return_intent": true,
+  "product_sku": "HW-5634",
+  "messages": [
+    {
+      "ts": "2026-08-09T00:34:36.426484+00:00",
+      "speaker": "bot",
+      "message_id": "dd4735af-0910-4335-bb70-2a52639f2893",
+      "text": "I need to return this because a part is missing. Message index 0. xxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": -0.021,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:37.426506+00:00",
+      "speaker": "agent",
+      "message_id": "fa6f300f-4692-41f2-8ce9-8fca101bd5c7",
+      "text": "Can I return this if the receipt is missing? Message index 1. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "escalation",
+      "sentiment_score": 0.526,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:38.426517+00:00",
+      "speaker": "bot",
+      "message_id": "d07ae92f-d506-4788-8f47-0f0e1359b947",
+      "text": "I bought this drill but it does not power on. Message index 2. xxxxxxxxxxxxxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.144,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:39.426524+00:00",
+      "speaker": "agent",
+      "message_id": "ecf2001e-8b43-45b3-887a-b730ff8e9092",
+      "text": "The box arrived with cracks on the side. Message index 3. xxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": -0.054,
+      "return_reason_code": "changed_mind",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:40.426531+00:00",
+      "speaker": "customer",
+      "message_id": "c2df9dc6-53a4-4307-b423-1bb2e86d0179",
+      "text": "The color does not match what I ordered. Message index 4. xxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.005,
+      "return_reason_code": "other",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:41.426538+00:00",
+      "speaker": "customer",
+      "message_id": "11825b34-bff5-41e5-884c-f9d83fad00f0",
+      "text": "The color does not match what I ordered. Message index 5. xxxxxx",
+      "intent": "escalation",
+      "sentiment_score": 0.821,
+      "return_reason_code": "damaged",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:42.426544+00:00",
+      "speaker": "customer",
+      "message_id": "69a2da32-0614-4f40-925c-3c1fe5d78bb5",
+      "text": "Can I get a refund to the original payment method? Message index 6. xxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": -0.061,
+      "return_reason_code": "missing_parts",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:43.426550+00:00",
+      "speaker": "customer",
+      "message_id": "31bc4e53-0dd5-4adc-97dd-19efebfdffa6",
+      "text": "Can I get a refund to the original payment method? Message index 7. xxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": 0.705,
+      "return_reason_code": "other",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:44.426556+00:00",
+      "speaker": "bot",
+      "message_id": "46f24145-b9d9-45f2-9724-3caeff619ce8",
+      "text": "Can I get a refund to the original payment method? Message index 8. xxxxxxxxxxxxxxxxxxxx",
+      "intent": "policy_question",
+      "sentiment_score": 0.745,
+      "return_reason_code": "damaged",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:45.426562+00:00",
+      "speaker": "bot",
+      "message_id": "05b827d1-d273-4c55-b01d-6a76a1fda779",
+      "text": "Can I get a refund to the original payment method? Message index 9. xxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": 0.995,
+      "return_reason_code": "damaged",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:46.426568+00:00",
+      "speaker": "bot",
+      "message_id": "8fbeb2ba-084a-43c3-946a-68c1be6b6c0f",
+      "text": "Can I get a refund to the original payment method? Message index 10. xxxxxx",
+      "intent": "greeting",
+      "sentiment_score": -0.113,
+      "return_reason_code": "missing_parts",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:47.426574+00:00",
+      "speaker": "customer",
+      "message_id": "884bc340-2409-4f41-a404-0ace64b5bb0f",
+      "text": "Can I return this if the receipt is missing? Message index 11. xx",
+      "intent": "reason",
+      "sentiment_score": -0.283,
+      "return_reason_code": "changed_mind",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:48.426580+00:00",
+      "speaker": "bot",
+      "message_id": "0b42cf2d-5c2f-42f8-b930-8469481b7ae9",
+      "text": "The color does not match what I ordered. Message index 12. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": 0.585,
+      "return_reason_code": "wrong_item",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:49.426586+00:00",
+      "speaker": "bot",
+      "message_id": "6214b803-a136-4ccc-94b9-a5cec7559bfd",
+      "text": "The color does not match what I ordered. Message index 13. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": -0.518,
+      "return_reason_code": "other",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:50.426592+00:00",
+      "speaker": "agent",
+      "message_id": "730a1c93-e0b4-4cb6-b632-88b77d79b991",
+      "text": "Can I get a refund to the original payment method? Message index 14. xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "policy_question",
+      "sentiment_score": -0.489,
+      "return_reason_code": "damaged",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:51.426597+00:00",
+      "speaker": "bot",
+      "message_id": "8ea581fe-abd6-48ea-9487-af186ecd06d4",
+      "text": "Can I return this if the receipt is missing? Message index 15. xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "escalation",
+      "sentiment_score": -0.684,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:52.426603+00:00",
+      "speaker": "bot",
+      "message_id": "57affd0a-ec10-456a-951f-c6355fa98b40",
+      "text": "Can I return this if the receipt is missing? Message index 16. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "policy_question",
+      "sentiment_score": 0.381,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:53.426609+00:00",
+      "speaker": "agent",
+      "message_id": "1a697ddb-87ee-4dc7-a63b-b9b0f0472c0b",
+      "text": "The color does not match what I ordered. Message index 17. xxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": -0.526,
+      "return_reason_code": "other",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:54.426614+00:00",
+      "speaker": "agent",
+      "message_id": "b67b4781-a38e-4278-9986-d5d96d4208a8",
+      "text": "Can I get a refund to the original payment method? Message index 18. xxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": 0.956,
+      "return_reason_code": "changed_mind",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:55.426620+00:00",
+      "speaker": "bot",
+      "message_id": "0923eed8-873a-40c8-b9cc-9a6990b716e3",
+      "text": "Can I get a refund to the original payment method? Message index 19. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": 0.821,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:56.426626+00:00",
+      "speaker": "bot",
+      "message_id": "50cac3e0-c140-43cd-8b38-845b15ed0578",
+      "text": "I bought this drill but it does not power on. Message index 20. xxxxxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": -0.562,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:57.426631+00:00",
+      "speaker": "customer",
+      "message_id": "28c6ff0b-ecce-455a-902c-fd35ed4366f1",
+      "text": "Can I get a refund to the original payment method? Message index 21. xxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": 0.293,
+      "return_reason_code": "missing_parts",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:34:58.426637+00:00",
+      "speaker": "agent",
+      "message_id": "9491c28a-7740-416f-b61f-3e91f9e0ae78",
+      "text": "I need to return this because a part is missing. Message index 22. xx",
+      "intent": "resolution",
+      "sentiment_score": -0.737,
+      "return_reason_code": "missing_parts",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:34:59.426643+00:00",
+      "speaker": "customer",
+      "message_id": "f9f4592c-e551-468b-aaf6-52b6892a23ad",
+      "text": "I bought this drill but it does not power on. Message index 23. xxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.573,
+      "return_reason_code": "missing_parts",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:00.426649+00:00",
+      "speaker": "agent",
+      "message_id": "add3045a-6856-405b-a87c-bbffb1372a5d",
+      "text": "I bought this drill but it does not power on. Message index 24. xxxxxxxxxxxxxxxxx",
+      "intent": "policy_question",
+      "sentiment_score": 0.935,
+      "return_reason_code": "missing_parts",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:01.426655+00:00",
+      "speaker": "agent",
+      "message_id": "852ea92b-9528-410b-84bc-bb37f7bf9a5a",
+      "text": "The box arrived with cracks on the side. Message index 25. xxxxxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": -0.718,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:02.426661+00:00",
+      "speaker": "agent",
+      "message_id": "11fe1d3a-300a-4d1a-bcb5-6404c374d532",
+      "text": "I need to return this because a part is missing. Message index 26. xxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": 0.581,
+      "return_reason_code": "damaged",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:35:03.426666+00:00",
+      "speaker": "agent",
+      "message_id": "5c928662-f4d5-46d4-b9a4-36c3daac24a3",
+      "text": "The color does not match what I ordered. Message index 27. xxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": 0.498,
+      "return_reason_code": "missing_parts",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:04.426674+00:00",
+      "speaker": "customer",
+      "message_id": "f389233e-29c0-4d59-adc3-ffe6072af497",
+      "text": "Can I return this if the receipt is missing? Message index 28. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": -0.532,
+      "return_reason_code": "damaged",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:05.426680+00:00",
+      "speaker": "bot",
+      "message_id": "8cd145a1-bd48-4b61-b183-cb392a8f33c0",
+      "text": "Can I return this if the receipt is missing? Message index 29. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.295,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:06.426686+00:00",
+      "speaker": "agent",
+      "message_id": "50b9d365-fbee-4716-a3d5-9e32d07c7365",
+      "text": "Can I get a refund to the original payment method? Message index 30. xxxxxxxxxxxxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": -0.72,
+      "return_reason_code": "damaged",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:35:07.426691+00:00",
+      "speaker": "customer",
+      "message_id": "4cb0054f-b82a-4e40-81f6-7d0c50e2d18f",
+      "text": "The box arrived with cracks on the side. Message index 31. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.775,
+      "return_reason_code": "wrong_item",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:35:08.426697+00:00",
+      "speaker": "bot",
+      "message_id": "7d92203a-73fa-4391-a1b4-eef6cf11e589",
+      "text": "Can I get a refund to the original payment method? Message index 32. xxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "resolution",
+      "sentiment_score": 0.892,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:09.426703+00:00",
+      "speaker": "bot",
+      "message_id": "d0aa8332-2713-4d0c-94f4-bdb446348382",
+      "text": "The color does not match what I ordered. Message index 33. xxxxxxxxx",
+      "intent": "greeting",
+      "sentiment_score": 0.667,
+      "return_reason_code": "other",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:10.426708+00:00",
+      "speaker": "bot",
+      "message_id": "ebe780ec-ed17-45b7-9220-487ba0e880dd",
+      "text": "The box arrived with cracks on the side. Message index 34. xxxxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": -0.565,
+      "return_reason_code": "changed_mind",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:11.426714+00:00",
+      "speaker": "bot",
+      "message_id": "5604491e-c243-44cc-9734-773fcacc1ba6",
+      "text": "The box arrived with cracks on the side. Message index 35. xxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": 0.089,
+      "return_reason_code": "missing_parts",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:35:12.426719+00:00",
+      "speaker": "customer",
+      "message_id": "7d69be10-2be7-42f8-99c0-04216536c8d4",
+      "text": "I bought this drill but it does not power on. Message index 36. xxxxxxxxxxxxxxxxx",
+      "intent": "policy_question",
+      "sentiment_score": -0.817,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:13.426725+00:00",
+      "speaker": "customer",
+      "message_id": "11fd5e38-fa7b-4d6d-9139-43b7d7afe437",
+      "text": "The box arrived with cracks on the side. Message index 37. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": -0.513,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    },
+    {
+      "ts": "2026-08-09T00:35:14.426731+00:00",
+      "speaker": "bot",
+      "message_id": "cc1520f5-ecd3-45ba-b791-7e8b14b44620",
+      "text": "The box arrived with cracks on the side. Message index 38. xxxxxxxxxxxxx",
+      "intent": "return_request",
+      "sentiment_score": 0.173,
+      "return_reason_code": "wrong_item",
+      "refund_requested": true
+    },
+    {
+      "ts": "2026-08-09T00:35:15.426736+00:00",
+      "speaker": "customer",
+      "message_id": "4e9ccfbc-5402-46bb-9393-785a80084711",
+      "text": "I need to return this because a part is missing. Message index 39. xxxxxxxxx",
+      "intent": "reason",
+      "sentiment_score": 0.717,
+      "return_reason_code": "wrong_item",
+      "refund_requested": false
+    }
+  ]
+}

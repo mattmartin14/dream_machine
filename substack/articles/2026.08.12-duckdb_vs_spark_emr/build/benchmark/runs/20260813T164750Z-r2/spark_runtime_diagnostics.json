@@ -1,19 +1,19 @@
 {
-  "benchmark_id": "20260813T164750Z-r3",
-  "job_run_id": "00g7vcerig4kp00b",
+  "benchmark_id": "20260813T164750Z-r2",
+  "job_run_id": "00g7vca3srqiog0b",
   "state": "SUCCESS",
   "state_details": "",
   "attempt": 1,
   "queued_duration_milliseconds": null,
-  "total_execution_duration_seconds": 291,
+  "total_execution_duration_seconds": 315,
   "total_resource_utilization": {
-    "vCPUHour": 0.396,
-    "memoryGBHour": 1.188,
-    "storageGBHour": 7.917
+    "vCPUHour": 0.432,
+    "memoryGBHour": 1.296,
+    "storageGBHour": 8.639
   },
   "billed_resource_utilization": {
-    "vCPUHour": 0.412,
-    "memoryGBHour": 1.236,
+    "vCPUHour": 0.443,
+    "memoryGBHour": 1.328,
     "storageGBHour": 0.0
   },
   "monitoring_configuration": {
@@ -32,8 +32,8 @@
     "5",
     "6",
     "8",
-    "80",
-    "81"
+    "82",
+    "84"
   ],
   "observed_executor_count": 9
 }

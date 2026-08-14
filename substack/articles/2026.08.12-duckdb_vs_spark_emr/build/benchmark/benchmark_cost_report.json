@@ -1,0 +1,307 @@
+{
+  "generated_at_utc": "2026-08-14T12:32:53.645187+00:00",
+  "run_ids": [
+    "20260813T164750Z-r1",
+    "20260813T164750Z-r2",
+    "20260813T164750Z-r3"
+  ],
+  "time_period": {
+    "start_date": "2026-08-12",
+    "end_date": "2026-08-16"
+  },
+  "grand_total_unblended_cost_usd": 0.00578869,
+  "runs": [
+    {
+      "benchmark_id": "20260813T164750Z-r1",
+      "query": {
+        "start_date": "2026-08-12",
+        "end_date": "2026-08-16"
+      },
+      "ce": {
+        "ok": true,
+        "data": {
+          "GroupDefinitions": [
+            {
+              "Type": "DIMENSION",
+              "Key": "SERVICE"
+            }
+          ],
+          "ResultsByTime": [
+            {
+              "TimePeriod": {
+                "Start": "2026-08-12",
+                "End": "2026-08-13"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-13",
+                "End": "2026-08-14"
+              },
+              "Total": {},
+              "Groups": [
+                {
+                  "Keys": [
+                    "Amazon Elastic Container Service"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.0016456666",
+                      "Unit": "USD"
+                    }
+                  }
+                },
+                {
+                  "Keys": [
+                    "Amazon Virtual Private Cloud"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.000095835",
+                      "Unit": "USD"
+                    }
+                  }
+                }
+              ],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-14",
+                "End": "2026-08-15"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-15",
+                "End": "2026-08-16"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            }
+          ],
+          "DimensionValueAttributes": []
+        }
+      },
+      "total_unblended_cost_usd": 0.0017415
+    },
+    {
+      "benchmark_id": "20260813T164750Z-r2",
+      "query": {
+        "start_date": "2026-08-12",
+        "end_date": "2026-08-16"
+      },
+      "ce": {
+        "ok": true,
+        "data": {
+          "GroupDefinitions": [
+            {
+              "Type": "DIMENSION",
+              "Key": "SERVICE"
+            }
+          ],
+          "ResultsByTime": [
+            {
+              "TimePeriod": {
+                "Start": "2026-08-12",
+                "End": "2026-08-13"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-13",
+                "End": "2026-08-14"
+              },
+              "Total": {},
+              "Groups": [
+                {
+                  "Keys": [
+                    "Amazon Elastic Container Service"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.0021667944",
+                      "Unit": "USD"
+                    }
+                  }
+                },
+                {
+                  "Keys": [
+                    "Amazon Virtual Private Cloud"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.000145835",
+                      "Unit": "USD"
+                    }
+                  }
+                }
+              ],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-14",
+                "End": "2026-08-15"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-15",
+                "End": "2026-08-16"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            }
+          ],
+          "DimensionValueAttributes": []
+        }
+      },
+      "total_unblended_cost_usd": 0.00231263
+    },
+    {
+      "benchmark_id": "20260813T164750Z-r3",
+      "query": {
+        "start_date": "2026-08-12",
+        "end_date": "2026-08-16"
+      },
+      "ce": {
+        "ok": true,
+        "data": {
+          "GroupDefinitions": [
+            {
+              "Type": "DIMENSION",
+              "Key": "SERVICE"
+            }
+          ],
+          "ResultsByTime": [
+            {
+              "TimePeriod": {
+                "Start": "2026-08-12",
+                "End": "2026-08-13"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-13",
+                "End": "2026-08-14"
+              },
+              "Total": {},
+              "Groups": [
+                {
+                  "Keys": [
+                    "Amazon Elastic Container Service"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.0016456666",
+                      "Unit": "USD"
+                    }
+                  }
+                },
+                {
+                  "Keys": [
+                    "Amazon Virtual Private Cloud"
+                  ],
+                  "Metrics": {
+                    "UnblendedCost": {
+                      "Amount": "0.00008889",
+                      "Unit": "USD"
+                    }
+                  }
+                }
+              ],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-14",
+                "End": "2026-08-15"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            },
+            {
+              "TimePeriod": {
+                "Start": "2026-08-15",
+                "End": "2026-08-16"
+              },
+              "Total": {
+                "UnblendedCost": {
+                  "Amount": "0",
+                  "Unit": "USD"
+                }
+              },
+              "Groups": [],
+              "Estimated": true
+            }
+          ],
+          "DimensionValueAttributes": []
+        }
+      },
+      "total_unblended_cost_usd": 0.00173456
+    }
+  ],
+  "notes": [
+    "Cost Explorer data may lag by 24-48h or longer.",
+    "Tag activation is forward-looking and may not backfill old charges."
+  ]
+}

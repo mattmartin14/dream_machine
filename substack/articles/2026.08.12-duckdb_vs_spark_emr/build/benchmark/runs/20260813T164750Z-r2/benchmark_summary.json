@@ -1,58 +1,58 @@
 {
-  "benchmark_id": "20260813T164750Z-r3",
+  "benchmark_id": "20260813T164750Z-r2",
   "run_date": "2026-08-08",
   "engines": {
     "duckdb": {
-      "in_job_elapsed_seconds": 36.15456,
+      "in_job_elapsed_seconds": 71.472371,
       "counts": {
         "transcripts": 1000,
         "messages": 131100,
         "result_rows": 250
       },
-      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r3/engine=duckdb/aggregate_results.json",
-      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r3/engine=duckdb/benchmark_result.json",
+      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r2/engine=duckdb/aggregate_results.json",
+      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r2/engine=duckdb/benchmark_result.json",
       "control_plane": {
-        "benchmark_id": "20260813T164750Z-r3",
-        "task_arn": "arn:aws:ecs:us-east-1:772434294110:task/duckdb-vs-spark-emr/6ca8bf0948ab4fba89c86276f082829d",
+        "benchmark_id": "20260813T164750Z-r2",
+        "task_arn": "arn:aws:ecs:us-east-1:772434294110:task/duckdb-vs-spark-emr/e3d488d4533f415ba4403646173856a1",
         "submit_api_seconds": 3,
         "provision_to_running_seconds": 23,
-        "run_to_stop_seconds": 56,
-        "control_plane_wall_seconds": 79
+        "run_to_stop_seconds": 101,
+        "control_plane_wall_seconds": 124
       }
     },
     "spark": {
-      "in_job_elapsed_seconds": 150.302851,
+      "in_job_elapsed_seconds": 166.718714,
       "counts": {
         "transcripts": 1000,
         "messages": 131100,
         "result_rows": 250
       },
-      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r3/engine=spark/aggregate_results/",
-      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r3/engine=spark/benchmark_result.json",
+      "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r2/engine=spark/aggregate_results/",
+      "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r2/engine=spark/benchmark_result.json",
       "control_plane": {
-        "benchmark_id": "20260813T164750Z-r3",
-        "job_run_id": "00g7vcerig4kp00b",
+        "benchmark_id": "20260813T164750Z-r2",
+        "job_run_id": "00g7vca3srqiog0b",
         "submit_api_seconds": 1,
-        "provision_to_running_seconds": 91,
-        "running_to_finish_seconds": 300,
-        "control_plane_wall_seconds": 391
+        "provision_to_running_seconds": 90,
+        "running_to_finish_seconds": 311,
+        "control_plane_wall_seconds": 401
       },
       "runtime_diagnostics": {
-        "benchmark_id": "20260813T164750Z-r3",
-        "job_run_id": "00g7vcerig4kp00b",
+        "benchmark_id": "20260813T164750Z-r2",
+        "job_run_id": "00g7vca3srqiog0b",
         "state": "SUCCESS",
         "state_details": "",
         "attempt": 1,
         "queued_duration_milliseconds": null,
-        "total_execution_duration_seconds": 291,
+        "total_execution_duration_seconds": 315,
         "total_resource_utilization": {
-          "vCPUHour": 0.396,
-          "memoryGBHour": 1.188,
-          "storageGBHour": 7.917
+          "vCPUHour": 0.432,
+          "memoryGBHour": 1.296,
+          "storageGBHour": 8.639
         },
         "billed_resource_utilization": {
-          "vCPUHour": 0.412,
-          "memoryGBHour": 1.236,
+          "vCPUHour": 0.443,
+          "memoryGBHour": 1.328,
           "storageGBHour": 0.0
         },
         "monitoring_configuration": {
@@ -71,13 +71,13 @@
           "5",
           "6",
           "8",
-          "80",
-          "81"
+          "82",
+          "84"
         ],
         "observed_executor_count": 9
       },
       "skew_analysis": {
-        "benchmark_id": "20260813T164750Z-r3",
+        "benchmark_id": "20260813T164750Z-r2",
         "engine": "spark",
         "run_date": "2026-08-08",
         "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
@@ -205,7 +205,7 @@
     }
   },
   "comparison": {
-    "spark_vs_duckdb_in_job_ratio": 4.157231,
-    "in_job_elapsed_delta_seconds": 114.148291
+    "spark_vs_duckdb_in_job_ratio": 2.332632,
+    "in_job_elapsed_delta_seconds": 95.246343
   }
 }

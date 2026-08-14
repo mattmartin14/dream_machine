@@ -1,0 +1,65 @@
+{
+  "generated_at_utc": "2026-08-14T12:33:05.355445+00:00",
+  "requested_run_ids": [
+    "20260813T164750Z-r1",
+    "20260813T164750Z-r2",
+    "20260813T164750Z-r3"
+  ],
+  "missing_run_ids": [],
+  "included_run_count": 3,
+  "aggregate": {
+    "duckdb_elapsed_seconds": {
+      "avg": 48.799824,
+      "min": 36.15456,
+      "max": 71.472371,
+      "stdev": 16.067498
+    },
+    "spark_elapsed_seconds": {
+      "avg": 167.52556,
+      "min": 150.302851,
+      "max": 185.555115,
+      "stdev": 14.402981
+    },
+    "spark_vs_duckdb_ratio": {
+      "avg": 3.758533,
+      "min": 2.332632,
+      "max": 4.785735,
+      "stdev": 1.0404
+    }
+  },
+  "runs": [
+    {
+      "benchmark_id": "20260813T164750Z-r1",
+      "run_date": "2026-08-08",
+      "duckdb_elapsed_seconds": 38.772542,
+      "spark_elapsed_seconds": 185.555115,
+      "spark_vs_duckdb_ratio": 4.785735,
+      "duckdb_control_plane_seconds": 79,
+      "spark_control_plane_seconds": 446,
+      "spark_billed_vcpu_hours": 0.477,
+      "spark_billed_memory_gb_hours": 1.43
+    },
+    {
+      "benchmark_id": "20260813T164750Z-r2",
+      "run_date": "2026-08-08",
+      "duckdb_elapsed_seconds": 71.472371,
+      "spark_elapsed_seconds": 166.718714,
+      "spark_vs_duckdb_ratio": 2.332632,
+      "duckdb_control_plane_seconds": 124,
+      "spark_control_plane_seconds": 401,
+      "spark_billed_vcpu_hours": 0.443,
+      "spark_billed_memory_gb_hours": 1.328
+    },
+    {
+      "benchmark_id": "20260813T164750Z-r3",
+      "run_date": "2026-08-08",
+      "duckdb_elapsed_seconds": 36.15456,
+      "spark_elapsed_seconds": 150.302851,
+      "spark_vs_duckdb_ratio": 4.157231,
+      "duckdb_control_plane_seconds": 79,
+      "spark_control_plane_seconds": 391,
+      "spark_billed_vcpu_hours": 0.412,
+      "spark_billed_memory_gb_hours": 1.236
+    }
+  ]
+}

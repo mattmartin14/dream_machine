@@ -1,0 +1,25 @@
+{
+  "benchmark_id": "20260813T164750Z-r1",
+  "engine": "duckdb",
+  "status": "succeeded",
+  "run_date": "2026-08-08",
+  "bucket": "matt-sbx-bucket-1-us-east-1",
+  "input_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
+  "logical_start_time": "2026-08-13T16:48:10.990969+00:00",
+  "logical_end_time": "2026-08-13T16:48:49.763513+00:00",
+  "elapsed_seconds": 38.772542,
+  "counts": {
+    "transcripts": 1000,
+    "messages": 131100,
+    "result_rows": 250
+  },
+  "stage_timings": {
+    "read": 38.624797,
+    "transform": 0.049559,
+    "write": 0.098162,
+    "total": 38.772542
+  },
+  "output_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r1/engine=duckdb/aggregate_results.json",
+  "metrics_uri": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/results/run_date=2026-08-08/benchmark_id=20260813T164750Z-r1/engine=duckdb/benchmark_result.json",
+  "emitted_at": "2026-08-13T16:48:49.764606+00:00"
+}

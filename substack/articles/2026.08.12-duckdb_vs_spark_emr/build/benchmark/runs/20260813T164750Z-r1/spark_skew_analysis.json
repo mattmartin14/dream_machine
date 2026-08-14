@@ -1,5 +1,5 @@
 {
-  "benchmark_id": "20260813T164750Z-r3",
+  "benchmark_id": "20260813T164750Z-r1",
   "engine": "spark",
   "run_date": "2026-08-08",
   "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",
@@ -9,8 +9,8 @@
     "average": 71934.03,
     "min": 15370,
     "p50": 15650.0,
-    "p90": 15756.0,
-    "p95": 15796.0,
+    "p90": 15760.0,
+    "p95": 15800.0,
     "p99": 28200058.0,
     "max": 28200058,
     "max_to_p50_ratio": 1801.921

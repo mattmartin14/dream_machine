@@ -1,5 +1,5 @@
 {
-  "benchmark_id": "20260813T164750Z-r3",
+  "benchmark_id": "20260813T164750Z-r2",
   "engine": "spark",
   "run_date": "2026-08-08",
   "input_glob": "s3://matt-sbx-bucket-1-us-east-1/etl-skew-demo/raw/returns_chat/run_date=2026-08-08/*/chat_*.json",

@@ -7,7 +7,7 @@
       "--dataset-prefix", "raw/returns_chat",
       "--run-date", "2026-08-08",
       "--region", "us-east-1",
-      "--benchmark-id", "20260812T141148Z"
+      "--benchmark-id", "20260813T164750Z-r3"
     ],
     "sparkSubmitParameters": "--py-files s3://matt-sbx-bucket-1-us-east-1/etl/scripts/duckdb-vs-spark-emr/skew_demo_package.zip --conf spark.executor.cores=1 --conf spark.executor.memory=2g --conf spark.driver.cores=1 --conf spark.driver.memory=2g"
   }
