@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  printf '[quack-bootstrap] %s\n' "$*"
+}
+
+log "Installing operating-system packages"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y --no-install-recommends ca-certificates curl lsof unzip
+
+log "Installing DuckDB 1.5.5"
+duckdb_version="1.5.5"
+architecture="arm64"
+curl --fail --location --retry 3 \
+  "https://github.com/duckdb/duckdb/releases/download/v$${duckdb_version}/duckdb_cli-linux-$${architecture}.zip" \
+  -o /tmp/duckdb.zip
+unzip -o /tmp/duckdb.zip -d /usr/local/bin
+chmod 0755 /usr/local/bin/duckdb
+rm /tmp/duckdb.zip
+
+log "Writing Quack server configuration"
+install -d -m 0755 /opt/quack-server
+
+cat >/opt/quack-server/quack_server.sql <<'SQL'
+INSTALL quack;
+LOAD quack;
+CALL quack_serve('quack:0.0.0.0:${quack_port}', allow_other_hostname => true, token => '${quack_token}');
+SQL
+
+cat >/opt/quack-server/start_server.sh <<'SCRIPT'
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$${BASH_SOURCE[0]}")" && pwd)"
+catalog_file="$script_dir/quack_catalog.duckdb"
+
+# Quack needs DuckDB's CLI process to remain alive under systemd.
+/usr/bin/sleep infinity | /usr/local/bin/duckdb -init "$script_dir/quack_server.sql" "$catalog_file"
+SCRIPT
+chmod 0755 /opt/quack-server/start_server.sh
+
+cat >/opt/quack-server/stop_server.sh <<'SCRIPT'
+#!/usr/bin/env bash
+set -euo pipefail
+
+default_port="${quack_port}"
+port="$${1:-$default_port}"
+pids="$(lsof -ti "tcp:$port" || true)"
+
+if [[ -z "$pids" ]]; then
+  echo "No process listening on port $port."
+  exit 0
+fi
+
+kill $pids
+echo "Stopped quack server (pid: $pids) on port $port."
+SCRIPT
+chmod 0755 /opt/quack-server/stop_server.sh
+
+log "Registering the Quack systemd service"
+cat >/etc/systemd/system/quack.service <<'UNIT'
+[Unit]
+Description=Quack DuckDB remote protocol server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/quack-server
+ExecStart=/opt/quack-server/start_server.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+log "Starting Quack on port ${quack_port}"
+systemctl daemon-reload
+systemctl enable --now quack.service
+log "Quack bootstrap complete"

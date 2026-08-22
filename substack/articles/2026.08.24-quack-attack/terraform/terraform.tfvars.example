@@ -1,0 +1,6 @@
+aws_region           = "us-east-1"
+vpc_id               = "vpc-0123456789abcdef0"
+subnet_id            = "subnet-0123456789abcdef0"
+allowed_cidr_blocks  = ["203.0.113.25/32"]
+ducklake_bucket_name = "your-globally-unique-ducklake-poc-bucket"
+quack_token          = "replace-with-a-long-random-token"
