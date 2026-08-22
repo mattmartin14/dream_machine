@@ -54,4 +54,4 @@ For the concurrency demonstration, start ten local processes using the same shar
 
 ## Teardown
 
-Run `./scripts/destroy.sh` from the repository root. This POC teardown explicitly deletes all DuckLake Parquet data from S3 before destroying the bucket, as well as the instance, EIP, IAM resources, and networking. The detached root EBS volume must be removed manually if `delete_root_volume_on_termination` stays false.
+Run `./scripts/destroy.sh` from the repository root. This POC teardown explicitly deletes all DuckLake Parquet data from S3 before destroying the bucket, as well as the instance, EIP, IAM resources, and networking. Before it runs, the script asks whether to retain the root EBS volume containing the Quack catalog (the default) or permanently delete it after the EC2 instance terminates.
