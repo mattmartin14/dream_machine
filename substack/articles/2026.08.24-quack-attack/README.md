@@ -1,6 +1,6 @@
 # Quack EC2 POC
 
-This Terraform root deploys one Ubuntu ARM64 EC2 instance, an Elastic IP, a CIDR-restricted security group, and a private S3 bucket for DuckLake Parquet data. The instance's EBS root volume stores the Quack `.duckdb` catalog and defaults to `delete_root_volume_on_termination = false` so a stop/start or reboot preserves it. The bootstrap installs DuckDB 1.5.5 and starts Quack under systemd.
+The `terraform/` module deploys one Ubuntu ARM64 EC2 instance, an Elastic IP, a CIDR-restricted security group, and a private S3 bucket for DuckLake Parquet data. The instance's EBS root volume stores the Quack `.duckdb` catalog and defaults to `delete_root_volume_on_termination = false` so a stop/start or reboot preserves it. The bootstrap installs DuckDB 1.5.5 and starts Quack under systemd.
 
 The server is launched by systemd as:
 
@@ -12,7 +12,7 @@ The positional catalog file is intentional: Quack creates fresh server-side conn
 
 ## Deploy
 
-1. Copy `terraform.tfvars.example` to `terraform.tfvars` and supply your VPC, a **public** subnet, laptop egress CIDR, globally unique bucket name, and token. Terraform creates an EC2 key pair from `~/.ssh/quack-poc.pub` by default.
+1. Copy `terraform/terraform.tfvars.example` to `terraform/terraform.tfvars` and supply your VPC, a **public** subnet, laptop egress CIDR, globally unique bucket name, and token. Terraform creates an EC2 key pair from `~/.ssh/quack-poc.pub` by default.
 2. From the repository root, run `./scripts/deploy.sh` and approve the Terraform plan.
 3. Wait for cloud-init, then inspect the service with `ssh -i ~/.ssh/quack-poc ubuntu@$(terraform -chdir=terraform output -raw quack_public_ip) 'sudo systemctl status quack'`.
 
