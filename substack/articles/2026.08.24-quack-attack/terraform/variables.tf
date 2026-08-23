@@ -74,15 +74,15 @@ variable "root_volume_size_gb" {
 }
 
 variable "delete_root_volume_on_termination" {
-  description = "Whether terminating the instance also deletes its EBS root volume. Leave false for POC catalog safety."
+  description = "Whether terminating the instance also deletes its EBS root volume. Enabled by default so POC teardown removes all billable storage."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "force_destroy_ducklake_bucket" {
-  description = "Allow Terraform to delete a non-empty POC bucket during destroy."
+  description = "Allow Terraform to delete the non-empty DuckLake POC bucket during destroy."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "tags" {

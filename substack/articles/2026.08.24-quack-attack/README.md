@@ -22,7 +22,9 @@ The instance is ARM64 (`t4g.small`) to keep the POC inexpensive. Change `instanc
 
 Quack on port 9494 is plain HTTP. This POC deliberately has no TLS proxy, so `scripts/start_ducklake.sh` opens an SSH tunnel from `localhost:9494` on the laptop to port 9494 on EC2. Quack automatically uses HTTP for that local URI while SSH encrypts the laptop-to-EC2 connection. A Caddy/nginx TLS proxy and a domain are the next step for direct public client connections.
 
-Start a local in-memory DuckDB session with the remote DuckLake catalog active as `dl1`:
+The EC2 server owns the complete DuckLake setup: its `dl1` metadata catalog lives on EBS, and its Parquet data path is in the provisioned S3 bucket. DuckDB on EC2 uses its instance profile for S3 credentials. Clients do not load DuckLake or `httpfs`, provide a `DATA_PATH`, or configure AWS credentials.
+
+Start a local in-memory DuckDB session attached only to Quack:
 
 ```bash
 ./scripts/start_ducklake.sh
@@ -31,20 +33,21 @@ Start a local in-memory DuckDB session with the remote DuckLake catalog active a
 The script runs the following shape of SQL, printing the exact values for copy/paste into another local DuckDB terminal:
 
 ```sql
-INSTALL httpfs; LOAD httpfs;
-INSTALL ducklake; LOAD ducklake;
 INSTALL quack; LOAD quack;
 
 CREATE OR REPLACE SECRET quack_secret (TYPE quack, TOKEN '<quack token>');
-CREATE OR REPLACE SECRET ducklake_s3 (TYPE s3, PROVIDER credential_chain);
-
-ATTACH 'ducklake:quack:localhost:9494' AS dl1 (
-  DATA_PATH 's3://<ducklake bucket>/'
-);
-USE dl1;
+ATTACH 'quack:localhost:9494' AS remote;
 ```
 
-`DATA_PATH` is shared S3 storage rather than a local path. The default `credential_chain` resolves the local AWS CLI/SSO session; run `aws sso login` first when needed. `USE dl1` ensures unqualified `CREATE TABLE` and `INSERT` statements target the remote DuckLake catalog. Network requests can run concurrently, but DuckDB/DuckLake catalog writes serialize; that is expected.
+With DuckDB 1.5.5, execute server-owned DuckLake SQL through Quack's query macro:
+
+```sql
+SELECT * FROM remote.query('CREATE TABLE dl1.test (id INTEGER)');
+SELECT * FROM remote.query('INSERT INTO dl1.test VALUES (1), (2)');
+SELECT * FROM remote.query('SELECT * FROM dl1.test');
+```
+
+Network requests can run concurrently, but DuckDB/DuckLake catalog writes serialize; that is expected. DuckDB 2.0 is expected to replace `remote.query(...)` with `CONNECT`, allowing ordinary SQL to run on the server.
 
 ## Verify Persistence And Concurrency
 
@@ -54,4 +57,4 @@ For the concurrency demonstration, start ten local processes using the same shar
 
 ## Teardown
 
-Run `./scripts/destroy.sh` from the repository root. This POC teardown explicitly deletes all DuckLake Parquet data from S3 before destroying the bucket, as well as the instance, EIP, IAM resources, and networking. Before it runs, the script asks whether to retain the root EBS volume containing the Quack catalog (the default) or permanently delete it after the EC2 instance terminates.
+Run `./scripts/destroy.sh` from the repository root. This POC teardown deletes all managed resources: DuckLake Parquet data and its S3 bucket, the EC2 instance and root EBS volume, EIP, IAM resources, and networking. There is no retention prompt; a destroy is destructive by design.

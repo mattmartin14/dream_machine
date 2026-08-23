@@ -20,28 +20,12 @@ unzip -o /tmp/duckdb.zip -d /usr/local/bin
 chmod 0755 /usr/local/bin/duckdb
 rm /tmp/duckdb.zip
 
-log "Writing server-owned DuckLake and Quack configuration"
+log "Writing Quack server configuration"
 install -d -m 0755 /opt/quack-server
 
 cat >/opt/quack-server/quack_server.sql <<'SQL'
-INSTALL httpfs;
-LOAD httpfs;
-INSTALL ducklake;
-LOAD ducklake;
 INSTALL quack;
 LOAD quack;
-
--- The EC2 instance profile supplies S3 credentials through credential_chain.
-SET home_directory = '/root';
-CREATE OR REPLACE SECRET ducklake_s3 (
-  TYPE s3,
-  PROVIDER credential_chain,
-  REGION '${aws_region}'
-);
-ATTACH 'ducklake:/opt/quack-server/ducklake_metadata.ducklake' AS dl1 (
-  DATA_PATH '${ducklake_data_path}'
-);
-
 CALL quack_serve('quack:0.0.0.0:${quack_port}', allow_other_hostname => true, token => '${quack_token}');
 SQL
 
@@ -85,7 +69,6 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/quack-server
-Environment=HOME=/root
 ExecStart=/opt/quack-server/start_server.sh
 Restart=on-failure
 RestartSec=5

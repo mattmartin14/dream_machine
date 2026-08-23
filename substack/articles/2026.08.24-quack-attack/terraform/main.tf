@@ -142,8 +142,10 @@ resource "aws_instance" "quack" {
   }
 
   user_data = templatefile("${path.module}/templates/bootstrap.sh.tftpl", {
-    quack_port  = var.quack_port
-    quack_token = var.quack_token
+    aws_region         = var.aws_region
+    ducklake_data_path = "s3://${aws_s3_bucket.ducklake_data.bucket}/data/"
+    quack_port         = var.quack_port
+    quack_token        = var.quack_token
   })
 
   user_data_replace_on_change = false
