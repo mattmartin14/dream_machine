@@ -43,9 +43,8 @@ Server-owned DuckLake alias: dl1
 Server-owned S3 DATA_PATH: configured on EC2
 
 Quack client SQL:
-  INSTALL quack;
-  LOAD quack;
-  CREATE OR REPLACE SECRET quack_secret (TYPE quack, TOKEN '$quack_token');
+  INSTALL quack; LOAD quack;
+  CREATE SECRET quack_secret (TYPE quack, TOKEN '$quack_token');
   ATTACH 'quack:$local_quack_host' AS remote;
 
 Writing and reading dl1.quack_demo on the EC2-hosted DuckLake catalog.
