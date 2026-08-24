@@ -27,14 +27,7 @@ if ! command -v ssh >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! lsof -ti "tcp:$local_quack_port" >/dev/null 2>&1; then
-  ssh -f -N \
-    -o ExitOnForwardFailure=yes \
-    -o StrictHostKeyChecking=accept-new \
-    -i "$HOME/.ssh/quack-poc" \
-    -L "127.0.0.1:$local_quack_port:127.0.0.1:9494" \
-    "ubuntu@$quack_public_ip"
-fi
+"$script_dir/start_ssh.sh" >/dev/null 2>&1 || exit 1
 
 cat <<EOF
 Remote Quack endpoint: $quack_uri
@@ -44,7 +37,7 @@ Server-owned S3 DATA_PATH: configured on EC2
 
 Quack client SQL:
   INSTALL quack; LOAD quack;
-  CREATE SECRET quack_secret (TYPE quack, TOKEN '$quack_token');
+  CREATE  SECRET quack_secret (TYPE quack, TOKEN '$quack_token');
   ATTACH 'quack:$local_quack_host' AS remote;
 
 Writing and reading dl1.quack_demo on the EC2-hosted DuckLake catalog.
