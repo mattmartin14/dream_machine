@@ -1,6 +1,6 @@
 INSTALL quack; LOAD quack;
 CREATE SECRET quack_secret (TYPE quack, TOKEN 'get-to-da-choppa');
-ATTACH 'quack:quackattack.yolomatt.com:9494' AS remote;
+ATTACH 'quack:localhost:9494' AS remote;
 
 -- V 1.5.5 (works)
 FROM remote.query('create or replace table dl1.sales (id int)');
