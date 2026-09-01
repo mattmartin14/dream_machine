@@ -1,4 +1,5 @@
 .venv/
+.venv-pyflink/
 __pycache__/
 *.pyc
 ducklake/catalog.ducklake

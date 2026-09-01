@@ -12,6 +12,14 @@ producer.py --> Kafka "events" --> Flink dedup job --> Kafka "events-deduped" --
 
 Kafka and Flink run in Docker. The producer/loader run locally in a Python 3.13 venv managed by `uv` (PyFlink itself doesn't yet support Python 3.13, so the Flink containers install their own Python 3.11 internally — this doesn't affect your local env).
 
+For editor IntelliSense on `flink_job/dedup_job.py`, there's also a `.venv-pyflink` (Python 3.11 + `apache-flink`) that's used only by Pylance (via `pyrightconfig.json`) — it's never executed; the real job always runs inside the Flink containers. Recreate it with:
+
+```bash
+uv venv .venv-pyflink --python 3.11
+uv pip install --python .venv-pyflink/bin/python "setuptools<81" wheel
+uv pip install --python .venv-pyflink/bin/python --no-build-isolation apache-flink==1.19.1
+```
+
 ## Setup
 
 ```bash
