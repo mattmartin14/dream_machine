@@ -1,9 +1,15 @@
-"""Consumes deduped events from Kafka and appends them to a DuckLake table in batches."""
+"""Consumes deduped events from Kafka and appends them to a DuckLake table in batches.
+
+Batches are converted to a columnar pyarrow Table before insertion (rather than
+row-by-row `executemany`), and handed to DuckDB via its zero-copy Arrow scan
+support, which avoids per-row Python<->SQL binding overhead."""
 import json
 import time
+from datetime import datetime
 from pathlib import Path
 
 import duckdb
+import pyarrow as pa
 from confluent_kafka import Consumer
 
 BOOTSTRAP_SERVERS = "localhost:9092"
@@ -16,6 +22,14 @@ DATA_PATH = REPO_ROOT / "ducklake" / "data"
 
 BATCH_SIZE = 50
 BATCH_TIMEOUT_SECONDS = 5.0
+
+EVENTS_SCHEMA = pa.schema([
+    ("event_id", pa.string()),
+    ("event_time", pa.timestamp("us")),
+    ("user_id", pa.int32()),
+    ("event_type", pa.string()),
+    ("payload", pa.string()),
+])
 
 
 def get_ducklake_connection() -> duckdb.DuckDBPyConnection:
@@ -40,14 +54,17 @@ def get_ducklake_connection() -> duckdb.DuckDBPyConnection:
     return con
 
 
+def batch_to_arrow(batch: list[dict]) -> pa.Table:
+    columns = {field.name: [e[field.name] for e in batch] for field in EVENTS_SCHEMA}
+    # Kafka messages carry event_time as an ISO-8601 string, not a datetime.
+    columns["event_time"] = [datetime.fromisoformat(t) for t in columns["event_time"]]
+    return pa.Table.from_pydict(columns, schema=EVENTS_SCHEMA)
+
+
 def insert_batch(con: duckdb.DuckDBPyConnection, batch: list[dict]):
-    con.executemany(
-        "INSERT INTO lake.events VALUES (?, ?, ?, ?, ?)",
-        [
-            (e["event_id"], e["event_time"], e["user_id"], e["event_type"], e["payload"])
-            for e in batch
-        ],
-    )
+    arrow_table = batch_to_arrow(batch)
+    # DuckDB scans the Arrow table zero-copy when referenced by name in SQL.
+    con.execute("INSERT INTO lake.events SELECT * FROM arrow_table")
 
 
 def main():
@@ -68,8 +85,8 @@ def main():
             msg = consumer.poll(1.0)
             now = time.time()
 
-            if msg is not None and not msg.error():
-                batch.append(json.loads(msg.value()))
+            if msg is not None and not msg.error() and (value := msg.value()) is not None:
+                batch.append(json.loads(value))
 
             should_flush = batch and (
                 len(batch) >= BATCH_SIZE or (now - last_flush) >= BATCH_TIMEOUT_SECONDS
