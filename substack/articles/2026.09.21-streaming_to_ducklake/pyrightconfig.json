@@ -1,0 +1,11 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "executionEnvironments": [
+    {
+      "root": "flink_job",
+      "venv": ".venv-pyflink",
+      "pythonVersion": "3.11"
+    }
+  ]
+}

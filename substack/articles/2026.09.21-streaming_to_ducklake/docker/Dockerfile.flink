@@ -1,0 +1,17 @@
+FROM flink:1.19-scala_2.12-java11
+
+# PyFlink does not yet support Python 3.12+, so pin 3.11 for the Flink runtime only.
+# The base image only ships a JRE; pemja (a PyFlink dep) needs a full JDK with headers to build.
+RUN apt-get update && \
+    apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip openjdk-11-jdk-headless gcc && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python3 && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python && \
+    ln -sf "$(dirname "$(dirname "$(readlink -f "$(which javac)")")")" /opt/full-jdk && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/opt/full-jdk
+
+RUN pip3 install --no-cache-dir apache-flink==1.19.1
+
+RUN wget -q -P /opt/flink/lib/ \
+    https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/3.2.0-1.19/flink-sql-connector-kafka-3.2.0-1.19.jar
