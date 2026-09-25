@@ -60,6 +60,15 @@
       .kpi-subtitle { color: var(--muted); font-size: 12px; }
       .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
       .kpi-label { color: var(--muted); }
+      .effort-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 14px 0; }
+      .effort-controls label { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+      .effort-controls select { min-width: 150px; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: #0b1220; color: var(--text); }
+      .effort-stats { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); }
+      .effort-stats h3 { margin: 0 0 12px; font-size: 15px; }
+      .effort-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+      .effort-stat-label { color: var(--muted); font-size: 12px; }
+      .effort-stat-value { margin-top: 4px; font-size: 18px; font-weight: 600; }
+      @media (max-width: 900px) { .config { flex-wrap: wrap; } }
     </style>
   </head>
   <body>
@@ -75,6 +84,7 @@
         <button class="tab" role="tab" aria-selected="false" data-view="daily" data-machine="BikeErg">BikeErg</button>
         <button class="tab" role="tab" aria-selected="false" data-view="summary">Summary</button>
         <button class="tab" role="tab" aria-selected="false" data-view="watts">Watts</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="effort">Pace Compare</button>
       </div>
       <label for="start-date" style="white-space:nowrap">Start Date:</label>
       <input id="start-date" type="date" value="2025-07-01" style="flex: 0 0 auto;" />
@@ -259,12 +269,53 @@
       </div>
     </div>
 
+    <div id="effort-section" class="grid hidden">
+      <div class="card" style="grid-column: span 2;">
+        <h2>Workout Pace Profiles</h2>
+        <div class="hint">Compare matching workouts for a machine and event. Fixed-distance and timed-event matches exclude intervals; choose Intervals to compare interval sessions separately. Each colored line is one workout.</div>
+        <div class="effort-controls">
+          <label for="effort-machine">Machine
+            <select id="effort-machine">
+              <option value="RowErg">RowErg</option>
+              <option value="SkiErg">SkiErg</option>
+              <option value="BikeErg">BikeErg</option>
+            </select>
+          </label>
+          <label for="effort-mode">Match by
+            <select id="effort-mode">
+              <option value="distance">Fixed distance</option>
+              <option value="time">Timed event</option>
+              <option value="intervals">Intervals</option>
+            </select>
+          </label>
+          <label for="effort-value">Target event
+            <select id="effort-value" aria-label="Target distance or time"></select>
+          </label>
+        </div>
+        <div class="chart-container" style="height: 500px;"><canvas id="effortChart"></canvas></div>
+        <div id="effort-status" class="hint" role="status">Choose a machine and target event to compare workouts.</div>
+        <div id="effort-stats" class="effort-stats hidden" aria-live="polite">
+          <h3 id="effort-stats-title">Selected workout</h3>
+          <div class="effort-stat-grid">
+            <div><div class="effort-stat-label">Average Pace</div><div id="effort-stat-pace" class="effort-stat-value">—</div></div>
+            <div><div id="effort-stat-cadence-label" class="effort-stat-label">Average SPM</div><div id="effort-stat-cadence" class="effort-stat-value">—</div></div>
+            <div><div class="effort-stat-label">Average Watts</div><div id="effort-stat-watts" class="effort-stat-value">—</div></div>
+            <div><div id="effort-stat-distance-label" class="effort-stat-label">Total Distance</div><div id="effort-stat-distance" class="effort-stat-value">—</div></div>
+            <div><div id="effort-stat-time-label" class="effort-stat-label">Work Time</div><div id="effort-stat-time" class="effort-stat-value">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
       const DEFAULT_MACHINE = 'RowErg';
       let activeMachine = DEFAULT_MACHINE;
       let activeView = 'daily';
       let selectedDateLabel = null; // cross-chart highlight
+      let effortChart = null;
+      let effortRequestId = 0;
+      let selectedEffortSeries = null;
 
       function getMachine() {
         const el = document.querySelector('.tab.active');
@@ -1752,6 +1803,278 @@
         }
       }
 
+      function formatElapsedTime(seconds) {
+        const total = Math.max(0, Math.round(Number(seconds) || 0));
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const remainder = total % 60;
+        return hours > 0
+          ? `${hours}:${String(minutes).padStart(2, '0')}:${String(remainder).padStart(2, '0')}`
+          : `${minutes}:${String(remainder).padStart(2, '0')}`;
+      }
+
+      async function loadEffortOptions() {
+        const machine = document.getElementById('effort-machine').value;
+        const mode = document.getElementById('effort-mode').value;
+        const valueSelect = document.getElementById('effort-value');
+        const status = document.getElementById('effort-status');
+        valueSelect.innerHTML = '';
+        status.textContent = 'Loading available events...';
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/api/effort_options?machine=${encodeURIComponent(machine)}`);
+          const result = await response.json();
+          if (!response.ok || result.error) throw new Error(result.error || `API error (${response.status})`);
+          const choices = mode === 'distance'
+            ? result.distances_m
+            : mode === 'time' ? result.durations_seconds : result.intervals;
+          choices.forEach(value => {
+            const option = document.createElement('option');
+            option.value = String(value);
+            if (mode === 'distance') {
+              const meters = Number(value);
+              const meterLabel = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(meters);
+              const kmLabel = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(meters / 1000);
+              option.textContent = `${meterLabel} m (${kmLabel} km)`;
+            } else if (mode === 'time') {
+              option.textContent = formatSecondsToMMSSff(value);
+            } else {
+              option.textContent = value;
+            }
+            valueSelect.appendChild(option);
+          });
+          if (!choices.length) {
+            status.textContent = `No distance or time events found for ${machine}.`;
+            clearEffortChart();
+          } else {
+            status.textContent = `${choices.length} event${choices.length === 1 ? '' : 's'} available.`;
+          }
+        } catch (error) {
+          status.textContent = `Could not load comparison events: ${error.message}`;
+          clearEffortChart();
+        }
+      }
+
+      function clearEffortChart() {
+        if (effortChart) {
+          effortChart.destroy();
+          effortChart = null;
+        }
+        selectedEffortSeries = null;
+        document.getElementById('effort-stats')?.classList.add('hidden');
+      }
+
+      function calculateOverallEffortStats(sessions, machine) {
+        const numericValues = key => sessions
+          .map(session => session[key])
+          .filter(value => Number.isFinite(value));
+        const avg = values => values.length
+          ? values.reduce((sum, value) => sum + value, 0) / values.length
+          : null;
+        const completeSessions = sessions.filter(session =>
+          Number.isFinite(session.time_seconds) && Number.isFinite(session.distance_m) && session.distance_m > 0
+        );
+        const totalDistance = completeSessions.reduce((sum, session) => sum + session.distance_m, 0);
+        const totalTime = completeSessions.reduce((sum, session) => sum + session.time_seconds, 0);
+        const splitDistance = isBikeErg(machine) ? 1000 : 500;
+        return {
+          avg_pace_seconds: totalDistance > 0 ? totalTime / (totalDistance / splitDistance) : null,
+          avg_spm: avg(numericValues('avg_spm')),
+          avg_watts: avg(numericValues('avg_watts')),
+          distance_m: totalDistance,
+          time_seconds: totalTime,
+        };
+      }
+
+      function renderEffortStats(session, machine, title, isOverall = false) {
+        const panel = document.getElementById('effort-stats');
+        if (!panel || !session) {
+          panel?.classList.add('hidden');
+          return;
+        }
+        const cadence = cadenceLabel(machine);
+        document.getElementById('effort-stats-title').textContent = title ||
+          `${session.date} · ${session.description || `Workout ${session.log_id}`}`;
+        document.getElementById('effort-stat-cadence-label').textContent = `Average ${cadence}`;
+        document.getElementById('effort-stat-pace').textContent =
+          Number.isFinite(session.avg_pace_seconds) ? `${formatSecondsToMMSSff(session.avg_pace_seconds)} ${paceSplitLabel(machine)}` : '—';
+        document.getElementById('effort-stat-cadence').textContent =
+          Number.isFinite(session.avg_spm) ? `${session.avg_spm.toFixed(1)} ${cadence.toLowerCase()}` : '—';
+        document.getElementById('effort-stat-watts').textContent =
+          Number.isFinite(session.avg_watts) ? `${session.avg_watts.toFixed(1)} W` : '—';
+        document.getElementById('effort-stat-distance-label').textContent = isOverall ? 'Combined Distance' : 'Total Distance';
+        document.getElementById('effort-stat-time-label').textContent = isOverall ? 'Combined Work Time' : 'Work Time';
+        document.getElementById('effort-stat-distance').textContent =
+          Number.isFinite(session.distance_m)
+            ? `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(session.distance_m)} m`
+            : '—';
+        document.getElementById('effort-stat-time').textContent =
+          Number.isFinite(session.time_seconds) ? formatElapsedTime(session.time_seconds) : '—';
+        panel.classList.remove('hidden');
+      }
+
+      function selectEffortSeries(chart, datasetIndex) {
+        selectedEffortSeries = selectedEffortSeries === datasetIndex ? null : datasetIndex;
+        chart.data.datasets.forEach((dataset, index) => {
+          const focused = selectedEffortSeries === null || selectedEffortSeries === index;
+          const baseColor = dataset.originalColor;
+          dataset.borderColor = focused ? baseColor : 'rgba(148, 163, 184, 0.16)';
+          dataset.backgroundColor = focused ? baseColor : 'rgba(148, 163, 184, 0.16)';
+          dataset.borderWidth = selectedEffortSeries === index ? 2.8 : 1.7;
+        });
+        const machine = document.getElementById('effort-machine').value;
+        if (selectedEffortSeries === null) {
+          renderEffortStats(
+            chart.overallStats,
+            machine,
+            `Overall average · ${chart.data.datasets.length} workouts`,
+            true,
+          );
+        } else {
+          const session = chart.data.datasets[selectedEffortSeries].session;
+          renderEffortStats(session, machine);
+        }
+        chart.update('none');
+      }
+
+      async function loadEffortComparison() {
+        const requestId = ++effortRequestId;
+        const machine = document.getElementById('effort-machine').value;
+        const mode = document.getElementById('effort-mode').value;
+        const target = document.getElementById('effort-value').value;
+        const status = document.getElementById('effort-status');
+        if (!target) return;
+        status.textContent = 'Loading matching workout curves...';
+        try {
+          const params = new URLSearchParams({ machine, mode, value: target });
+          const response = await fetch(`http://127.0.0.1:8000/api/effort_comparison?${params}`);
+          const result = await response.json();
+          if (requestId !== effortRequestId) return;
+          if (!response.ok || result.error) throw new Error(result.error || `API error (${response.status})`);
+          const sessions = result.sessions || [];
+          clearEffortChart();
+          if (!sessions.length) {
+            status.textContent = 'No matching workouts with detail data were found for this event.';
+            return;
+          }
+          const colors = sessions.map((_, index) => `hsl(${(index * 137.508) % 360} 78% 64%)`);
+          const paceUnit = isBikeErg(machine) ? '/1000m' : '/500m';
+          const datasets = sessions.map((session, index) => ({
+            label: `${session.date} · ${session.description || `Workout ${session.log_id}`}`,
+            session,
+            originalColor: colors[index],
+            data: (session.points || []).map(point => ({
+              x: Number(point.elapsed_seconds),
+              y: Number(point.pace_seconds),
+            })).filter(point => Number.isFinite(point.x) && Number.isFinite(point.y) && point.y > 0),
+            borderColor: colors[index],
+            backgroundColor: colors[index],
+            pointRadius: 0,
+            pointHoverRadius: 3,
+            pointHitRadius: 8,
+            borderWidth: 1.7,
+            tension: 0.12,
+            showLine: true,
+            fill: false,
+          }));
+          effortChart = new Chart(document.getElementById('effortChart'), {
+            type: 'scatter',
+            data: { datasets },
+            plugins: [{
+              id: 'selectedWorkoutAveragePace',
+              afterDraw: chart => {
+                const average = selectedEffortSeries === null
+                  ? chart.overallStats?.avg_pace_seconds
+                  : chart.data.datasets[selectedEffortSeries]?.session?.avg_pace_seconds;
+                const yScale = chart.scales.y;
+                const area = chart.chartArea;
+                if (!Number.isFinite(average) || !yScale || !area) return;
+                const y = yScale.getPixelForValue(average);
+                if (y < area.top || y > area.bottom) return;
+                const context = chart.ctx;
+                context.save();
+                context.strokeStyle = '#f87171';
+                context.fillStyle = '#f87171';
+                context.lineWidth = 2;
+                context.setLineDash([5, 4]);
+                context.beginPath();
+                context.moveTo(area.left, y);
+                context.lineTo(area.right, y);
+                context.stroke();
+                context.setLineDash([]);
+                context.textAlign = 'right';
+                context.textBaseline = 'bottom';
+                const label = selectedEffortSeries === null ? 'Overall avg' : 'Workout avg';
+                context.fillText(`${label} ${formatSecondsToMMSSff(average)}`, area.right - 4, y - 4);
+                context.restore();
+              }
+            }],
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              parsing: false,
+              interaction: { mode: 'nearest', intersect: false },
+              onClick: (event, activeElements, chart) => {
+                const area = chart.chartArea;
+                if (!area || event.x < area.left || event.x > area.right || event.y < area.top || event.y > area.bottom) return;
+                let selected = activeElements?.[0];
+                if (!selected) {
+                  selected = chart.getElementsAtEventForMode(event, 'nearest', { intersect: false }, true)?.[0];
+                }
+                if (selected) selectEffortSeries(chart, selected.datasetIndex);
+              },
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'bottom',
+                  labels: { color: '#cbd5e1', boxWidth: 12 },
+                  onClick: (event, item, legend) => selectEffortSeries(legend.chart, item.datasetIndex),
+                },
+                tooltip: {
+                  callbacks: {
+                    title: items => items.length ? `${items[0].dataset.label} · ${formatElapsedTime(items[0].parsed.x)} elapsed` : '',
+                    label: item => `Avg pace (${paceUnit}): ${formatSecondsToMMSSff(item.parsed.y)}`,
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  type: 'linear',
+                  title: { display: true, text: 'Overall time from workout start', color: '#cbd5e1' },
+                  ticks: { color: '#cbd5e1', callback: value => formatElapsedTime(value) },
+                  grid: { color: 'rgba(255,255,255,0.06)' },
+                },
+                y: {
+                  title: { display: true, text: `Average pace (${paceUnit})`, color: '#cbd5e1' },
+                  ticks: { color: '#cbd5e1', callback: value => formatSecondsToMMSS(value) },
+                  grid: { color: 'rgba(255,255,255,0.06)' },
+                }
+              }
+            }
+          });
+          effortChart.overallStats = calculateOverallEffortStats(sessions, machine);
+          renderEffortStats(
+            effortChart.overallStats,
+            machine,
+            `Overall average · ${sessions.length} workouts`,
+            true,
+          );
+          effortChart.update('none');
+          const eventLabel = mode === 'distance'
+            ? `${Number(target).toLocaleString()} m`
+            : mode === 'time' ? formatSecondsToMMSSff(Number(target)) : target;
+          status.textContent = `${sessions.length} workout${sessions.length === 1 ? '' : 's'} found for ${machine} · ${eventLabel}. Click a line or legend item to focus it; click again to restore all lines.`;
+        } catch (error) {
+          if (requestId !== effortRequestId) return;
+          status.textContent = `Could not load pace profiles: ${error.message}`;
+          clearEffortChart();
+        }
+      }
+
+      async function loadEffortView() {
+        await loadEffortOptions();
+        if (document.getElementById('effort-value').value) await loadEffortComparison();
+      }
+
       async function loadLifetimeKPIs() {
         try {
           const res = await fetch('http://127.0.0.1:8000/api/lifetime_kpis').then(r => r.json());
@@ -1830,6 +2153,7 @@
       document.getElementById('reload').addEventListener('click', () => {
         if (activeView === 'summary') return loadSummary();
         if (activeView === 'watts') return loadWatts();
+        if (activeView === 'effort') return loadEffortView();
         return loadAll();
       });
       // Tab click handlers
@@ -1844,17 +2168,27 @@
           activeView = view;
           if (view === 'summary') {
             document.getElementById('daily-section').classList.add('hidden');
+            document.getElementById('watts-section').classList.add('hidden');
+            document.getElementById('effort-section').classList.add('hidden');
             document.getElementById('summary-section').classList.remove('hidden');
             loadSummary();
           } else if (view === 'watts') {
             document.getElementById('daily-section').classList.add('hidden');
             document.getElementById('summary-section').classList.add('hidden');
+            document.getElementById('effort-section').classList.add('hidden');
             document.getElementById('watts-section').classList.remove('hidden');
             loadWatts();
+          } else if (view === 'effort') {
+            document.getElementById('daily-section').classList.add('hidden');
+            document.getElementById('summary-section').classList.add('hidden');
+            document.getElementById('watts-section').classList.add('hidden');
+            document.getElementById('effort-section').classList.remove('hidden');
+            loadEffortView();
           } else {
             activeMachine = btn.dataset.machine || DEFAULT_MACHINE;
             document.getElementById('summary-section').classList.add('hidden');
             document.getElementById('watts-section').classList.add('hidden');
+            document.getElementById('effort-section').classList.add('hidden');
             document.getElementById('daily-section').classList.remove('hidden');
             loadAll();
           }
@@ -1863,8 +2197,15 @@
       function reloadActiveView() {
         if (activeView === 'summary') loadSummary();
         else if (activeView === 'watts') loadWatts();
+        else if (activeView === 'effort') loadEffortView();
         else loadAll();
       }
+      document.getElementById('effort-machine').addEventListener('change', loadEffortView);
+      document.getElementById('effort-mode').addEventListener('change', async () => {
+        await loadEffortOptions();
+        if (document.getElementById('effort-value').value) loadEffortComparison();
+      });
+      document.getElementById('effort-value').addEventListener('change', loadEffortComparison);
       document.getElementById('start-date').addEventListener('change', reloadActiveView);
       document.getElementById('use-start-date').addEventListener('change', reloadActiveView);
       document.querySelectorAll('input[name="distance-filter"]').forEach(inp => {

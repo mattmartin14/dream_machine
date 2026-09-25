@@ -1,6 +1,6 @@
 YEAR ?= $(shell python3 -c "import datetime; t=datetime.date.today(); print(t.year+1 if t.month>=5 else t.year)")
 
-.PHONY: data dashboard stop help
+.PHONY: data dashboard dash stop help
 
 help:
 	@echo "Usage:"
@@ -18,6 +18,8 @@ dashboard:
 	@pkill -f "dev.py" 2>/dev/null || true
 	@sleep 1
 	@./launch.sh
+
+dash: dashboard
 
 stop:
 	@lsof -ti:8080 | xargs kill 2>/dev/null || true

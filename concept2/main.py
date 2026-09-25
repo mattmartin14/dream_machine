@@ -20,6 +20,7 @@ app.add_middleware(
 
 WORKOUTS_DIR = os.path.expanduser("~/concept2/workouts")
 SUMMARY_GLOB = os.path.join(WORKOUTS_DIR, "*summary*.csv")
+_INTERVAL_DESCRIPTION_RE = re.compile(r"\b\d+\s*[x×]\s*\d+(?:\s*(?:m|km))?\b", re.IGNORECASE)
 
 
 # ---------------------------------------------------------------------------
@@ -39,6 +40,10 @@ def _machine_slug(machine: str) -> str:
     if m.startswith("bike"):
         return "bikeerg"
     return m or "rowerg"
+
+
+def _is_interval_description(description: Any) -> bool:
+    return bool(description and _INTERVAL_DESCRIPTION_RE.search(str(description)))
 
 
 def _extract_log_id_from_path(path: str) -> int:
@@ -109,6 +114,33 @@ def _query_detail_for_file(file_path: str) -> List[Dict[str, Any]]:
             except Exception:
                 pass
         points.append(out)
+    return points
+
+
+def _query_effort_points(file_path: str) -> List[Dict[str, float]]:
+    """Read pace samples against elapsed workout time for a detail export."""
+    con = _con()
+    sql = r'''
+        SELECT
+            TRY_CAST("Time (seconds)" AS DOUBLE) AS elapsed_seconds,
+            CASE
+                WHEN TRY_CAST("Pace (seconds)" AS DOUBLE) < 10
+                THEN TRY_CAST("Pace (seconds)" AS DOUBLE) * 60
+                ELSE TRY_CAST("Pace (seconds)" AS DOUBLE)
+            END AS pace_seconds
+        FROM read_csv_auto(?)
+        WHERE TRY_CAST("Time (seconds)" AS DOUBLE) IS NOT NULL
+          AND TRY_CAST("Pace (seconds)" AS DOUBLE) > 0
+        ORDER BY elapsed_seconds
+    '''
+    df = con.execute(sql, [file_path]).df()
+    points: List[Dict[str, float]] = []
+    for _, row in df.iterrows():
+        elapsed = row.get("elapsed_seconds")
+        pace = row.get("pace_seconds")
+        if elapsed is None or pace is None or pd.isna(elapsed) or pd.isna(pace):
+            continue
+        points.append({"elapsed_seconds": float(elapsed), "pace_seconds": float(pace)})
     return points
 
 
@@ -206,6 +238,137 @@ def session_detail(
     return {"log_id": log_id, "filename": file_path, "date": date, "machine": machine, "points": strokes}
 
 
+@app.get("/api/effort_options")
+def effort_options(machine: str = Query("RowErg")):
+    """Return fixed-event options and interval workout descriptions for a machine."""
+    con = _con()
+    sql = '''
+        SELECT DISTINCT
+            TRY_CAST("Work Distance" AS DOUBLE) AS distance_m,
+            TRY_CAST("Work Time (Seconds)" AS DOUBLE) AS time_seconds,
+            "Description" AS description
+        FROM read_csv_auto(?)
+        WHERE "Type" = ? AND TRY_CAST("Log ID" AS BIGINT) IS NOT NULL
+    '''
+    df = con.execute(sql, [SUMMARY_GLOB, machine]).df()
+    distances = set()
+    durations = set()
+    intervals = set()
+    for _, row in df.iterrows():
+        description = row.get("description")
+        if _is_interval_description(description):
+            intervals.add(str(description).strip())
+            continue
+        distance = row.get("distance_m")
+        duration = row.get("time_seconds")
+        if pd.notna(distance) and float(distance) > 0:
+            distances.add(float(distance))
+        if pd.notna(duration) and float(duration) > 0:
+            durations.add(float(duration))
+    return {
+        "distances_m": sorted(distances),
+        "durations_seconds": sorted(durations),
+        "intervals": sorted(intervals, key=str.casefold),
+    }
+
+
+@app.get("/api/effort_comparison")
+def effort_comparison(
+    machine: str = Query("RowErg"),
+    mode: str = Query("distance", description="distance, time, or intervals"),
+    value: str = Query(...),
+):
+    """Return each matching workout's detail pace curve against elapsed time."""
+    if mode not in ("distance", "time", "intervals"):
+        return {"error": "mode must be distance, time, or intervals"}
+
+    params: List[Any] = [SUMMARY_GLOB, machine]
+    if mode == "intervals":
+        match_clause = '"Description" = ?'
+        params.append(value)
+        numeric_value: Optional[float] = None
+    else:
+        try:
+            numeric_value = float(value)
+        except ValueError:
+            return {"error": "value must be numeric for distance and time matches"}
+        if numeric_value <= 0:
+            return {"error": "value must be greater than zero"}
+        field = '"Work Distance"' if mode == "distance" else '"Work Time (Seconds)"'
+        tolerance = 0.5 if mode == "distance" else 0.05
+        match_clause = f'ABS(TRY_CAST({field} AS DOUBLE) - ?) < ?'
+        params.extend([numeric_value, tolerance])
+
+    sql = f'''
+        SELECT
+            TRY_CAST("Log ID" AS BIGINT) AS log_id,
+            strftime(TRY_CAST("Date" AS DATE), '%Y-%m-%d') AS workout_date,
+            "Description" AS description,
+            TRY_CAST("Work Distance" AS DOUBLE) AS distance_m,
+            TRY_CAST("Work Time (Seconds)" AS DOUBLE) AS time_seconds,
+            TRY_CAST("Avg Watts" AS DOUBLE) AS avg_watts,
+            TRY_CAST("Stroke Rate/Cadence" AS DOUBLE) AS avg_spm
+        FROM read_csv_auto(?)
+        WHERE "Type" = ?
+          AND TRY_CAST("Log ID" AS BIGINT) IS NOT NULL
+                    AND {match_clause}
+        ORDER BY TRY_CAST("Date" AS TIMESTAMP), log_id
+    '''
+    con = _con()
+    df = con.execute(sql, params).df()
+    kind = _machine_slug(machine)
+    sessions: List[Dict[str, Any]] = []
+    for _, row in df.iterrows():
+        description = row.get("description")
+        if mode != "intervals" and _is_interval_description(description):
+            continue
+        if pd.isna(row.get("log_id")) or pd.isna(row.get("workout_date")):
+            continue
+        log_id = int(row["log_id"])
+        date = str(row["workout_date"])
+        file_path = os.path.join(
+            WORKOUTS_DIR, f"{date}_{kind}_detail_workout_{log_id}.csv"
+        )
+        if not os.path.isfile(file_path):
+            continue
+        try:
+            points = _query_effort_points(file_path)
+        except Exception as exc:
+            print(f"Could not read effort detail {file_path}: {exc}")
+            continue
+        if not points:
+            continue
+        distance_m = row.get("distance_m")
+        time_seconds = row.get("time_seconds")
+        distance_value = None if pd.isna(distance_m) else float(distance_m)
+        time_value = None if pd.isna(time_seconds) else float(time_seconds)
+        pace_divisor = 1000.0 if _machine_slug(machine) == "bikeerg" else 500.0
+        average_pace = (
+            time_value / (distance_value / pace_divisor)
+            if time_value is not None and distance_value is not None and distance_value > 0
+            else None
+        )
+        avg_watts = row.get("avg_watts")
+        avg_spm = row.get("avg_spm")
+        sessions.append({
+            "log_id": log_id,
+            "date": date,
+            "description": None if pd.isna(description) else str(description),
+            "distance_m": distance_value,
+            "time_seconds": time_value,
+            "avg_pace_seconds": average_pace,
+            "avg_watts": None if pd.isna(avg_watts) else float(avg_watts),
+            "avg_spm": None if pd.isna(avg_spm) else float(avg_spm),
+            "points": points,
+        })
+    return {
+        "machine": machine,
+        "mode": mode,
+        "value": numeric_value if numeric_value is not None else value,
+        "sessions": sessions,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Routes — new (replace Cube semantic layer)
 # ---------------------------------------------------------------------------
@@ -218,7 +381,7 @@ def daily_metrics(
 ):
     pace_divisor = 500.0 if machine.lower().replace(" ", "") in ("rowerg", "skierg") else 1000.0
     params: List[Any] = [machine]
-    where_parts = ['"Type" = ?', 'TRY_CAST("Work Time (Seconds)" AS DOUBLE) >= 300']
+    where_parts = ['"Type" = ?', 'TRY_CAST("Work Distance" AS DOUBLE) >= 500']
 
     if distance_filter:
         where_parts.append('TRY_CAST("Work Distance" AS DOUBLE) >= 5000')
