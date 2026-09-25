@@ -1649,3 +1649,92 @@ INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
 INFO:     Finished server process [43020]
+INFO:     Started server process [52843]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [25/Sep/2026 19:15:38] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62706 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62706 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+::1 - - [25/Sep/2026 19:15:54] "GET / HTTP/1.1" 200 -
+::1 - - [25/Sep/2026 19:15:54] code 404, message File not found
+::1 - - [25/Sep/2026 19:15:54] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:62713 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62713 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62714 - "GET /api/effort_options?machine=RowErg&mode=distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62715 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62716 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62719 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62719 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62719 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62719 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62720 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62723 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62723 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62724 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=6000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62726 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=7000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62727 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=8000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62730 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=10000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62731 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62731 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62733 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62744 - "GET /api/effort_options?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62744 - "GET /api/effort_comparison?machine=SkiErg&mode=time&value=64.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62744 - "GET /api/effort_options?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62744 - "GET /api/effort_comparison?machine=SkiErg&mode=distance&value=106 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62744 - "GET /api/effort_comparison?machine=SkiErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62745 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62745 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62745 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62747 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=6000 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [52843]
+INFO:     Started server process [56998]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [25/Sep/2026 19:25:43] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62782 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62782 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62792 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62793 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [56998]
+INFO:     Started server process [58769]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [25/Sep/2026 19:26:58] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62797 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62797 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62833 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4 HTTP/1.1" 200 OK
+::1 - - [25/Sep/2026 19:29:45] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62838 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62838 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62838 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62838 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62840 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+::1 - - [25/Sep/2026 19:30:08] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:62844 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62844 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62844 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62844 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62846 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62848 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=3000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62850 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62853 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=6000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62854 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=8000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62861 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=10000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62862 - "GET /api/effort_options?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62862 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62862 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=10000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62863 - "GET /api/effort_options?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62863 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62863 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=600 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62865 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62870 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62870 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800 HTTP/1.1" 200 OK

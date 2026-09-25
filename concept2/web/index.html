@@ -68,6 +68,16 @@
       .effort-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
       .effort-stat-label { color: var(--muted); font-size: 12px; }
       .effort-stat-value { margin-top: 4px; font-size: 18px; font-weight: 600; }
+      .effort-pr { margin-top: 18px; }
+      .effort-table-wrap { margin-top: 18px; overflow-x: auto; }
+      .effort-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      .effort-table th, .effort-table td { padding: 9px 10px; border-top: 1px solid rgba(255,255,255,0.08); text-align: right; white-space: nowrap; }
+      .effort-table th:first-child, .effort-table td:first-child { text-align: left; }
+      .effort-table th { color: var(--muted); font-weight: 600; }
+      .effort-table tr.recent { background: rgba(96,165,250,0.12); font-weight: 600; }
+      .effort-table tr.pr { box-shadow: inset 3px 0 #f87171; }
+      .effort-table .better { color: #86efac; }
+      .effort-table .worse { color: #fca5a5; }
       @media (max-width: 900px) { .config { flex-wrap: wrap; } }
     </style>
   </head>
@@ -291,6 +301,9 @@
           <label for="effort-value">Target event
             <select id="effort-value" aria-label="Target distance or time"></select>
           </label>
+          <label for="effort-smoothing">
+            <input id="effort-smoothing" type="checkbox" /> Smooth pace lines
+          </label>
         </div>
         <div class="chart-container" style="height: 500px;"><canvas id="effortChart"></canvas></div>
         <div id="effort-status" class="hint" role="status">Choose a machine and target event to compare workouts.</div>
@@ -304,6 +317,22 @@
             <div><div id="effort-stat-time-label" class="effort-stat-label">Work Time</div><div id="effort-stat-time" class="effort-stat-value">—</div></div>
           </div>
         </div>
+        <div id="effort-pr" class="effort-stats effort-pr hidden" aria-live="polite">
+          <h3>PR</h3>
+          <div class="effort-stat-grid">
+            <div><div class="effort-stat-label">Date</div><div id="effort-pr-date" class="effort-stat-value">—</div></div>
+            <div><div class="effort-stat-label">Pace</div><div id="effort-pr-pace" class="effort-stat-value">—</div></div>
+            <div><div id="effort-pr-cadence-label" class="effort-stat-label">SPM</div><div id="effort-pr-cadence" class="effort-stat-value">—</div></div>
+            <div><div class="effort-stat-label">Watts</div><div id="effort-pr-watts" class="effort-stat-value">—</div></div>
+            <div><div class="effort-stat-label">Overall Time</div><div id="effort-pr-time" class="effort-stat-value">—</div></div>
+          </div>
+        </div>
+        <div id="effort-table-wrap" class="effort-table-wrap hidden">
+          <table class="effort-table">
+            <thead><tr><th>Date</th><th>Time</th><th>Pace</th><th>Watts</th><th id="effort-table-cadence-heading">SPM</th><th>Rank</th><th>vs PR</th></tr></thead>
+            <tbody id="effort-table-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -316,6 +345,7 @@
       let effortChart = null;
       let effortRequestId = 0;
       let selectedEffortSeries = null;
+      let effortSmoothing = false;
 
       function getMachine() {
         const el = document.querySelector('.tab.active');
@@ -1827,7 +1857,8 @@
           const choices = mode === 'distance'
             ? result.distances_m
             : mode === 'time' ? result.durations_seconds : result.intervals;
-          choices.forEach(value => {
+          const availableChoices = Array.isArray(choices) ? choices : [];
+          availableChoices.forEach(value => {
             const option = document.createElement('option');
             option.value = String(value);
             if (mode === 'distance') {
@@ -1842,11 +1873,12 @@
             }
             valueSelect.appendChild(option);
           });
-          if (!choices.length) {
-            status.textContent = `No distance or time events found for ${machine}.`;
+          if (!availableChoices.length) {
+            const modeLabel = mode === 'distance' ? 'distance' : mode === 'time' ? 'timed' : 'interval';
+            status.textContent = `No ${modeLabel} events found for ${machine}.`;
             clearEffortChart();
           } else {
-            status.textContent = `${choices.length} event${choices.length === 1 ? '' : 's'} available.`;
+            status.textContent = `${availableChoices.length} event${availableChoices.length === 1 ? '' : 's'} available.`;
           }
         } catch (error) {
           status.textContent = `Could not load comparison events: ${error.message}`;
@@ -1861,6 +1893,10 @@
         }
         selectedEffortSeries = null;
         document.getElementById('effort-stats')?.classList.add('hidden');
+        document.getElementById('effort-pr')?.classList.add('hidden');
+        document.getElementById('effort-table-wrap')?.classList.add('hidden');
+        const tableBody = document.getElementById('effort-table-body');
+        tableBody?.replaceChildren();
       }
 
       function calculateOverallEffortStats(sessions, machine) {
@@ -1912,14 +1948,139 @@
         panel.classList.remove('hidden');
       }
 
+      function getBestEffortSession(sessions, mode) {
+        if (!Array.isArray(sessions) || !sessions.length) return null;
+        const valid = sessions.filter(session =>
+          Number.isFinite(session?.time_seconds) && Number.isFinite(session?.distance_m) && session.distance_m > 0
+        );
+        if (!valid.length) return null;
+        if (mode === 'time') {
+          return valid.reduce((best, session) => {
+            if (!best || Number(session.distance_m) > Number(best.distance_m)) return session;
+            return best;
+          }, null);
+        }
+        return valid.reduce((best, session) => {
+          if (!best || Number(session.time_seconds) < Number(best.time_seconds)) return session;
+          return best;
+        }, null);
+      }
+
+      function renderEffortPR(sessions, mode, machine) {
+        const panel = document.getElementById('effort-pr');
+        if (!panel) return;
+        const pr = getBestEffortSession(sessions, mode);
+        if (!pr) {
+          panel.classList.add('hidden');
+          return;
+        }
+
+        const cadence = cadenceLabel(machine);
+        document.getElementById('effort-pr-date').textContent = pr.date || '—';
+        document.getElementById('effort-pr-pace').textContent =
+          Number.isFinite(pr.avg_pace_seconds) ? `${formatSecondsToMMSSff(pr.avg_pace_seconds)} ${paceSplitLabel(machine)}` : '—';
+        document.getElementById('effort-pr-cadence-label').textContent = `Average ${cadence}`;
+        document.getElementById('effort-pr-cadence').textContent =
+          Number.isFinite(pr.avg_spm) ? `${pr.avg_spm.toFixed(1)} ${cadence.toLowerCase()}` : '—';
+        document.getElementById('effort-pr-watts').textContent =
+          Number.isFinite(pr.avg_watts) ? `${pr.avg_watts.toFixed(1)} W` : '—';
+        document.getElementById('effort-pr-time').textContent =
+          Number.isFinite(pr.time_seconds) ? formatElapsedTime(pr.time_seconds) : '—';
+        panel.classList.remove('hidden');
+      }
+
+      function smoothEffortPoints(points, windowSize = 7) {
+        if (!effortSmoothing || points.length < 3) return points;
+        const radius = Math.floor(windowSize / 2);
+        return points.map((point, index) => {
+          const start = Math.max(0, index - radius);
+          const end = Math.min(points.length, index + radius + 1);
+          const window = points.slice(start, end);
+          const average = window.reduce((sum, item) => sum + item.y, 0) / window.length;
+          return { x: point.x, y: average };
+        });
+      }
+
+      function formatSignedSeconds(seconds) {
+        if (!Number.isFinite(seconds)) return '—';
+        if (Math.abs(seconds) < 0.005) return 'PR';
+        const sign = seconds > 0 ? '+' : '-';
+        return `${sign}${formatSecondsToMMSSff(Math.abs(seconds))}`;
+      }
+
+      function formatSignedDistance(meters) {
+        if (!Number.isFinite(meters)) return '—';
+        if (Math.abs(meters) < 0.5) return 'PR';
+        return `${meters > 0 ? '+' : '-'}${Math.abs(meters).toLocaleString(undefined, { maximumFractionDigits: 0 })} m`;
+      }
+
+      function isLaterEffortSession(candidate, current) {
+        if (!current) return true;
+        if (candidate.date !== current.date) return candidate.date > current.date;
+        return Number(candidate.log_id) > Number(current.log_id);
+      }
+
+      function renderEffortTable(sessions, mode, machine) {
+        const wrap = document.getElementById('effort-table-wrap');
+        const body = document.getElementById('effort-table-body');
+        if (!wrap || !body || !sessions.length) {
+          wrap?.classList.add('hidden');
+          return;
+        }
+        const pr = getBestEffortSession(sessions, mode);
+        if (!pr) {
+          wrap.classList.add('hidden');
+          return;
+        }
+        const mostRecent = sessions.reduce((latest, session) =>
+          isLaterEffortSession(session, latest) ? session : latest, null);
+        const ranking = sessions.filter(session =>
+          Number.isFinite(session.time_seconds) && Number.isFinite(session.distance_m) && session.distance_m > 0
+        ).sort((left, right) => mode === 'time'
+          ? right.distance_m - left.distance_m
+          : left.time_seconds - right.time_seconds);
+        const rankById = new Map(ranking.map((session, index) => [session.log_id, index + 1]));
+        document.getElementById('effort-table-cadence-heading').textContent = cadenceLabel(machine);
+        body.replaceChildren();
+        ranking.forEach(session => {
+          const row = document.createElement('tr');
+          if (session.log_id === mostRecent.log_id) row.classList.add('recent');
+          if (session.log_id === pr?.log_id) row.classList.add('pr');
+          const comparison = mode === 'time'
+            ? formatSignedDistance(session.distance_m - pr.distance_m)
+            : formatSignedSeconds(session.time_seconds - pr.time_seconds);
+          const comparisonValue = mode === 'time'
+            ? session.distance_m - pr.distance_m
+            : session.time_seconds - pr.time_seconds;
+          const isBetter = mode === 'time' ? comparisonValue > 0 : comparisonValue < 0;
+          const comparisonClass = comparison === 'PR' ? 'better' : (isBetter ? 'better' : 'worse');
+          const cells = [
+            session.date || '—',
+            Number.isFinite(session.time_seconds) ? formatElapsedTime(session.time_seconds) : '—',
+            Number.isFinite(session.avg_pace_seconds) ? formatSecondsToMMSSff(session.avg_pace_seconds) : '—',
+            Number.isFinite(session.avg_watts) ? `${session.avg_watts.toFixed(1)} W` : '—',
+            Number.isFinite(session.avg_spm) ? session.avg_spm.toFixed(1) : '—',
+            `#${rankById.get(session.log_id)}`,
+            comparison,
+          ];
+          cells.forEach((value, index) => {
+            const cell = document.createElement('td');
+            cell.textContent = value;
+            if (index === cells.length - 1) cell.className = comparisonClass;
+            row.appendChild(cell);
+          });
+          body.appendChild(row);
+        });
+        wrap.classList.remove('hidden');
+      }
+
       function selectEffortSeries(chart, datasetIndex) {
         selectedEffortSeries = selectedEffortSeries === datasetIndex ? null : datasetIndex;
         chart.data.datasets.forEach((dataset, index) => {
-          const focused = selectedEffortSeries === null || selectedEffortSeries === index;
-          const baseColor = dataset.originalColor;
-          dataset.borderColor = focused ? baseColor : 'rgba(148, 163, 184, 0.16)';
-          dataset.backgroundColor = focused ? baseColor : 'rgba(148, 163, 184, 0.16)';
-          dataset.borderWidth = selectedEffortSeries === index ? 2.8 : 1.7;
+          const focused = selectedEffortSeries === null ? dataset.isRecent : selectedEffortSeries === index;
+          dataset.borderColor = focused ? dataset.originalColor : dataset.mutedColor;
+          dataset.backgroundColor = focused ? dataset.originalColor : dataset.mutedColor;
+          dataset.borderWidth = focused ? (dataset.isRecent || selectedEffortSeries === index ? 2.8 : 1.7) : 1.1;
         });
         const machine = document.getElementById('effort-machine').value;
         if (selectedEffortSeries === null) {
@@ -1950,7 +2111,7 @@
           const result = await response.json();
           if (requestId !== effortRequestId) return;
           if (!response.ok || result.error) throw new Error(result.error || `API error (${response.status})`);
-          const sessions = result.sessions || [];
+          const sessions = Array.isArray(result.sessions) ? result.sessions.filter(Boolean) : [];
           clearEffortChart();
           if (!sessions.length) {
             status.textContent = 'No matching workouts with detail data were found for this event.';
@@ -1958,16 +2119,20 @@
           }
           const colors = sessions.map((_, index) => `hsl(${(index * 137.508) % 360} 78% 64%)`);
           const paceUnit = isBikeErg(machine) ? '/1000m' : '/500m';
+          const mostRecent = sessions.reduce((latest, session) =>
+            isLaterEffortSession(session, latest) ? session : latest, null);
           const datasets = sessions.map((session, index) => ({
             label: `${session.date} · ${session.description || `Workout ${session.log_id}`}`,
             session,
             originalColor: colors[index],
-            data: (session.points || []).map(point => ({
+            mutedColor: `hsla(${(index * 137.508) % 360}, 45%, 55%, 0.22)`,
+            isRecent: session.log_id === mostRecent.log_id,
+            data: smoothEffortPoints((session.points || []).map(point => ({
               x: Number(point.elapsed_seconds),
               y: Number(point.pace_seconds),
-            })).filter(point => Number.isFinite(point.x) && Number.isFinite(point.y) && point.y > 0),
-            borderColor: colors[index],
-            backgroundColor: colors[index],
+            })).filter(point => Number.isFinite(point.x) && Number.isFinite(point.y) && point.y > 0)),
+            borderColor: session.log_id === mostRecent.log_id ? colors[index] : `hsla(${(index * 137.508) % 360}, 45%, 55%, 0.22)`,
+            backgroundColor: session.log_id === mostRecent.log_id ? colors[index] : `hsla(${(index * 137.508) % 360}, 45%, 55%, 0.22)`,
             pointRadius: 0,
             pointHoverRadius: 3,
             pointHitRadius: 8,
@@ -2058,11 +2223,14 @@
             `Overall average · ${sessions.length} workouts`,
             true,
           );
+          renderEffortPR(sessions, mode, machine);
+          renderEffortTable(sessions, mode, machine);
           effortChart.update('none');
           const eventLabel = mode === 'distance'
             ? `${Number(target).toLocaleString()} m`
             : mode === 'time' ? formatSecondsToMMSSff(Number(target)) : target;
-          status.textContent = `${sessions.length} workout${sessions.length === 1 ? '' : 's'} found for ${machine} · ${eventLabel}. Click a line or legend item to focus it; click again to restore all lines.`;
+          const smoothingLabel = effortSmoothing ? ' Smoothed lines are on.' : '';
+          status.textContent = `${sessions.length} workout${sessions.length === 1 ? '' : 's'} found for ${machine} · ${eventLabel}. Recent workout is highlighted; click a line or legend item to focus it.${smoothingLabel}`;
         } catch (error) {
           if (requestId !== effortRequestId) return;
           status.textContent = `Could not load pace profiles: ${error.message}`;
@@ -2201,6 +2369,10 @@
         else loadAll();
       }
       document.getElementById('effort-machine').addEventListener('change', loadEffortView);
+      document.getElementById('effort-smoothing').addEventListener('change', (event) => {
+        effortSmoothing = event.target.checked;
+        loadEffortComparison();
+      });
       document.getElementById('effort-mode').addEventListener('change', async () => {
         await loadEffortOptions();
         if (document.getElementById('effort-value').value) loadEffortComparison();
