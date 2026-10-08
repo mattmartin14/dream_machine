@@ -41,3 +41,14 @@ Run with the DuckDB CLI. It loads the `aws` extension, creates an S3 secret from
 ```sh
 duckdb -c ".read query.sql"
 ```
+
+### `benchmark.sh`
+
+Runs `query.sql` on DuckDB 1.5, then 2.0 (switching versions via `toggle_version.sh`). Each version gets one untimed warm-up run, then 5 timed runs by default. Only the `real` time from `.timer` is captured, so the extension install and secret creation are not counted. Prints each run, both averages, and the % decrease in run time.
+
+```sh
+./benchmark.sh      # 5 runs per version
+./benchmark.sh 10   # 10 runs per version
+```
+
+The script leaves DuckDB 2.0 installed; run `./toggle_version.sh 1.5` to switch back.
