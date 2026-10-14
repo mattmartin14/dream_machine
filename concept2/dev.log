@@ -1738,3 +1738,309 @@ INFO:     127.0.0.1:62863 - "GET /api/effort_comparison?machine=BikeErg&mode=tim
 INFO:     127.0.0.1:62865 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1200 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:62870 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1500 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:62870 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58769]
+INFO:     Started server process [34014]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [28/Sep/2026 06:21:05] "GET / HTTP/1.1" 304 -
+::1 - - [28/Sep/2026 06:21:05] code 404, message File not found
+::1 - - [28/Sep/2026 06:21:05] code 404, message File not found
+::1 - - [28/Sep/2026 06:21:05] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [28/Sep/2026 06:21:05] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [28/Sep/2026 06:21:05] code 404, message File not found
+::1 - - [28/Sep/2026 06:21:05] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:59155 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59155 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59157 - "GET /api/session_detail?date=2026-09-28&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59157 - "GET /api/session_summary?log_id=121068920 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59157 - "GET /api/session_detail?date=2026-09-25&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59157 - "GET /api/session_summary?log_id=120972884 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59161 - "GET /api/session_detail?date=2026-09-28&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59161 - "GET /api/session_summary?log_id=121068920 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59163 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59163 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59165 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59166 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59166 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59168 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [34014]
+INFO:     Started server process [60831]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [30/Sep/2026 06:48:17] "GET / HTTP/1.1" 304 -
+::1 - - [30/Sep/2026 06:48:17] code 404, message File not found
+::1 - - [30/Sep/2026 06:48:17] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [30/Sep/2026 06:48:17] code 404, message File not found
+::1 - - [30/Sep/2026 06:48:17] code 404, message File not found
+::1 - - [30/Sep/2026 06:48:17] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [30/Sep/2026 06:48:17] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:65186 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65186 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65186 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65186 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65192 - "GET /api/session_detail?date=2026-09-30&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65192 - "GET /api/session_summary?log_id=121152619 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65194 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65194 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65194 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65194 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [60831]
+INFO:     Started server process [74301]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [05/Oct/2026 07:45:39] "GET / HTTP/1.1" 200 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [05/Oct/2026 07:45:39] code 404, message File not found
+::1 - - [05/Oct/2026 07:45:39] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:62611 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62611 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62614 - "GET /api/session_detail?date=2026-10-05&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62614 - "GET /api/session_summary?log_id=121321790 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62615 - "GET /api/daily_metrics?machine=RowErg&distance_filter=true&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62615 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62617 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62617 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62618 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=6000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62670 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62670 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62670 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [74301]
+INFO:     Started server process [43977]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [07/Oct/2026 06:24:08] "GET / HTTP/1.1" 200 -
+::1 - - [07/Oct/2026 06:24:08] code 404, message File not found
+::1 - - [07/Oct/2026 06:24:08] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [07/Oct/2026 06:24:08] code 404, message File not found
+::1 - - [07/Oct/2026 06:24:08] code 404, message File not found
+::1 - - [07/Oct/2026 06:24:08] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [07/Oct/2026 06:24:08] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:57508 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57508 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57508 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57508 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57518 - "GET /api/session_detail?date=2026-10-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57518 - "GET /api/session_summary?log_id=121406347 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57521 - "GET /api/session_detail?date=2026-10-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57521 - "GET /api/session_summary?log_id=121406347 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57525 - "GET /api/session_detail?date=2026-04-06&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57525 - "GET /api/session_summary?log_id=115067919 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57528 - "GET /api/session_detail?date=2026-10-07&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57528 - "GET /api/session_summary?log_id=121406347 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57529 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57529 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [43977]
+INFO:     Started server process [86193]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [09/Oct/2026 06:30:29] "GET / HTTP/1.1" 200 -
+::1 - - [09/Oct/2026 06:30:29] code 404, message File not found
+::1 - - [09/Oct/2026 06:30:29] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [09/Oct/2026 06:30:29] code 404, message File not found
+::1 - - [09/Oct/2026 06:30:29] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [09/Oct/2026 06:30:29] code 404, message File not found
+::1 - - [09/Oct/2026 06:30:29] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:50469 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50469 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50486 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50486 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50487 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50487 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50487 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50487 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50490 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50495 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50495 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50495 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86193]
+INFO:     Started server process [25208]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [12/Oct/2026 07:34:06] "GET / HTTP/1.1" 200 -
+::1 - - [12/Oct/2026 07:34:06] code 404, message File not found
+::1 - - [12/Oct/2026 07:34:06] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [12/Oct/2026 07:34:06] code 404, message File not found
+::1 - - [12/Oct/2026 07:34:06] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [12/Oct/2026 07:34:06] code 404, message File not found
+::1 - - [12/Oct/2026 07:34:06] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:52950 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52950 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52954 - "GET /api/session_detail?date=2026-10-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52954 - "GET /api/session_summary?date=2026-10-12&machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52958 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52958 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52959 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52960 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52961 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52961 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52962 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=6000 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25208]
+INFO:     Started server process [86703]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Oct/2026 06:24:23] "GET / HTTP/1.1" 200 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 06:24:23] code 404, message File not found
+::1 - - [14/Oct/2026 06:24:23] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:58216 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58221 - "GET /api/session_detail?date=2026-10-14&machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58221 - "GET /api/session_summary?log_id=121665816 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [86703]
+INFO:     Started server process [95615]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Oct/2026 07:59:23] "GET / HTTP/1.1" 200 -
+::1 - - [14/Oct/2026 07:59:23] code 404, message File not found
+::1 - - [14/Oct/2026 07:59:23] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 07:59:23] code 404, message File not found
+::1 - - [14/Oct/2026 07:59:23] "GET /apple-touch-icon.png HTTP/1.1" 404 -
+::1 - - [14/Oct/2026 07:59:23] code 404, message File not found
+::1 - - [14/Oct/2026 07:59:23] "GET /favicon.ico HTTP/1.1" 404 -
+INFO:     127.0.0.1:58521 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58521 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58521 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58521 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58521 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/daily_metrics?machine=SkiErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/latest_workout?machine=SkiErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58523 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58555 - "GET /api/monthly_watts?start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58555 - "GET /api/effort_options?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58555 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /api/effort_options?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=5000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /api/effort_options?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58557 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1801.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58558 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1801.3 HTTP/1.1" 200 OK
+::1 - - [14/Oct/2026 08:07:32] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:58579 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_options?machine=RowErg&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_options?machine=RowErg&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58580 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=125.4&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58581 - "GET /api/effort_comparison?machine=RowErg&mode=time&value=1800&cluster=true HTTP/1.1" 200 OK
+::1 - - [14/Oct/2026 08:11:00] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:58603 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/daily_metrics?machine=BikeErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/latest_workout?machine=BikeErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58603 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=5000&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58606 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58606 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58607 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58607 - "GET /api/effort_options?machine=BikeErg&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58607 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58607 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=true HTTP/1.1" 200 OK
+::1 - - [14/Oct/2026 08:12:26] "GET / HTTP/1.1" 200 -
+INFO:     127.0.0.1:58614 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/monthly_distance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/lifetime_kpis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=5000&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/effort_options?machine=BikeErg&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58617 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58627 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=true HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [95615]
+INFO:     Started server process [99484]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+::1 - - [14/Oct/2026 08:14:38] "GET / HTTP/1.1" 304 -
+INFO:     127.0.0.1:58632 - "GET /api/daily_metrics?machine=RowErg&start_date=2025-07-01 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/latest_workout?machine=RowErg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_options?machine=RowErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_comparison?machine=RowErg&mode=distance&value=500&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_comparison?machine=BikeErg&mode=distance&value=5000&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_options?machine=BikeErg&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=584.3&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_options?machine=BikeErg&cluster=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /api/effort_comparison?machine=BikeErg&mode=time&value=1800&cluster=true HTTP/1.1" 200 OK

@@ -238,8 +238,11 @@ def session_detail(
     return {"log_id": log_id, "filename": file_path, "date": date, "machine": machine, "points": strokes}
 
 
+_TIME_CLUSTER_SECONDS = 15.0
+
+
 @app.get("/api/effort_options")
-def effort_options(machine: str = Query("RowErg")):
+def effort_options(machine: str = Query("RowErg"), cluster: bool = Query(False)):
     """Return fixed-event options and interval workout descriptions for a machine."""
     con = _con()
     sql = '''
@@ -264,7 +267,14 @@ def effort_options(machine: str = Query("RowErg")):
         if pd.notna(distance) and float(distance) > 0:
             distances.add(float(distance))
         if pd.notna(duration) and float(duration) > 0:
-            durations.add(float(duration))
+            d = float(duration)
+            if cluster:
+                # Only 5-minute targets are listed; other durations are omitted.
+                nearest = round(d / 300.0) * 300.0
+                if nearest <= 0 or abs(d - nearest) > _TIME_CLUSTER_SECONDS:
+                    continue
+                d = nearest
+            durations.add(d)
     return {
         "distances_m": sorted(distances),
         "durations_seconds": sorted(durations),
@@ -277,6 +287,7 @@ def effort_comparison(
     machine: str = Query("RowErg"),
     mode: str = Query("distance", description="distance, time, or intervals"),
     value: str = Query(...),
+    cluster: bool = Query(False),
 ):
     """Return each matching workout's detail pace curve against elapsed time."""
     if mode not in ("distance", "time", "intervals"):
@@ -296,6 +307,8 @@ def effort_comparison(
             return {"error": "value must be greater than zero"}
         field = '"Work Distance"' if mode == "distance" else '"Work Time (Seconds)"'
         tolerance = 0.5 if mode == "distance" else 0.05
+        if mode == "time" and cluster and numeric_value % 60 == 0:
+            tolerance = _TIME_CLUSTER_SECONDS + 1e-6
         match_clause = f'ABS(TRY_CAST({field} AS DOUBLE) - ?) < ?'
         params.extend([numeric_value, tolerance])
 

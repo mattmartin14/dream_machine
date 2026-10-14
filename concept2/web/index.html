@@ -56,6 +56,7 @@
       .tab:hover { background: rgba(255,255,255,0.06); }
       .tab.active { background: var(--accent); color: #0b1220; }
       .hidden { display: none; }
+      .effort-controls label.hidden { display: none; }
       .kpi-value { font-size: 24px; font-weight: 600; color: var(--text); margin-top: 6px; white-space: nowrap; }
       .kpi-subtitle { color: var(--muted); font-size: 12px; }
       .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -298,6 +299,9 @@
               <option value="intervals">Intervals</option>
             </select>
           </label>
+          <label for="effort-cluster" id="effort-cluster-label" class="hidden" title="List 5-minute targets (5, 10, 15...) and group rides within 15 seconds of each, e.g. 30:02 into 30 minutes">
+            <input id="effort-cluster" type="checkbox" /> Cluster similar times
+          </label>
           <label for="effort-value">Target event
             <select id="effort-value" aria-label="Target distance or time"></select>
           </label>
@@ -346,6 +350,7 @@
       let effortRequestId = 0;
       let selectedEffortSeries = null;
       let effortSmoothing = false;
+      let lastEffortOptionsKey = null;
 
       function getMachine() {
         const el = document.querySelector('.tab.active');
@@ -1848,10 +1853,15 @@
         const mode = document.getElementById('effort-mode').value;
         const valueSelect = document.getElementById('effort-value');
         const status = document.getElementById('effort-status');
+        const previousValue = valueSelect.value;
+        const keepSelection = lastEffortOptionsKey === `${machine}|${mode}`;
+        lastEffortOptionsKey = `${machine}|${mode}`;
         valueSelect.innerHTML = '';
         status.textContent = 'Loading available events...';
+        document.getElementById('effort-cluster-label').classList.toggle('hidden', mode !== 'time');
+        const cluster = mode === 'time' && document.getElementById('effort-cluster').checked;
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/effort_options?machine=${encodeURIComponent(machine)}`);
+          const response = await fetch(`http://127.0.0.1:8000/api/effort_options?machine=${encodeURIComponent(machine)}&cluster=${cluster}`);
           const result = await response.json();
           if (!response.ok || result.error) throw new Error(result.error || `API error (${response.status})`);
           const choices = mode === 'distance'
@@ -1867,12 +1877,21 @@
               const kmLabel = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(meters / 1000);
               option.textContent = `${meterLabel} m (${kmLabel} km)`;
             } else if (mode === 'time') {
-              option.textContent = formatSecondsToMMSSff(value);
+              option.textContent = cluster ? `${Number(value) / 60} minutes` : formatSecondsToMMSSff(value);
             } else {
               option.textContent = value;
             }
             valueSelect.appendChild(option);
           });
+          if (keepSelection && previousValue && availableChoices.length) {
+            const prev = Number(previousValue);
+            let match = availableChoices.find(v => String(v) === previousValue);
+            if (match === undefined && mode === 'time' && Number.isFinite(prev)) {
+              const nearest = availableChoices.reduce((a, b) => Math.abs(b - prev) < Math.abs(a - prev) ? b : a);
+              if (Math.abs(nearest - prev) <= 15) match = nearest;
+            }
+            if (match !== undefined) valueSelect.value = String(match);
+          }
           if (!availableChoices.length) {
             const modeLabel = mode === 'distance' ? 'distance' : mode === 'time' ? 'timed' : 'interval';
             status.textContent = `No ${modeLabel} events found for ${machine}.`;
@@ -2106,7 +2125,8 @@
         if (!target) return;
         status.textContent = 'Loading matching workout curves...';
         try {
-          const params = new URLSearchParams({ machine, mode, value: target });
+          const cluster = mode === 'time' && document.getElementById('effort-cluster').checked;
+          const params = new URLSearchParams({ machine, mode, value: target, cluster });
           const response = await fetch(`http://127.0.0.1:8000/api/effort_comparison?${params}`);
           const result = await response.json();
           if (requestId !== effortRequestId) return;
@@ -2374,6 +2394,10 @@
         loadEffortComparison();
       });
       document.getElementById('effort-mode').addEventListener('change', async () => {
+        await loadEffortOptions();
+        if (document.getElementById('effort-value').value) loadEffortComparison();
+      });
+      document.getElementById('effort-cluster').addEventListener('change', async () => {
         await loadEffortOptions();
         if (document.getElementById('effort-value').value) loadEffortComparison();
       });
