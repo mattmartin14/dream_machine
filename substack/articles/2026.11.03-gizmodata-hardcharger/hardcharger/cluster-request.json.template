@@ -1,0 +1,61 @@
+{
+  "id": "${HC_REQUEST_ID}",
+  "name": "${HC_CLUSTER_NAME}",
+  "label": "${HC_CLUSTER_LABEL}",
+  "project_environment_id": "${HC_PROJECT_ENVIRONMENT_ID}",
+  "auth_mode": "managed",
+  "admin_username": "${HC_ADMIN_USERNAME}",
+  "admin_password": "${HC_ADMIN_PASSWORD}",
+  "compute_instance_size": {
+    "name": "${HC_COMPUTE_INSTANCE_SIZE}"
+  },
+  "database_engine": {
+    "name": "duckdb"
+  },
+  "database_image": {
+    "name": "${HC_DATABASE_IMAGE}"
+  },
+  "enable_local_nvme_ssd": false,
+  "license_edition": "core",
+  "enable_instrumentation": false,
+  "enable_metrics": true,
+  "enable_oauth": false,
+  "access_control_catalog_id": null,
+  "enable_web_ui": false,
+  "tls_mode": "nlb",
+  "client_port": 443,
+  "allow_any_ip": false,
+  "ip_access_list": [],
+  "read_only": false,
+  "lockdown_mode": false,
+  "query_timeout": 0,
+  "max_sessions": 0,
+  "session_idle_timeout": 0,
+  "health_check_query": "SHOW DATABASES",
+  "health_check_interval_seconds": 5,
+  "log_level": "info",
+  "log_format": "text",
+  "cloud_region": {
+    "id": "${HC_CLOUD_REGION_ID}"
+  },
+  "enable_autoscaling": false,
+  "min_replicas": 1,
+  "max_replicas": 5,
+  "autoscale_cpu_target_percent": 70,
+  "autoscale_memory_target_percent": 80,
+  "secrets_to_mount": [],
+  "database_mounts": [],
+  "catalogs_to_mount": [
+    "${HC_DEFAULT_CATALOG_ID}"
+  ],
+  "data_volume_size_gi": 10,
+  "default_catalog_id": "${HC_DEFAULT_CATALOG_ID}",
+  "dns_label": "${HC_DNS_LABEL}",
+  "graceful_shutdown_enabled": true,
+  "shutdown_grace_period_seconds": 300,
+  "enable_catalog_logging": false,
+  "max_concurrent_statements": 0,
+  "max_queued_statements": -1,
+  "max_queue_wait": -1,
+  "admin_bypass_queue_default": true
+}

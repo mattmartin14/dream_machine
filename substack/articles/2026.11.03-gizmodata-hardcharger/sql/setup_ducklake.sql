@@ -1,0 +1,5 @@
+-- DuckLake catalog creation is intentionally not hard-coded here.
+-- Hardcharger supports DuckLake, but the actual catalog URI, storage credentials,
+-- metadata catalog, and ownership model depend on the managed cluster configuration.
+-- Have GizmoData confirm those values and supply the supported initialization SQL.
+-- The ETL will create its two target tables in the configured current catalog/schema.

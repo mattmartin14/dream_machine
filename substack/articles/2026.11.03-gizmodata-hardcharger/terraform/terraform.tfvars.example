@@ -1,0 +1,13 @@
+aws_region       = "us-east-2"
+hardcharger_region = "us-east-2"
+project          = "hardcharger-demo"
+environment      = "dev"
+enable_schedule  = false
+assign_public_ip = true
+
+# Optional: use existing VPC and at least two subnets in that VPC.
+# existing_vpc_id     = "vpc-..."
+# existing_subnet_ids = ["subnet-...", "subnet-..."]
+
+# Populate only with the verified AWS principal GizmoData will use for S3 reads.
+# hardcharger_s3_principal_arn = "arn:aws:iam::123456789012:role/..."

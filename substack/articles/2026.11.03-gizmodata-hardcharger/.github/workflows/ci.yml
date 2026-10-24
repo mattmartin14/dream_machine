@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+      - name: Install dependencies
+        run: uv sync --extra dev
+      - name: Unit tests
+        run: uv run pytest -m "not integration"
+      - name: Lint
+        run: uv run ruff check .
+      - name: Shell syntax
+        run: bash -n hardcharger/provision.sh hardcharger/destroy.sh scripts/*.sh
+      - name: Terraform format
+        run: terraform -chdir=terraform fmt -check -recursive
+      - name: Terraform validate
+        run: |
+          terraform -chdir=terraform init -backend=false
+          terraform -chdir=terraform validate

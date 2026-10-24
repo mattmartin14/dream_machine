@@ -1,0 +1,9 @@
+so far, we have the terrarform working
+we were able to provision a hardcharger cluster
+we were able to tear down aws and hard charger
+
+outstanding items
+- mounting my personal aws acct/secrets so hard charger can talk to it
+- test running the etl job
+- test querying the data
+- test row level and column level security
