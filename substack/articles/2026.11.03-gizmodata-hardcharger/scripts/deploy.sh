@@ -9,10 +9,10 @@ if [[ "${1:-}" != "--apply" ]]; then
   exit 2
 fi
 shift
-WITH_DATA=false
+RUN_JOB=false
 while (($#)); do
   case "$1" in
-    --with-data) WITH_DATA=true ;;
+    --run-job) RUN_JOB=true ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
   shift
@@ -29,7 +29,7 @@ if [[ -f .env ]]; then
   set +a
 fi
 
-REGION="${AWS_REGION:-us-east-2}"
+REGION="${AWS_REGION:-us-east-1}"
 aws sts get-caller-identity --region "$REGION" --output json >/dev/null
 
 terraform -chdir=terraform init
@@ -73,7 +73,6 @@ fi
 
 export AWS_REGION="$REGION"
 export HARDCHARGER_SECRET_ARN="$(terraform -chdir=terraform output -raw hardcharger_secret_arn)"
-export RAW_BUCKET="$(terraform -chdir=terraform output -raw raw_bucket_name)"
 export HARDCHARGER_URI=""
 export HARDCHARGER_USERNAME=""
 if [[ -f hardcharger/cluster-config.env ]]; then
@@ -85,9 +84,7 @@ fi
 uv sync --extra dev
 uv run python scripts/smoke_test.py
 
-if [[ "$WITH_DATA" == true ]]; then
-  uv run python scripts/generate_tpch.py --scale-factor "${TPCH_SCALE_FACTOR:-1}"
-  uv run python scripts/upload_tpch.py --bucket "$RAW_BUCKET"
+if [[ "$RUN_JOB" == true ]]; then
   export ECS_CLUSTER_NAME="$(terraform -chdir=terraform output -raw ecs_cluster_name)"
   export ECS_TASK_DEFINITION_ARN="$(terraform -chdir=terraform output -raw ecs_task_definition_arn)"
   export ECS_SUBNET_IDS="$(terraform -chdir=terraform output -json task_subnet_ids | jq -r 'join(",")')"
@@ -99,7 +96,7 @@ if [[ "$WITH_DATA" == true ]]; then
   fi
   ./scripts/run_etl_aws.sh
 else
-  echo "Dataset generation/upload and the initial ETL run were skipped. Use --with-data to request them."
+  echo "The Fargate job was skipped. Use --run-job to run it."
 fi
 
 echo "Deployment complete. The recurring EventBridge schedule remains disabled by default."

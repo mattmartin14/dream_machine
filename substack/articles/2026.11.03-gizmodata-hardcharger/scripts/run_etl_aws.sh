@@ -8,12 +8,12 @@ CLUSTER_NAME="${ECS_CLUSTER_NAME:?Set ECS_CLUSTER_NAME}"
 TASK_DEFINITION="${ECS_TASK_DEFINITION_ARN:?Set ECS_TASK_DEFINITION_ARN}"
 SUBNETS="${ECS_SUBNET_IDS:?Set comma-separated ECS_SUBNET_IDS}"
 SECURITY_GROUP="${ECS_SECURITY_GROUP_ID:?Set ECS_SECURITY_GROUP_ID}"
-REGION="${AWS_REGION:-us-east-2}"
+REGION="${AWS_REGION:-us-east-1}"
 ASSIGN_PUBLIC_IP="${ECS_ASSIGN_PUBLIC_IP:-ENABLED}"
 
-subnet_json="$(python -c 'import json,sys; print(json.dumps(sys.argv[1].split(",")))' "$SUBNETS")"
-network_json="$(python -c 'import json,sys; print(json.dumps({"awsvpcConfiguration":{"subnets":json.loads(sys.argv[1]),"securityGroups":[sys.argv[2]],"assignPublicIp":sys.argv[3]}}))' "$subnet_json" "$SECURITY_GROUP" "$ASSIGN_PUBLIC_IP")"
-overrides="$(python -c '
+subnet_json="$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1].split(",")))' "$SUBNETS")"
+network_json="$(python3 -c 'import json,sys; print(json.dumps({"awsvpcConfiguration":{"subnets":json.loads(sys.argv[1]),"securityGroups":[sys.argv[2]],"assignPublicIp":sys.argv[3]}}))' "$subnet_json" "$SECURITY_GROUP" "$ASSIGN_PUBLIC_IP")"
+overrides="$(python3 -c '
 import json, os
 env = [{"name": key, "value": os.environ[key]} for key in
        ("PROCESSING_DATE", "PROCESSING_START_DATE", "PROCESSING_END_DATE") if os.getenv(key)]

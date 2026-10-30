@@ -53,21 +53,6 @@ resource "aws_iam_role_policy" "task_execution" {
 
 data "aws_iam_policy_document" "task_access" {
   statement {
-    sid       = "ReadRawTpch"
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.raw.arn}/tpch/*"]
-  }
-  statement {
-    sid       = "ListRawTpch"
-    actions   = ["s3:ListBucket"]
-    resources = [aws_s3_bucket.raw.arn]
-    condition {
-      test     = "StringLike"
-      variable = "s3:prefix"
-      values   = ["tpch", "tpch/*"]
-    }
-  }
-  statement {
     sid       = "ReadConnectionSecret"
     actions   = ["secretsmanager:GetSecretValue"]
     resources = [aws_secretsmanager_secret.hardcharger.arn]

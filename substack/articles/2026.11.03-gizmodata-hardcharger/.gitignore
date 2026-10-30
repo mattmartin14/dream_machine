@@ -17,6 +17,7 @@ terraform.tfvars
 hardcharger/cluster-config.env
 hardcharger/cluster-config.local.env
 hardcharger/cluster-response.json
+hardcharger/cluster-support-curl.txt
 hardcharger/cluster-request.json
 data/
 dist/

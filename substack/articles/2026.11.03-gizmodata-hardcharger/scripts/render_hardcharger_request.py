@@ -12,7 +12,6 @@ from typing import Any
 
 PLACEHOLDER = re.compile(r"^\$\{([A-Z0-9_]+)\}$")
 REQUIRED = (
-    "HC_REQUEST_ID",
     "HC_CLUSTER_NAME",
     "HC_CLUSTER_LABEL",
     "HC_PROJECT_ENVIRONMENT_ID",
@@ -62,6 +61,16 @@ def render(template_path: Path, output_path: Path, env: dict[str, str] | None = 
             "Add the documented client IP allowlist entries before provisioning "
             "with HC_ALLOW_ANY_IP=false"
         )
+    if values.get("HC_S3_SECRET_ID"):
+        rendered["secrets_to_mount"] = [values["HC_S3_SECRET_ID"]]
+    if values.get("HC_DATABASE_ID"):
+        rendered["database_mounts"] = [
+            {
+                "database_id": values["HC_DATABASE_ID"],
+                "mount_point": values.get("HC_PERSIST_DB_NAME") or None,
+                "read_only": False,
+            }
+        ]
     rendered["allow_any_ip"] = allow_any_ip_value == "true"
     rendered["ip_access_list"] = ip_access_list
     if rendered["cloud_region"]["id"] != values["HC_CLOUD_REGION_ID"]:

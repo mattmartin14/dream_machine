@@ -23,7 +23,7 @@ def main() -> int:
     if not args.bucket:
         parser.error("Pass --bucket or set RAW_BUCKET")
     key = f"{args.prefix.strip('/')}/reference/customer_segment/customer_segment.parquet"
-    boto3.client("s3", region_name=os.getenv("AWS_REGION", "us-east-2")).upload_file(
+    boto3.client("s3", region_name=os.getenv("AWS_REGION", "us-east-1")).upload_file(
         str(args.file), args.bucket, key
     )
     print(f"Uploaded {args.file} to s3://{args.bucket}/{key} ({args.file.stat().st_size} bytes)")

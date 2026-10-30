@@ -12,7 +12,7 @@ class EtlLock:
         owner_id: str,
         *,
         client: Any | None = None,
-        region: str = "us-east-2",
+        region: str = "us-east-1",
     ) -> None:
         if client is None:
             import boto3

@@ -10,6 +10,41 @@ explicitly gated. The EventBridge schedule defaults to disabled. Do not run the
 deployment until you have reviewed the expected AWS spend and filled the missing
 GizmoData integration inputs.
 
+## POC build-out flow and what it tests
+
+The POC proves one thing end to end: an AWS-orchestrated job can make managed
+Hardcharger read private S3 Parquet, aggregate it, and keep the result as a table
+inside Hardcharger. Nothing is written back to S3.
+
+```mermaid
+flowchart TD
+    A["1. terraform apply (AWS)<br/>ECR, ECS, IAM, empty Secrets Manager secret"] --> B["2. Build and push ETL image to ECR"]
+    B --> C["3. provision.sh: POST /api/secrets/<br/>S3 secret from HC_AWS_PERSONAL_* keys"]
+    C --> D["4. provision.sh: POST /api/database-clusters/<br/>secrets_to_mount = S3 secret"]
+    D --> E["5. Poll until endpoint_ready"]
+    E --> F["6. Write cluster URI, user and password<br/>to Secrets Manager"]
+    F --> G["7. ECS Fargate task starts<br/>(hardcharger-orders-summary)"]
+    G --> H["8. Task reads Secrets Manager<br/>and connects to Hardcharger over TLS"]
+    H --> I["9. Task sends CREATE OR REPLACE TABLE ... AS<br/>SELECT ... FROM read_parquet('s3://...')"]
+    I --> J[("Private S3 bucket<br/>tpch/orders.parquet")]
+    J -. "read via mounted S3 secret<br/>(read-only IAM user)" .-> K
+    I --> K["10. Hardcharger aggregates<br/>and stores orders_summary table"]
+    K --> L["11. Verify: table exists and has rows"]
+```
+
+What each stage checks:
+
+| Stage | What it proves |
+| --- | --- |
+| 1-2 | AWS assets deploy and the job image is available to Fargate |
+| 3-5 | The Hardcharger API creates the S3 secret and a cluster that mounts it |
+| 6 | AWS Secrets Manager holds the cluster login, never the task environment |
+| 7-8 | Fargate can fetch the login and reach the cluster |
+| 9-10 | Hardcharger itself reads S3, aggregates, and writes the table (Fargate only sends SQL) |
+| 11 | The `orders_summary` table exists in Hardcharger and has rows |
+
+Row- and column-level security tests come after this flow works.
+
 ## Verified behavior and open integration points
 
 Official Hardcharger documentation reviewed for this project confirms:
@@ -150,17 +185,19 @@ This explicit flag authorizes creation of AWS project resources. The script:
 2. Initializes and validates Terraform and applies project infrastructure.
 3. Builds/pushes the ECR image and updates the task definition.
 4. Calls the configurable managed Hardcharger provisioning adapter.
-5. Runs a connection/S3-caller smoke check.
+5. Runs a connection smoke check.
 
-To also generate/upload the default SF1 data and execute an initial Fargate ETL:
+To also run the Fargate job (Hardcharger reads the S3 Parquet, aggregates it, and
+stores `order_stats.main.orders_summary`):
 
 ```bash
-./scripts/deploy.sh --apply --with-data
+./scripts/deploy.sh --apply --run-job
 ```
 
-SF1 is the initial data size; set `TPCH_SCALE_FACTOR` to another positive
-integer in `.env` to change it. Generation and upload use local disk, S3 storage,
-and request charges, and are not run unless `--with-data` is requested.
+The AWS stack contains no S3 buckets. Hardcharger reads your existing bucket through
+the S3 secret created from `HC_AWS_PERSONAL_*`, and `provision.sh` creates and mounts
+the persisted `order_stats` database. AWS infrastructure defaults to us-east-1; the
+Hardcharger cluster stays in us-east-2.
 If managed-service provisioning fails after AWS succeeds, the AWS resources are
 left in place for safe retry or explicit cleanup; the script prints the state of
 the partial deployment. It does not destroy data or infrastructure implicitly.
@@ -356,16 +393,12 @@ Destroy only project-managed resources after stopping tasks and reviewing the
 Terraform plan:
 
 ```bash
-./scripts/destroy.sh --confirm --delete-s3-data
+./scripts/destroy.sh --confirm
 ```
 
-The required `--delete-s3-data` flag explicitly authorizes deletion of the
-general-purpose bucket contents and Terraform-managed S3 Tables resources. It
-sets S3 Tables `force_destroy` before Terraform destroys the project table
-bucket, removing all its namespaces, tables, and data.
 Delete the managed cluster only with the separate documented API config and
 `GIZMODATA_API_KEY` environment variable, then run
-`./scripts/destroy.sh --confirm --delete-s3-data --delete-hardcharger`. The
+`./scripts/destroy.sh --confirm --delete-hardcharger`. The
 Hardcharger delete runs before AWS object and infrastructure deletion; a failed
 API call stops AWS teardown. DuckLake
 objects are not deleted by this AWS script; remove them only through a separately

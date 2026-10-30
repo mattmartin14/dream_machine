@@ -58,7 +58,7 @@ if ! status="$(curl --config "$curl_config" --output "$response_file" --write-ou
   echo "GizmoData cluster termination request failed; AWS teardown has not started." >&2
   exit 1
 fi
-if [[ "$status" != "200" ]]; then
+if [[ "$status" != "200" && "$status" != "202" ]]; then
   echo "GizmoData cluster termination returned HTTP $status; AWS teardown has not started." >&2
   exit 1
 fi

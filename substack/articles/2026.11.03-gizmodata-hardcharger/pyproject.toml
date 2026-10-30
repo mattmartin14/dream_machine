@@ -20,6 +20,7 @@ dev = ["pytest>=8.3", "ruff>=0.9"]
 
 [project.scripts]
 hardcharger-etl = "hardcharger_demo.etl:main"
+hardcharger-orders-summary = "hardcharger_demo.orders_summary:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hardcharger_demo"]

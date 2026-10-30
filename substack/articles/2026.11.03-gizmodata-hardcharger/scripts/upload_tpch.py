@@ -22,7 +22,7 @@ def upload(
     manifest_path = data_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
     if client is None:
-        client = boto3.client("s3", region_name=os.getenv("AWS_REGION", "us-east-2"))
+        client = boto3.client("s3", region_name=os.getenv("AWS_REGION", "us-east-1"))
     results: list[dict[str, object]] = []
     for table, details in manifest["tables"].items():
         source = data_dir / details["file"]

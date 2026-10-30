@@ -9,8 +9,8 @@
 4. Confirm the Hardcharger service can access the raw S3 prefix.
 5. Review `terraform plan`; recurring schedule must remain disabled.
 
-The top-level deployment requires `--apply`; `--with-data` separately authorizes
-SF1 generation, S3 upload, and the initial Fargate ETL. Neither this repository
+The top-level deployment requires `--apply`; `--run-job` separately runs
+the Fargate job. Neither this repository
 setup nor its tests contacted AWS.
 
 ## Terraform
@@ -33,6 +33,17 @@ are intentionally retained. Review the response and remote cluster state before
 retrying. Continue with the corrected local config or run the explicit destroy
 script. A failed API response cannot be safely auto-cleaned without the vendor's
 actual response schema and deletion semantics.
+
+The provision script automatically discards a saved API error response and
+retries with the current configuration. It preserves responses that cannot be
+identified as either a successful cluster response or an API error; inspect
+those and confirm remote state before retrying to avoid duplicate creation.
+On API request failures, the provision script saves a sanitized, copyable curl
+command to the ignored `hardcharger/cluster-support-curl.txt` file. The command
+uses a heredoc so the JSON body is readable and has no escaped newlines.
+Authorization, username, password, token, and secret values are redacted. For
+an already-saved response, the command is reconstructed from the current
+configuration and may differ from the original request.
 
 The top-level destroy script supports `--delete-hardcharger`. When enabled, it
 calls the documented `DELETE /api/database-clusters/{id}?wait=true` endpoint

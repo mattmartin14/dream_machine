@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS deployment region."
   type        = string
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
 variable "hardcharger_region" {
@@ -63,36 +63,6 @@ variable "container_image" {
   default     = "bootstrap:pending"
 }
 
-variable "hardcharger_s3_principal_arn" {
-  description = "Optional GizmoData AWS principal to grant read-only access to raw S3 data."
-  type        = string
-  default     = ""
-}
-
-variable "raw_bucket_name" {
-  description = "Optional globally unique name for the raw data bucket."
-  type        = string
-  default     = ""
-}
-
-variable "output_bucket_name" {
-  description = "Optional globally unique name for analytical outputs."
-  type        = string
-  default     = ""
-}
-
-variable "tables_bucket_name" {
-  description = "Optional S3 Tables bucket name."
-  type        = string
-  default     = ""
-}
-
-variable "allow_s3_tables_force_destroy" {
-  description = "Allow irreversible deletion of all S3 Tables namespaces/tables when true."
-  type        = bool
-  default     = false
-}
-
 variable "hardcharger_secret_name" {
   description = "Optional Secrets Manager name. Defaults to a name scoped by project/environment."
   type        = string
@@ -127,4 +97,16 @@ variable "common_tags" {
   description = "Additional tags to apply to project resources."
   type        = map(string)
   default     = {}
+}
+
+variable "source_s3_uri" {
+  description = "Parquet object or glob that Hardcharger reads through its mounted S3 secret."
+  type        = string
+  default     = "s3://matt-sbx-bucket-1-us-east-1/tpch/orders.parquet"
+}
+
+variable "target_table" {
+  description = "Table the job creates inside Hardcharger. The persisted order_stats database is mounted read-write on the cluster."
+  type        = string
+  default     = "order_stats.main.orders_summary"
 }

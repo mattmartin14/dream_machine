@@ -1,19 +1,16 @@
 locals {
-  name_prefix        = "${var.project}-${var.environment}"
-  use_existing_vpc   = var.existing_vpc_id != ""
-  secret_name        = var.hardcharger_secret_name != "" ? var.hardcharger_secret_name : "${local.name_prefix}/connection"
-  lock_table_name    = var.etl_lock_table_name != "" ? var.etl_lock_table_name : "${local.name_prefix}-etl-lock"
-  raw_bucket_name    = var.raw_bucket_name != "" ? var.raw_bucket_name : "${local.name_prefix}-${data.aws_caller_identity.current.account_id}-raw"
-  output_bucket_name = var.output_bucket_name != "" ? var.output_bucket_name : "${local.name_prefix}-${data.aws_caller_identity.current.account_id}-out"
-  tables_bucket_name = var.tables_bucket_name != "" ? var.tables_bucket_name : "${local.name_prefix}-${data.aws_caller_identity.current.account_id}-tables"
-  task_subnet_ids    = local.use_existing_vpc ? var.existing_subnet_ids : aws_subnet.public[*].id
-  task_vpc_id        = local.use_existing_vpc ? var.existing_vpc_id : aws_vpc.demo[0].id
+  name_prefix      = "${var.project}-${var.environment}"
+  use_existing_vpc = var.existing_vpc_id != ""
+  secret_name      = var.hardcharger_secret_name != "" ? var.hardcharger_secret_name : "${local.name_prefix}/connection"
+  lock_table_name  = var.etl_lock_table_name != "" ? var.etl_lock_table_name : "${local.name_prefix}-etl-lock"
+  task_subnet_ids  = local.use_existing_vpc ? var.existing_subnet_ids : aws_subnet.public[*].id
+  task_vpc_id      = local.use_existing_vpc ? var.existing_vpc_id : aws_vpc.demo[0].id
 }
 
 resource "aws_secretsmanager_secret" "hardcharger" {
   name                    = local.secret_name
   description             = "Managed Hardcharger connection details; value is added after provisioning."
-  recovery_window_in_days = 7
+  recovery_window_in_days = 0
   tags                    = var.common_tags
 }
 
@@ -55,15 +52,15 @@ resource "aws_ecs_task_definition" "etl" {
 
   container_definitions = jsonencode([
     {
-      name      = "etl"
-      image     = var.container_image
-      essential = true
-      command   = ["hardcharger-etl"]
+      name       = "etl"
+      image      = var.container_image
+      essential  = true
+      entryPoint = ["hardcharger-orders-summary"]
       environment = [
         { name = "AWS_REGION", value = var.aws_region },
         { name = "ENVIRONMENT", value = var.environment },
-        { name = "RAW_BUCKET", value = aws_s3_bucket.raw.bucket },
-        { name = "RAW_PREFIX", value = "tpch" },
+        { name = "SOURCE_S3_URI", value = var.source_s3_uri },
+        { name = "TARGET_TABLE", value = var.target_table },
         { name = "HARDCHARGER_SECRET_ARN", value = aws_secretsmanager_secret.hardcharger.arn },
         { name = "DDB_LOCK_TABLE", value = aws_dynamodb_table.etl_lock.name }
       ]

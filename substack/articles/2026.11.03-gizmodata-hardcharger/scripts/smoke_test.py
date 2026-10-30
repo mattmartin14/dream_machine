@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Check ADBC connectivity and AWS-side raw bucket access without a data scan."""
+"""Check ADBC connectivity to the Hardcharger cluster."""
 
 from __future__ import annotations
 
 import logging
-
-import boto3
 
 from hardcharger_demo.config import Settings
 from hardcharger_demo.connection import connect
@@ -27,17 +25,7 @@ def main() -> int:
             current_catalog = cursor.fetchone()[0]
         finally:
             cursor.close()
-    s3 = boto3.client("s3", region_name=settings.aws_region)
-    s3.list_objects_v2(
-        Bucket=settings.raw_bucket,
-        Prefix=f"{settings.raw_prefix}/",
-        MaxKeys=1,
-    )
-    print(
-        "Smoke test passed: Hardcharger query and AWS caller's S3 listing succeeded; "
-        f"session catalog={current_catalog!r}. "
-        "This does not verify the managed service's S3 identity."
-    )
+    print(f"Smoke test passed: Hardcharger query succeeded; session catalog={current_catalog!r}.")
     return 0
 
 

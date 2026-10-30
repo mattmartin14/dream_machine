@@ -34,7 +34,7 @@ class Settings:
         if timeout < 1:
             raise ValueError("QUERY_TIMEOUT_SECONDS must be greater than zero")
         return cls(
-            aws_region=os.getenv("AWS_REGION", "us-east-2"),
+            aws_region=os.getenv("AWS_REGION", "us-east-1"),
             hardcharger_uri=os.getenv("HARDCHARGER_URI", ""),
             hardcharger_username=os.getenv("HARDCHARGER_USERNAME", ""),
             hardcharger_password=os.getenv("HARDCHARGER_PASSWORD"),
@@ -52,12 +52,6 @@ class Settings:
         )
 
     def require_etl(self) -> None:
-        required = {
-            "RAW_BUCKET": self.raw_bucket,
-        }
-        missing = [name for name, value in required.items() if not value]
-        if missing:
-            raise ValueError(f"Missing required configuration: {', '.join(missing)}")
         if not self.hardcharger_secret_arn and (
             not self.hardcharger_uri
             or not self.hardcharger_username

@@ -1,5 +1,4 @@
 {
-  "id": "${HC_REQUEST_ID}",
   "name": "${HC_CLUSTER_NAME}",
   "label": "${HC_CLUSTER_LABEL}",
   "project_environment_id": "${HC_PROJECT_ENVIRONMENT_ID}",

@@ -6,14 +6,6 @@ output "hardcharger_region" {
   value = var.hardcharger_region
 }
 
-output "raw_bucket_name" {
-  value = aws_s3_bucket.raw.bucket
-}
-
-output "output_bucket_name" {
-  value = aws_s3_bucket.output.bucket
-}
-
 output "ecr_repository_url" {
   value = aws_ecr_repository.etl.repository_url
 }
@@ -41,10 +33,6 @@ output "task_subnet_ids" {
 output "hardcharger_secret_arn" {
   value     = aws_secretsmanager_secret.hardcharger.arn
   sensitive = true
-}
-
-output "s3_tables_bucket_arn" {
-  value = aws_s3tables_table_bucket.analytics.arn
 }
 
 output "scheduler_name" {
