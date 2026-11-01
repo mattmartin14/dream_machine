@@ -36,6 +36,18 @@ def test_rendered_payload_uses_supplied_schema_and_secure_ip_default(tmp_path: P
     assert output.stat().st_mode & 0o777 == 0o600
 
 
+def test_access_control_catalog_is_optional_and_rendered_when_set(tmp_path: Path) -> None:
+    output = tmp_path / "request.json"
+    render(TEMPLATE, output, values())
+    assert json.loads(output.read_text())["access_control_catalog_id"] is None
+
+    config = values()
+    config["HC_ACCESS_CONTROL_CATALOG_ID"] = "d0687822-ad61-4743-98c2-0806e6eb3b7d"
+    render(TEMPLATE, output, config)
+    request = json.loads(output.read_text())
+    assert request["access_control_catalog_id"] == config["HC_ACCESS_CONTROL_CATALOG_ID"]
+
+
 def test_renderer_rejects_missing_values(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="Missing Hardcharger request values"):
         render(TEMPLATE, tmp_path / "request.json", {})

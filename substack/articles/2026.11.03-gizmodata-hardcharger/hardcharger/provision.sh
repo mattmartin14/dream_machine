@@ -190,15 +190,20 @@ ensure_s3_secret() {
 
 databases_endpoint="${HC_DATABASES_ENDPOINT:-https://app.gizmodata.com/api/databases/}"
 
-# Creates (or reuses, matched by name) a persisted DuckDB database and exports its
-# ID so the cluster mounts it read-write.
+# Creates a persisted DuckDB database and exports its ID so the cluster mounts it
+# read-write. A database with the same name already existing would carry old tables
+# into the new cluster, so this fails unless HC_REUSE_PERSIST_DB=true.
 ensure_database() {
   [[ -n "${HC_PERSIST_DB_NAME:-}" ]] || return 0
   local name="$HC_PERSIST_DB_NAME" db_payload db_id
   perform_request "$databases_endpoint" GET "" "$response_tmp" || return 1
   db_id="$(jq -r --arg name "$name" --arg env "$HC_PROJECT_ENVIRONMENT_ID" \
     'map(select(.name == $name and .project_environment_id == $env and .active_flag != false)) | first | .id // empty' "$response_tmp")"
-  if [[ -n "$db_id" ]]; then
+  if [[ -n "$db_id" && "${HC_REUSE_PERSIST_DB:-false}" != true ]]; then
+    echo "Persisted database '$name' ($db_id) already exists and would carry over old data." >&2
+    echo "Delete it first (hardcharger/destroy.sh does this) or set HC_REUSE_PERSIST_DB=true." >&2
+    return 1
+  elif [[ -n "$db_id" ]]; then
     echo "Reusing persisted Hardcharger database '$name' ($db_id)."
   else
     db_payload="$(mktemp)"

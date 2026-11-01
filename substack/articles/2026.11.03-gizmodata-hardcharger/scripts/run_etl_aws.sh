@@ -4,28 +4,25 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-CLUSTER_NAME="${ECS_CLUSTER_NAME:?Set ECS_CLUSTER_NAME}"
-TASK_DEFINITION="${ECS_TASK_DEFINITION_ARN:?Set ECS_TASK_DEFINITION_ARN}"
-SUBNETS="${ECS_SUBNET_IDS:?Set comma-separated ECS_SUBNET_IDS}"
-SECURITY_GROUP="${ECS_SECURITY_GROUP_ID:?Set ECS_SECURITY_GROUP_ID}"
 REGION="${AWS_REGION:-us-east-1}"
-ASSIGN_PUBLIC_IP="${ECS_ASSIGN_PUBLIC_IP:-ENABLED}"
-
-subnet_json="$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1].split(",")))' "$SUBNETS")"
-network_json="$(python3 -c 'import json,sys; print(json.dumps({"awsvpcConfiguration":{"subnets":json.loads(sys.argv[1]),"securityGroups":[sys.argv[2]],"assignPublicIp":sys.argv[3]}}))' "$subnet_json" "$SECURITY_GROUP" "$ASSIGN_PUBLIC_IP")"
-overrides="$(python3 -c '
-import json, os
-env = [{"name": key, "value": os.environ[key]} for key in
-       ("PROCESSING_DATE", "PROCESSING_START_DATE", "PROCESSING_END_DATE") if os.getenv(key)]
-print(json.dumps({"containerOverrides": [{"name": "etl", "environment": env}]}))
-')"
+tf_out() { terraform -chdir=terraform output "$@"; }
+CLUSTER_NAME="$(tf_out -raw ecs_cluster_name)"
+TASK_DEFINITION="$(tf_out -raw ecs_task_definition_arn)"
+SECURITY_GROUP="$(tf_out -raw task_security_group_id)"
+SUBNETS="$(tf_out -json task_subnet_ids | jq -r 'join(",")')"
+if [[ "$(tf_out -raw assign_public_ip)" == "true" ]]; then
+  ASSIGN_PUBLIC_IP=ENABLED
+else
+  ASSIGN_PUBLIC_IP=DISABLED
+fi
+network_json="$(jq -nc --arg s "$SUBNETS" --arg g "$SECURITY_GROUP" --arg a "$ASSIGN_PUBLIC_IP" \
+  '{awsvpcConfiguration: {subnets: ($s | split(",")), securityGroups: [$g], assignPublicIp: $a}}')"
 task_arn="$(aws ecs run-task \
   --region "$REGION" \
   --cluster "$CLUSTER_NAME" \
   --task-definition "$TASK_DEFINITION" \
   --launch-type FARGATE \
   --network-configuration "$network_json" \
-  --overrides "$overrides" \
   --query 'tasks[0].taskArn' \
   --output text)"
 
@@ -43,3 +40,4 @@ if [[ "$exit_code" != "0" ]]; then
   echo "ETL task exited with code $exit_code." >&2
   exit 1
 fi
+echo "ETL task completed successfully."

@@ -64,5 +64,25 @@ if [[ "$status" != "200" && "$status" != "202" ]]; then
 fi
 
 rm -f "$METADATA_FILE" hardcharger/cluster-response.json
+
+# Delete the persisted database (and its cloud backup) so the next build starts empty.
+LOCAL_CONFIG="hardcharger/cluster-config.local.env"
+if [[ -f "$LOCAL_CONFIG" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$LOCAL_CONFIG"
+  set +a
+fi
+if [[ -n "${HC_PERSIST_DB_NAME:-}" && -n "${HC_PROJECT_ENVIRONMENT_ID:-}" ]]; then
+  api="https://app.gizmodata.com/api/databases"
+  auth="Authorization: Bearer ${GIZMODATA_API_KEY}"
+  db_ids="$(curl -sf -H "$auth" "$api/" | jq -r --arg n "$HC_PERSIST_DB_NAME" --arg e "$HC_PROJECT_ENVIRONMENT_ID" \
+    '.[] | select(.name == $n and .project_environment_id == $e) | .id' || true)"
+  for db_id in $db_ids; do
+    curl -sf -X DELETE -H "$auth" "$api/$db_id?hard_delete=true&destroy_data=true" >/dev/null \
+      && echo "Deleted persisted database '$HC_PERSIST_DB_NAME' ($db_id)." \
+      || echo "Could not delete persisted database $db_id; delete it before the next build." >&2
+  done
+fi
 unset GIZMODATA_API_KEY
 echo "GizmoData confirmed cluster termination; local cluster metadata removed."

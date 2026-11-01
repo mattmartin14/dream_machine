@@ -9,14 +9,10 @@ if [[ "${1:-}" != "--apply" ]]; then
   exit 2
 fi
 shift
-RUN_JOB=false
-while (($#)); do
-  case "$1" in
-    --run-job) RUN_JOB=true ;;
-    *) echo "Unknown option: $1" >&2; exit 2 ;;
-  esac
-  shift
-done
+if (($#)); then
+  echo "Unknown option: $1" >&2
+  exit 2
+fi
 
 for command in terraform aws docker jq uv python3; do
   command -v "$command" >/dev/null || { echo "Required command not found: $command" >&2; exit 2; }
@@ -84,20 +80,6 @@ fi
 uv sync --extra dev
 uv run python scripts/smoke_test.py
 
-if [[ "$RUN_JOB" == true ]]; then
-  export ECS_CLUSTER_NAME="$(terraform -chdir=terraform output -raw ecs_cluster_name)"
-  export ECS_TASK_DEFINITION_ARN="$(terraform -chdir=terraform output -raw ecs_task_definition_arn)"
-  export ECS_SUBNET_IDS="$(terraform -chdir=terraform output -json task_subnet_ids | jq -r 'join(",")')"
-  export ECS_SECURITY_GROUP_ID="$(terraform -chdir=terraform output -raw task_security_group_id)"
-  if [[ "$(terraform -chdir=terraform output -raw assign_public_ip)" == "true" ]]; then
-    export ECS_ASSIGN_PUBLIC_IP=ENABLED
-  else
-    export ECS_ASSIGN_PUBLIC_IP=DISABLED
-  fi
-  ./scripts/run_etl_aws.sh
-else
-  echo "The Fargate job was skipped. Use --run-job to run it."
-fi
-
+echo "Run the ETL job separately with ./scripts/run_etl_aws.sh."
 echo "Deployment complete. The recurring EventBridge schedule remains disabled by default."
 terraform -chdir=terraform output

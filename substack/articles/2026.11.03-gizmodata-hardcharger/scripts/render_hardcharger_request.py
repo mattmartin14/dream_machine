@@ -63,6 +63,8 @@ def render(template_path: Path, output_path: Path, env: dict[str, str] | None = 
         )
     if values.get("HC_S3_SECRET_ID"):
         rendered["secrets_to_mount"] = [values["HC_S3_SECRET_ID"]]
+    if values.get("HC_ACCESS_CONTROL_CATALOG_ID"):
+        rendered["access_control_catalog_id"] = values["HC_ACCESS_CONTROL_CATALOG_ID"]
     if values.get("HC_DATABASE_ID"):
         rendered["database_mounts"] = [
             {
