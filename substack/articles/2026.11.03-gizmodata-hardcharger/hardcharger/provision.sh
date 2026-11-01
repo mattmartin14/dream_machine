@@ -222,6 +222,62 @@ ensure_database() {
   export HC_DATABASE_ID="$db_id"
 }
 
+# Each cluster needs its own access-control store (a store is bound to the first cluster that
+# starts with it). Creates a fresh PostgreSQL store per build and exports its ID; destroy.sh
+# deletes it. An explicit HC_ACCESS_CONTROL_CATALOG_ID skips creation.
+ensure_access_control_catalog() {
+  [[ "${HC_CREATE_ACCESS_CONTROL_CATALOG:-false}" == true && -z "${HC_ACCESS_CONTROL_CATALOG_ID:-}" ]] || return 0
+  local name ac_payload
+  name="${HC_PERSIST_DB_NAME:-hardcharger}-access-control-$(date +%Y%m%d%H%M%S)"
+  ac_payload="$(mktemp)"
+  jq -n --arg name "$name" --arg env "$HC_PROJECT_ENVIRONMENT_ID" --arg cloud "${HC_CLOUD_LABEL:-aws}" \
+    '{name: $name, label: $name, purpose: "access_control", project_environment_id: $env,
+      cloud: {label: $cloud}, wait: true}' >"$ac_payload"
+  perform_request "${HC_CATALOGS_ENDPOINT:-https://app.gizmodata.com/api/catalogs/postgresql/master/}" \
+    POST "$ac_payload" "$response_tmp" || {
+    rm -f "$ac_payload"
+    echo "Could not create the access-control catalog '$name'." >&2
+    return 1
+  }
+  rm -f "$ac_payload"
+  HC_CREATED_AC_CATALOG_ID="$(jq -er '.id' "$response_tmp")"
+  export HC_ACCESS_CONTROL_CATALOG_ID="$HC_CREATED_AC_CATALOG_ID"
+  echo "Created access-control catalog '$name' ($HC_CREATED_AC_CATALOG_ID)."
+}
+
+delete_created_catalog() {
+  [[ -n "${HC_CREATED_AC_CATALOG_ID:-}" ]] || return 0
+  perform_request "${HC_CATALOGS_BASE:-https://app.gizmodata.com/api/catalogs}/$HC_CREATED_AC_CATALOG_ID?hard_delete=true&destroy_data=true" \
+    DELETE "" "$response_tmp" || echo "Could not delete catalog $HC_CREATED_AC_CATALOG_ID; remove it manually." >&2
+}
+
+save_metadata() {
+  printf 'HC_CLUSTER_ID=%q\nHARDCHARGER_URI=%q\nHARDCHARGER_USERNAME=%q\nHC_CREATED_AC_CATALOG_ID=%q\n' \
+    "$HC_CLUSTER_ID" "${HARDCHARGER_URI:-}" "$HARDCHARGER_USERNAME" "${HC_CREATED_AC_CATALOG_ID:-}" >"$metadata_file"
+  chmod 600 "$metadata_file"
+}
+
+report_start_failure() {
+  local record="$1"
+  echo "" >&2
+  echo "Hardcharger cluster $HC_CLUSTER_ID FAILED to start." >&2
+  echo "--- provisioning_error ---" >&2
+  jq -r '.provisioning_error // "(none reported)"' "$record" >&2
+  echo "--- pod logs (last 40 lines) ---" >&2
+  jq -r '.provisioning_pod_logs // "(none reported)"' "$record" | tail -40 >&2
+  if [[ -s "$payload_tmp" ]]; then
+    save_support_curl "$HC_API_ENDPOINT" "$HC_API_METHOD" "$payload_tmp" 2>/dev/null || true
+  fi
+  if [[ -s "$support_curl_file" ]]; then
+    echo "--- curl request that created the cluster (credentials redacted) ---" >&2
+    cat "$support_curl_file" >&2
+  fi
+  cp "$record" hardcharger/cluster-failure.json
+  echo "" >&2
+  echo "Full cluster record: hardcharger/cluster-failure.json" >&2
+  echo "Clean up before retrying: ./hardcharger/destroy.sh --confirm" >&2
+}
+
 if [[ -f "$metadata_file" ]]; then
   echo "Using previously saved cluster metadata; no create request will be sent."
   set -a
@@ -272,9 +328,11 @@ else
     require_value GIZMODATA_API_KEY "${GIZMODATA_API_KEY:-}"
     ensure_s3_secret
     ensure_database
+    ensure_access_control_catalog
     python3 scripts/render_hardcharger_request.py "$HC_API_PAYLOAD_TEMPLATE" "$payload_tmp"
     if ! perform_request "$HC_API_ENDPOINT" "$HC_API_METHOD" "$payload_tmp" "$response_file"; then
       save_support_curl "$HC_API_ENDPOINT" "$HC_API_METHOD" "$payload_tmp"
+      delete_created_catalog
       exit 1
     fi
   fi
@@ -293,6 +351,8 @@ fi
 
 require_value HC_CLUSTER_ID "${HC_CLUSTER_ID:-}"
 require_value HARDCHARGER_USERNAME "${HARDCHARGER_USERNAME:-}"
+# Saved before polling so destroy.sh can clean up a cluster that fails to start.
+save_metadata
 
 if [[ -n "${HC_READY_ENDPOINT_TEMPLATE:-}" ]]; then
   require_value HC_READY_METHOD "${HC_READY_METHOD:-}"
@@ -309,6 +369,11 @@ if [[ -n "${HC_READY_ENDPOINT_TEMPLATE:-}" ]]; then
   ready_endpoint="${HC_READY_ENDPOINT_TEMPLATE//\{cluster_id\}/$encoded_cluster_id}"
   while (( $(date +%s) < deadline )); do
     if perform_request "$ready_endpoint" "$HC_READY_METHOD" "" "$response_tmp"; then
+      cluster_status="$(jq -r '.status // empty' "$response_tmp" 2>/dev/null || true)"
+      if [[ "$cluster_status" == "failed" || "$cluster_status" == "error" ]]; then
+        report_start_failure "$response_tmp"
+        exit 1
+      fi
       state="$(jq -er "$HC_READY_STATE_JQ" "$response_tmp" 2>/dev/null || true)"
       if [[ "$state" == "$HC_READY_SUCCESS_VALUE" ]]; then
         if [[ -z "${HARDCHARGER_URI:-}" ]]; then
@@ -321,7 +386,8 @@ if [[ -n "${HC_READY_ENDPOINT_TEMPLATE:-}" ]]; then
     sleep "$interval"
   done
   if [[ "${state:-}" != "$HC_READY_SUCCESS_VALUE" ]]; then
-    echo "Timed out waiting for cluster readiness; metadata is preserved to prevent duplicate creation." >&2
+    echo "Timed out waiting for cluster readiness (last status: ${cluster_status:-unknown}); metadata is preserved to prevent duplicate creation." >&2
+    echo "Clean up before retrying: ./hardcharger/destroy.sh --confirm" >&2
     exit 1
   fi
 else
@@ -337,11 +403,7 @@ require_value HARDCHARGER_URI "${HARDCHARGER_URI:-}"
   exit 2
 }
 
-if [[ ! -f "$metadata_file" ]]; then
-  printf 'HC_CLUSTER_ID=%q\nHARDCHARGER_URI=%q\nHARDCHARGER_USERNAME=%q\n' \
-    "$HC_CLUSTER_ID" "$HARDCHARGER_URI" "$HARDCHARGER_USERNAME" >"$metadata_file"
-  chmod 600 "$metadata_file"
-fi
+save_metadata
 
 if [[ -z "${HC_SECRET_ID:-}" ]]; then
   terraform_outputs="$(terraform -chdir=terraform output -json)" || {

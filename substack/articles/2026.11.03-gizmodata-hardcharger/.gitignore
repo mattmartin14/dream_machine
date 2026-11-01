@@ -22,3 +22,4 @@ hardcharger/cluster-request.json
 data/
 dist/
 *.egg-info/
+hardcharger/cluster-failure.json

@@ -33,6 +33,11 @@ def main() -> None:
                 cur.execute(sql)
             except dbapi.ProgrammingError as error:
                 print(f"Refused: {error}")
+                print("Hint: select only columns you have been granted, for example:")
+                print(
+                    '  uv run python scripts/query_orders_summary.py "SELECT order_status, '
+                    'order_priority, order_count FROM order_stats.main.orders_summary"'
+                )
                 return
             print([col[0] for col in cur.description])
             for row in cur.fetchall():

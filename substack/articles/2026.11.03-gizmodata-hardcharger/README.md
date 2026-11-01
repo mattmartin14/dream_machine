@@ -21,9 +21,12 @@ uv sync --extra dev
 cp hardcharger/cluster-config.example.env hardcharger/cluster-config.local.env
 ```
 
-Fill in `hardcharger/cluster-config.local.env`. It includes
-`HC_ACCESS_CONTROL_CATALOG_ID`, which attaches the access-control catalog (needed for users,
-grants, and row policies) when the cluster is created.
+Fill in `hardcharger/cluster-config.local.env`. With `HC_CREATE_ACCESS_CONTROL_CATALOG=true`,
+`provision.sh` creates a fresh access-control catalog (needed for users, grants, and row
+policies) for each cluster and `destroy.sh` deletes it; a catalog can only be used by one
+cluster. The image must be a pinned release such as `hardcharger-2.4.1`, not `latest`.
+If the cluster fails to start, `provision.sh` prints the provisioning error, pod logs, and the
+create curl (credentials redacted), and saves the record to `hardcharger/cluster-failure.json`.
 
 ## 1. Source data in S3
 
@@ -65,7 +68,8 @@ credentials in the Terraform-managed secret. SQL is run one statement at a time 
 uv run python scripts/run_sql.py sql/readonly_demo/01_create_readonly_user.sql
 uv run python scripts/query_orders_summary.py
 uv run python scripts/run_sql.py sql/readonly_demo/02_column_level_security.sql
-uv run python scripts/query_orders_summary.py
+uv run python scripts/query_orders_summary.py #should fail
+uv run python scripts/query_orders_summary.py "SELECT order_status FROM order_stats.main.orders_summary"
 uv run python scripts/run_sql.py sql/readonly_demo/03_row_level_security.sql
 uv run python scripts/query_orders_summary.py "SELECT order_status, order_priority, order_count FROM order_stats.main.orders_summary"
 ```

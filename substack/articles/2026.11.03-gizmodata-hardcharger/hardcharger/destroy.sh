@@ -65,6 +65,14 @@ fi
 
 rm -f "$METADATA_FILE" hardcharger/cluster-response.json
 
+# Delete the access-control catalog created for this cluster (a store can't be reused by another cluster).
+if [[ -n "${HC_CREATED_AC_CATALOG_ID:-}" ]]; then
+  curl -sf -X DELETE -H "Authorization: Bearer ${GIZMODATA_API_KEY}" \
+    "https://app.gizmodata.com/api/catalogs/${HC_CREATED_AC_CATALOG_ID}?hard_delete=true&destroy_data=true" >/dev/null \
+    && echo "Deleted access-control catalog ${HC_CREATED_AC_CATALOG_ID}." \
+    || echo "Could not delete access-control catalog ${HC_CREATED_AC_CATALOG_ID}; delete it manually." >&2
+fi
+
 # Delete the persisted database (and its cloud backup) so the next build starts empty.
 LOCAL_CONFIG="hardcharger/cluster-config.local.env"
 if [[ -f "$LOCAL_CONFIG" ]]; then
