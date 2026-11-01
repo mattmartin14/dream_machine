@@ -69,7 +69,7 @@ uv run python scripts/run_sql.py sql/readonly_demo/01_create_readonly_user.sql
 uv run python scripts/query_orders_summary.py
 uv run python scripts/run_sql.py sql/readonly_demo/02_column_level_security.sql
 uv run python scripts/query_orders_summary.py #should fail
-uv run python scripts/query_orders_summary.py "SELECT order_status FROM order_stats.main.orders_summary"
+uv run python scripts/query_orders_summary.py "SELECT order_status FROM order_stats.main.orders_summary" #should succeed
 uv run python scripts/run_sql.py sql/readonly_demo/03_row_level_security.sql
 uv run python scripts/query_orders_summary.py "SELECT order_status, order_priority, order_count FROM order_stats.main.orders_summary"
 ```
