@@ -1,0 +1,30 @@
+# Local credentials and certificates
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+.pgpass
+
+# Local DuckDB/DuckLake catalogs and databases
+*.duckdb
+*.duckdb.wal
+*.ducklake
+*.ducklake.wal
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+
+# Terraform state and variable files, including backups and lock metadata
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.tfplan
+.terraform/
