@@ -20,25 +20,48 @@ From the project directory, in a Bash or zsh session where the credentials are s
 (run `source ~/.zshrc` if needed):
 
 ```sh
-source scripts/deploy.sh
+make deploy
 ```
 
-Source the script rather than executing it: only sourcing can export
-`AURORA_HOST` to the current shell. It refreshes the public IPv4 address from
-AWS, downloads the AWS RDS global CA bundle to `~/.aws/rds-global-bundle.pem`,
+Make requires `AURORA_ADMIN_USER` and `AURORA_ADMIN_PWD` to be exported in
+the invoking shell, along with AWS credentials. Deployment refreshes the public
+IPv4 address from AWS, downloads the AWS RDS global CA bundle to
+`~/.aws/rds-global-bundle.pem`,
 initializes Terraform, and applies the configuration without a confirmation
-prompt. It also exports `AURORA_SSL_ROOT_CERT` to the bundle path. The public IP and credentials are passed to
+prompt. The public IP and credentials are passed to
 Terraform through environment variables, not a local inputs file. Rerun
 the deploy script if your IP changes. Aurora creation can take several minutes.
 Only run the ETL after apply completes.
 Both scripts use a restrictive umask for Terraform state files.
 
 The global PEM bundle is suitable for Aurora in any commercial AWS Region.
-After deployment, run DuckDB in the same shell:
+After deployment, run the DuckLake ETL:
 
 ```sh
-duckdb -c ".read etl/ducklake_etl.sql"
+make etl
 ```
+
+The ETL target reads the Aurora endpoint from Terraform state and uses the
+downloaded CA bundle, or `AURORA_SSL_ROOT_CERT` if set. It requires the
+exported Aurora and AWS credentials and `SLACK_WEBHOOK` used by the ETL.
+It does not deploy infrastructure automatically. Make runs each target in a
+child shell, so `make deploy` does not export the connection settings to your
+current shell. Running the SQL directly without `AURORA_HOST` makes PostgreSQL
+try a local socket instead of Aurora. To run DuckDB directly without
+redeploying, set the connection settings in the current shell:
+
+```sh
+if AURORA_HOST=$(terraform -chdir=terraform output -raw aurora_host) && [ -n "$AURORA_HOST" ]; then
+  export AURORA_HOST
+  export AURORA_SSL_ROOT_CERT="${AURORA_SSL_ROOT_CERT:-$HOME/.aws/rds-global-bundle.pem}"
+  duckdb -c ".read etl/ducklake_etl.sql"
+else
+  echo "Could not read the Aurora endpoint from Terraform." >&2
+fi
+```
+
+Alternatively, source `scripts/deploy.sh` in the current Bash or zsh session
+to apply the infrastructure and export both settings.
 
 Run the ETL scripts from the project directory. For example, the Iceberg
 workflow uses `duckdb -c ".read etl/iceberg_etl.sql"` and the data generator
@@ -50,13 +73,14 @@ the existing local `aws_dl1.ducklake` catalog is not migrated.
 When finished, from the project directory:
 
 ```sh
-bash scripts/destroy.sh
+make destroy
 ```
 
 The destroy script supplies placeholder database credentials and CIDR to
 Terraform; it does not need the Aurora login, but it does need AWS credentials.
 **It destroys resources without a confirmation prompt.** It does not unset
-`AURORA_HOST` in the parent shell; run `unset AURORA_HOST` afterward.
+`AURORA_HOST` in the parent shell; if you previously sourced the deploy script,
+run `unset AURORA_HOST AURORA_SSL_ROOT_CERT` afterward.
 The cluster skips its final snapshot on deletion, so the Aurora catalog is
 lost. The S3 data files are not removed. Delete any retained backups or other
 resources separately, and remove local state and shell credentials when no
