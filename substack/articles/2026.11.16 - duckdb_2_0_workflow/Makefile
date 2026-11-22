@@ -22,5 +22,19 @@ etl:
 	AURORA_HOST="$$host" AURORA_SSL_ROOT_CERT="$$cert" \
 		duckdb -c ".read etl/ducklake_etl.sql"
 
+query_data:
+	@host="$$(terraform -chdir=terraform output -raw aurora_host)" || exit $$?; \
+	if [ -z "$$host" ]; then \
+		printf '%s\n' 'Terraform returned an empty Aurora endpoint.' >&2; \
+		exit 1; \
+	fi; \
+	cert="$${AURORA_SSL_ROOT_CERT:-$$HOME/.aws/rds-global-bundle.pem}"; \
+	if [ ! -r "$$cert" ]; then \
+		printf 'Aurora CA bundle is not readable: %s\n' "$$cert" >&2; \
+		exit 1; \
+	fi; \
+	AURORA_HOST="$$host" AURORA_SSL_ROOT_CERT="$$cert" \
+		duckdb -c ".read etl/query_ducklake.sql"
+
 destroy:
 	bash scripts/destroy.sh
